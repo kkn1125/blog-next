@@ -6,11 +6,23 @@ import SyntaxHighlighter from "react-syntax-highlighter";
 import { MDXRemote } from "next-mdx-remote";
 import { tomorrowNight } from "react-syntax-highlighter/dist/cjs/styles/hljs";
 import { getArticleFromSlug, getSlugs } from "@/libs/service";
+import { Stack, Typography } from "@mui/material";
+import PostLayout from "@/layouts/PostLayout";
+import GenerateHead from "@/components/GenerateHead";
+import { BRAND_NAME, BRAND_DESC, AUTHOR } from "@/util/global";
 
 interface CodeBlockProps {
   children: string;
   className: string;
 }
+const metadatas = (title: string, desc: string) => ({
+  title: `${BRAND_NAME.toUpperCase()}::${title}`,
+  description: desc
+    .slice(0, 50)
+    .replace(/[<>']+/g, "")
+    .trim(),
+  author: AUTHOR,
+});
 
 const components = {
   code: ({ children, className }: CodeBlockProps) => {
@@ -27,16 +39,35 @@ const components = {
   },
 };
 
-function Index({ slugs, post }: { slugs: string[]; post: any }) {
+function Index({
+  slugs,
+  origin,
+  post,
+}: {
+  slugs: string[];
+  origin: any;
+  post: any;
+}) {
   return (
-    <div>
-      {post && (
-        <>
-          <div>{post?.frontmatter?.title || ""}</div>
-          <MDXRemote {...post} components={components as MDXComponents} />
-        </>
-      )}
-    </div>
+    <Stack sx={{ flex: 1 }}>
+      <GenerateHead
+        metadatas={metadatas(
+          post.frontmatter.title,
+          post.frontmatter.description
+        )}
+      />
+      <Typography fontSize={30} fontWeight={700}>
+        Blog
+      </Typography>
+      <PostLayout>
+        {post && (
+          <>
+            <div>{post?.frontmatter?.title || ""}</div>
+            <MDXRemote {...post} components={components as MDXComponents} />
+          </>
+        )}
+      </PostLayout>
+    </Stack>
   );
 }
 
@@ -54,6 +85,7 @@ export const getStaticProps = async ({ params }: any) => {
 
   return {
     props: {
+      origin: post,
       post: mdxSource,
     },
   };

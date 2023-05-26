@@ -38,14 +38,14 @@ function BaseLayout({
           }}>
           <SideBar />
         </Box>
-        <Box
+        <Stack
           sx={{
             width: "70%",
             mx: "auto",
           }}>
           <Toolbar />
           {children}
-        </Box>
+        </Stack>
       </Stack>
       <Footer />
     </Stack>
