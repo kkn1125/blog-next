@@ -11,6 +11,7 @@ import SendIcon from "@mui/icons-material/Send";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import StarBorder from "@mui/icons-material/StarBorder";
+import { Toolbar } from "@mui/material";
 
 export default function SideBar() {
   const [open, setOpen] = useState(true);
@@ -28,11 +29,18 @@ export default function SideBar() {
         bgcolor: "background.paper",
       }}
       component='nav'
-      aria-labelledby='nested-list-subheader'
       subheader={
-        <ListSubheader component='div' id='nested-list-subheader'>
-          Nested List Items
-        </ListSubheader>
+        <>
+          <Toolbar />
+          {/* <ListSubheader
+          component='div'
+          sx={{
+            position: "static",
+            color: "inherit",
+          }}>
+          Blog Menu List
+        </ListSubheader> */}
+        </>
       }>
       <ListItemButton>
         <ListItemIcon>

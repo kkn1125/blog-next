@@ -11,10 +11,12 @@ function Footer() {
       sx={{
         p: 3,
         color: "#ffffff",
-        backgroundColor: "#000000a6",
+        backgroundColor: "#333333",
         fontWeight: 100,
       }}>
-      <Box>
+      <Box sx={{
+        fontFamily: `"IBM Plex Sans KR", sans-serif`
+      }}>
         Copyright 2021. <strong>{BRAND_NAME.toUpperCase()}</strong> All rights
         reserved.
       </Box>

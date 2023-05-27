@@ -21,6 +21,23 @@ const nextConfig = {
   swcMinify: true,
   trailingSlash: true,
   transpilePackages: ["react-syntax-highlighter"],
+  images: {
+    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
+        port:'',
+        pathname: '/**'
+      },
+      {
+        protocol: 'https',
+        hostname: 'fastly.picsum.photos',
+        port:'',
+        pathname: '/id/**'
+      }
+    ]
+  }
 };
 
 module.exports = withMDX(nextConfig);

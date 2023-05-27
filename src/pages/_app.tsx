@@ -18,10 +18,19 @@ export interface MyAppProps extends AppProps {
 
 export default function MyApp(props: MyAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
-
   return (
     <CacheProvider value={emotionCache}>
       <Head>
+        <link rel='preconnect' href='https://fonts.googleapis.com' />
+        <link
+          rel='preconnect'
+          href='https://fonts.gstatic.com'
+          crossOrigin=''
+        />
+        <link
+          href='https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@100;200;300;400;500;600;700&display=swap'
+          rel='stylesheet'
+        />
         <meta name='viewport' content='initial-scale=1, width=device-width' />
       </Head>
       <VisitorProvider>
@@ -29,6 +38,10 @@ export default function MyApp(props: MyAppProps) {
           <>
             <GlobalStyles
               styles={(theme) => css`
+                :root {
+                  font-family: "IBM Plex Sans KR", sans-serif;
+                }
+
                 ::-webkit-scrollbar {
                   width: 8px;
                   background-color: #373c0056;
@@ -54,6 +67,7 @@ export default function MyApp(props: MyAppProps) {
 
                   #__next {
                     height: 100%;
+                    font-family: "IBM Plex Sans KR", sans-serif;
                   }
                 }
               `}
@@ -68,28 +82,4 @@ export default function MyApp(props: MyAppProps) {
       </VisitorProvider>
     </CacheProvider>
   );
-}
-
-export async function getStaticProps() {
-  const articles = await getAllArticles();
-
-  articles
-    .map((article: any) => article.data)
-    .sort(
-      (
-        a: { data: { publishedAt: number } },
-        b: { data: { publishedAt: number } }
-      ) => {
-        if (a.data.publishedAt > b.data.publishedAt) return 1;
-        if (a.data.publishedAt < b.data.publishedAt) return -1;
-
-        return 0;
-      }
-    );
-
-  return {
-    props: {
-      posts: articles.reverse(),
-    },
-  };
 }

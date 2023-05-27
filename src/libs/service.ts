@@ -5,7 +5,6 @@ import { serialize } from "next-mdx-remote/serialize";
 import path from "path";
 import readingTime from "reading-time";
 
-
 const basePath = "src/database";
 
 export const serializeMdx = (source: string) => {
@@ -40,7 +39,7 @@ export async function getSlugs() {
 
     return slug;
   });
-  return pathList
+  return pathList;
 }
 
 export async function getArticleFromSlug(slug: string) {
@@ -56,7 +55,7 @@ export async function getArticleFromSlug(slug: string) {
     frontmatter: {
       slug: slug || "",
       excerpt: data.excerpt || "",
-      title: data.title || '',
+      title: data.title || "",
       publishedAt: data.date || new Date().toLocaleString("ko"),
       readingTime: readingTime(source).text,
       ...Object.fromEntries(Object.entries(data).map(([k, v]) => [k, v || ""])),
@@ -74,6 +73,7 @@ export async function getAllArticles() {
       "utf-8"
     );
     const { data } = matter(source);
+    console.log("matter data", data);
 
     if (articleSlug.match(/\.mdx/)) {
       return [

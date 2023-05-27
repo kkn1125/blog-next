@@ -1,6 +1,4 @@
-"use client";
-
-import * as React from "react";
+import React, { useContext, useEffect } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -16,9 +14,10 @@ import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { AUTHOR, BRAND_NAME } from "@/util/global";
 import { useRouter } from "next/navigation";
+import { useRouter as useNavigate } from "next/router";
 import Link from "next/link";
+import { ColorModeContext } from "@/context/ThemeModeProvider";
 
-// const pages = ["Products", "Pricing", "Blog"];
 const pages = [
   {
     name: "blog",
@@ -30,16 +29,27 @@ const pages = [
   },
 ];
 
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+// const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function ResponsiveAppBar() {
+  const colorMode = useContext(ColorModeContext) as any;
   const router = useRouter();
+  const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
+
+  const settings = [
+    {
+      name: "theme",
+      feature: () => {
+        colorMode.toggleColorMode();
+      },
+    },
+  ];
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -56,15 +66,19 @@ function ResponsiveAppBar() {
     setAnchorElUser(null);
   };
 
+  useEffect(() => {
+    handleCloseNavMenu();
+    handleCloseUserMenu();
+  }, [navigate.pathname]);
+
   return (
     <AppBar
       component={"nav"}
       position='fixed'
       sx={{
-        zIndex: 1000,
         color: "inherit",
-        backgroundColor: "inherit",
-        backdropFilter: 'blur(50px)'
+        backgroundColor: "#ffffff56",
+        backdropFilter: "blur(1rem)",
       }}>
       <Container maxWidth='xl'>
         <Toolbar disableGutters>
@@ -74,20 +88,26 @@ function ResponsiveAppBar() {
             noWrap
             component={Link}
             href='/'
+            fontWeight={700}
+            letterSpacing={"0.3rem"}
+            fontFamily={`"IBM Plex Sans KR", sans-serif`}
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
               color: "inherit",
               textDecoration: "none",
             }}>
             {BRAND_NAME.toUpperCase()}
           </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+          <Box
+            sx={{
+              flex: 0,
+              display: { xs: "flex", md: "none" },
+            }}>
+            {/* mobile hamberg */}
             <IconButton
+              className='exclude'
               size='large'
               aria-label='account of current user'
               aria-controls='menu-appbar'
@@ -96,8 +116,10 @@ function ResponsiveAppBar() {
               color='inherit'>
               <MenuIcon />
             </IconButton>
+            {/* mobile menu */}
             <Menu
               id='menu-appbar'
+              className='exclude'
               anchorEl={anchorElNav}
               anchorOrigin={{
                 vertical: "bottom",
@@ -109,7 +131,10 @@ function ResponsiveAppBar() {
                 horizontal: "left",
               }}
               open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
+              onClose={() => {
+                handleCloseNavMenu();
+                handleCloseUserMenu();
+              }}
               sx={{
                 display: { xs: "block", md: "none" },
               }}>
@@ -125,25 +150,33 @@ function ResponsiveAppBar() {
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
-          <Typography
-            variant='h5'
-            noWrap
-            component={Link}
-            href='/'
+
+          {/* mobile middle */}
+          <Box
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
-              flexGrow: 1,
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
+              flex: 1,
+              justifyContent: "center",
             }}>
-            {BRAND_NAME.toUpperCase()}
-          </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+            <Typography
+              variant='h5'
+              noWrap
+              component={Link}
+              href='/'
+              fontWeight={700}
+              letterSpacing={"0.3rem"}
+              fontFamily={`"IBM Plex Sans KR", sans-serif`}
+              sx={{
+                color: "inherit",
+                textDecoration: "none",
+              }}>
+              {BRAND_NAME.toUpperCase()}
+            </Typography>
+          </Box>
+
+          {/* desktop menu */}
+          <Box sx={{ flex: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map(({ name, path }) => (
               <Button
                 key={name}
@@ -151,13 +184,17 @@ function ResponsiveAppBar() {
                   handleCloseNavMenu();
                   router.push(path);
                 }}
-                sx={{ my: 2, color: "inehrit", display: "block" }}>
+                sx={{
+                  my: 2,
+                  color: (theme) => theme.palette.text.primary,
+                  display: "block",
+                }}>
                 {name}
               </Button>
             ))}
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
+          <Box sx={{ flex: 0 }}>
             <Tooltip title='Open settings'>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt='Remy Sharp' src='/static/images/avatar/2.jpg' />
@@ -177,10 +214,18 @@ function ResponsiveAppBar() {
                 horizontal: "right",
               }}
               open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}>
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign='center'>{setting}</Typography>
+              onClose={() => {
+                handleCloseNavMenu();
+                handleCloseUserMenu();
+              }}>
+              {settings.map(({ name, feature }) => (
+                <MenuItem
+                  key={name}
+                  onClick={() => {
+                    handleCloseUserMenu();
+                    feature();
+                  }}>
+                  <Typography textAlign='center'>{name}</Typography>
                 </MenuItem>
               ))}
             </Menu>
