@@ -18,6 +18,13 @@ const nextConfig = {
   output: "export",
   distDir: "out",
   // reactStrictMode: true,
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = { fs: false };
+    }
+
+    return config;
+  },
   swcMinify: true,
   trailingSlash: true,
   transpilePackages: ["react-syntax-highlighter"],
@@ -25,19 +32,19 @@ const nextConfig = {
     unoptimized: true,
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'picsum.photos',
-        port:'',
-        pathname: '/**'
+        protocol: "https",
+        hostname: "picsum.photos",
+        port: "",
+        pathname: "/**",
       },
       {
-        protocol: 'https',
-        hostname: 'fastly.picsum.photos',
-        port:'',
-        pathname: '/id/**'
-      }
-    ]
-  }
+        protocol: "https",
+        hostname: "fastly.picsum.photos",
+        port: "",
+        pathname: "/id/**",
+      },
+    ],
+  },
 };
 
 module.exports = withMDX(nextConfig);

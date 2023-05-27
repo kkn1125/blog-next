@@ -41,12 +41,15 @@ published: true
 
 사용자화 할 함수를 작성하기 위해 함수들을 모아두는 라이브러리를 만드는데 있어서 현재 사용하고자 하는 앱 폴더 바로 하위에 templatetags/ 디렉토리를 생성합니다.
 
-<div class="btn-bundle">
-   <button class="btn btn-info" target="origin" group="one">templatetags</button>
-   <button class="btn btn-info" target="change" group="one">my_tags</button>
+<div class='btn-bundle'>
+  <button class='btn btn-info' target='origin' group='one'>
+    templatetags
+  </button>
+  <button class='btn btn-info' target='change' group='one'>
+    my_tags
+  </button>
 </div>
 
-{:page="origin" group="one"}
 ```python
 # project_name/app_name/templatetags/customs.py
 from django import template
@@ -66,11 +69,11 @@ def split(value, key):
       return value
 ```
 
-<div page="change" group="one">
-   templatetags가 아닌 다른 이름으로 변경할 경우 settings.py에서 templates에 libraries를 추가해줘야 한다.
+<div page='change' group='one'>
+  templatetags가 아닌 다른 이름으로 변경할 경우 settings.py에서 templates에
+  libraries를 추가해줘야 한다.
 </div>
 
-{:page="change" group="one"}
 ```python
 TEMPLATES = [
     {
@@ -87,50 +90,44 @@ TEMPLATES = [
 ]
 ```
 
------
+---
 
 이렇게 필요한 함수를 만들었다면 template에서 사용하면 되는데, 자신이 작성한 `python`파일 명을 `load`해서 사용해야 합니다.
 
-<div class="btn-bundle">
-   <button class="btn btn-info" target="first" group="two">for문</button>
-   <button class="btn btn-info" target="second" group="two">단독</button>
+<div class='btn-bundle'>
+  <button class='btn btn-info' target='first' group='two'>
+    for문
+  </button>
+  <button class='btn btn-info' target='second' group='two'>
+    단독
+  </button>
 </div>
 
-{%raw%}
-
-{:page="first" group="two"}
 ```html
 <!-- layout.html -->
-{% load customs %}
-...
+{% load customs %} ...
 <div class="container">
-   {% with todo.tags|split:',' as tags%}
-      {% for tag in tags %}
-         {{tag}}<br>
-      {% endfor %}
-   {% endWith %}
+  {% with todo.tags|split:',' as tags%} {% for tag in tags %} {{tag}}<br />
+  {% endfor %} {% endWith %}
 </div>
 ...
 ```
 
-{:page="second" group="two"}
 ```html
 <!-- layout.html -->
-{% load customs %}
-...
+{% load customs %} ...
 <span class="tag tag-info">
-   {{ todo.tags|split:',' }} <!-- 배열 출력 -->
+  {{ todo.tags|split:',' }}
+  <!-- 배열 출력 -->
 </span>
 ...
 ```
-
-{%endraw%}
 
 `with`에 관한 자세한 사항은 [여기](https://docs.djangoproject.com/en/4.0/ref/templates/builtins/)를 참고하세요.
 
 이렇게 세팅하고나면 필요한 함수를 작성해서 사용하시면 됩니다. templatetags에 대해 더 알고 싶으시다면 django 공식 홈페이지의 docs를 읽어보시면 됩니다. 링크는 아래에 있습니다.
 
------
+---
 
 📚 함께 보면 좋은 내용
 

@@ -72,7 +72,7 @@ published: true
 
 #### 문단 파싱
 
-{%raw%}
+
 
 문단을 파싱하기 위해 정한 기준은 엔터 (\n)가 두번 이상 들어간 것을 기준으로 했습니다.
 
@@ -119,7 +119,7 @@ const Markdown = (function (){
 Markdown.parse(mdContents);
 ```
 
-{%endraw%}
+
 
 먼저 내용을 문단으로 나누어 배열을 복사하고 `block`에서 파싱된 내용을 파싱하자마자 지우고 `converted`에 같은 인덱스에 넣는 방법으로 파싱합니다.
 
@@ -127,7 +127,7 @@ Markdown.parse(mdContents);
 
 ### Heading
 
-{%raw%}
+
 
 ```javascript
 this.heading = function (){
@@ -142,7 +142,7 @@ this.heading = function (){
 }
 ```
 
-{%endraw%}
+
 
 `ol`, `ul`, `blockquote`를 제외한 나머지를 이런 식으로 변환시키면 `converted`에 변환된 내용만 담기게 되므로 나중에 `join`해서 화면에 렌더해주면 됩니다. 처음 만들어 보시는 분들은 나머지 기능은 한 번 구현해보시면서 익혀보시길...
 
@@ -154,7 +154,7 @@ this.heading = function (){
 
 여러 시도를 해봤지만 배열을 사용해서 스택자료처럼 만드는게 가장 근접한 방식이 아닌가 생각합니다.
 
-{%raw%}
+
 
 ```javascript
 this.listify = function (){
@@ -213,7 +213,7 @@ this.listify = function (){
 }
 ```
 
-{%endraw%}
+
 
 이렇게 배열에 담고 래핑된 횟수만큼 닫아주고를 반복시키면 쉽게 계층형 리스트화를 할 수 있습니다. 리스트화할 때 `ol`인지 `ul`인지 `blockquote`인지 판별하는 정규식을 짜고 `types`에 넣어주면 래핑되는 태그와 닫는 태그가 알아서 들어가게 됩니다.
 

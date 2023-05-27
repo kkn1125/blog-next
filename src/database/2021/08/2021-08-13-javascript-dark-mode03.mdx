@@ -38,30 +38,27 @@ published: true
 ```html
 <!DOCTYPE html>
 <html>
+  <head>
+    <!-- body가 생기기 전이므로 탈락 -->
+    <script src="path/path/if-01.js"></script>
+  </head>
 
-    <head>
-        <!-- body가 생기기 전이므로 탈락 -->
-        <script src="path/path/if-01.js"></script>
-    </head>
+  <!-- 상동 그리고 규칙에 어긋나므로 탈락 -->
+  <script src="path/path/if-02.js"></script>
 
-    <!-- 상동 그리고 규칙에 어긋나므로 탈락 -->
-    <script src="path/path/if-02.js"></script>
+  <body>
+    <!-- 버튼보다 먼저 생성되서 탈락 -->
+    <script src="path/path/if-03.js"></script>
+    <div>
+      <button id="DM">DarkMode</button>
+    </div>
 
-    <body>
-        <!-- 버튼보다 먼저 생성되서 탈락 -->
-        <script src="path/path/if-03.js"></script>
-        <div>
-            <button id="DM">DarkMode</button>
-        </div>
+    <!-- tags ... -->
 
-        <!-- tags ... -->
-
-        <!-- 기존 사용 위치 -->
-        <script src="path/path/if-05.js"></script>
-    </body>
-
+    <!-- 기존 사용 위치 -->
+    <script src="path/path/if-05.js"></script>
+  </body>
 </html>
-
 ```
 
 위치는 비교해보나마나였지만 혹시나하는 마음에 시도해봤습니다. 그렇다면 콘솔에서 어떤 차이 점이 있는지 보겠습니다.
@@ -76,19 +73,18 @@ published: true
 
 ```html
 <html>
-    <head>
-        <!-- ... -->
-    </head>
+  <head>
+    <!-- ... -->
+  </head>
 
-    <body>
-        <div>
-            <button id="toggleBtn">Dark Mode Toggle</button>
-        </div>
+  <body>
+    <div>
+      <button id="toggleBtn">Dark Mode Toggle</button>
+    </div>
 
-        <!-- body tag에 dark class 부여 -->
-        <script src="main.js"></script>
-    </body>
-
+    <!-- body tag에 dark class 부여 -->
+    <script src="main.js"></script>
+  </body>
 </html>
 ```
 
@@ -97,31 +93,30 @@ published: true
 `javascript`를 통해서 몇가지 `readyState`를 찍어봤습니다.
 
 ```javascript
-
 console.debug("========== html script ==========");
 console.debug("========== 01 html origin ==========");
 // 이때는 이제 막 바디태그를 읽어들이는 시점
 console.log(document.readyState); // loading
-console.log(document.body) // 바디태그 존재
-console.log(document.body.classList) // DOMTokenList [value: ""]
-console.log(document.querySelector('#darkMode')); // null
+console.log(document.body); // 바디태그 존재
+console.log(document.body.classList); // DOMTokenList [value: ""]
+console.log(document.querySelector("#darkMode")); // null
 
-window.addEventListener('DOMContentLoaded',()=>{
-    // DOM전체를 읽고 전체 페이지를 읽은 시점
-    console.debug("========== 02 html DOM Loaded ==========");
-    console.log(document.readyState) // interactive
-    console.log(document.body) // 바디태그 존재
-    console.log(document.body.classList) // DOMTokenList ["dark", value: "dark"]
-    console.log(document.querySelector('#darkMode')) // 존재
+window.addEventListener("DOMContentLoaded", () => {
+  // DOM전체를 읽고 전체 페이지를 읽은 시점
+  console.debug("========== 02 html DOM Loaded ==========");
+  console.log(document.readyState); // interactive
+  console.log(document.body); // 바디태그 존재
+  console.log(document.body.classList); // DOMTokenList ["dark", value: "dark"]
+  console.log(document.querySelector("#darkMode")); // 존재
 });
 
-window.addEventListener('load',()=>{
-    // 문서 전체 다 읽고 소스를 다 로드 한 시점
-    console.debug("========== 03 html Load ==========");
-    console.log(document.readyState) // complete
-    console.log(document.body) // 존재
-    console.log(document.body.classList) // DOMTokenList ["dark", value: "dark"]
-    console.log(document.querySelector('#darkMode')) // 존재
+window.addEventListener("load", () => {
+  // 문서 전체 다 읽고 소스를 다 로드 한 시점
+  console.debug("========== 03 html Load ==========");
+  console.log(document.readyState); // complete
+  console.log(document.body); // 존재
+  console.log(document.body.classList); // DOMTokenList ["dark", value: "dark"]
+  console.log(document.querySelector("#darkMode")); // 존재
 });
 
 // body에 dark class 부여 하는 구문
@@ -166,11 +161,11 @@ let css = document.createTextNode(`
     body{
         transition: .5s ease;
     }
-`)
+`);
 style.appendChild(css);
-setTimeout(()=>{
-    document.head.appendChild(style);
-}, 50)
+setTimeout(() => {
+  document.head.appendChild(style);
+}, 50);
 
 // darkMode 코드들 ...
 // body에 dark클래스 추가하는 코드
@@ -189,7 +184,7 @@ setTimeout(()=>{
 
 최종적으로 블로그에 적용된 방법은 결론의 1번 방법 입니다. 적용이유는 slow 3g로 테스트한 결과 눈으로 보여지는 시점에서 `dark`가 적용된 상태로 렌더되는 것이 보였고, 2번 방법으로는 setTimeout과 소스들의 로드되는 시점들이 제각각이어서 1번이 가장 빠르고 최적의 방법이라 생각되었습니다.
 
------
+---
 
 > 참고 사이트
 

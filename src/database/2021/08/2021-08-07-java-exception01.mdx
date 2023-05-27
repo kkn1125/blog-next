@@ -34,7 +34,7 @@ published: true
 
 # xml 없는 프로젝트
 
-꽤 오랫동안 묵혀뒀던 주제였습니다. Spring 책을 보면서 최근 web.xml(context-*.xml 등) 파일 없이 자바화 한다는 추세라는 문구를 보고 무작정 따라했던 기억이 납니다.  
+꽤 오랫동안 묵혀뒀던 주제였습니다. Spring 책을 보면서 최근 web.xml(context-\*.xml 등) 파일 없이 자바화 한다는 추세라는 문구를 보고 무작정 따라했던 기억이 납니다.  
 그 영향에 현재도 xml파일 없이 구현 중에 있습니다.
 
 이러한 레퍼런스가 오랜시간 쌓인게 아니기때문에 오류와 직면할때마다 외국 모사이트에 비슷한 의논을 찾아 영어 번역에만 두시간 쏟기도 합니다.
@@ -44,6 +44,7 @@ published: true
 ## Error Page 처리
 
 > **작업 환경**
+>
 > - spring legacy project
 > - springframework 5.3.6
 > - jackson data bind
@@ -58,7 +59,7 @@ published: true
 
 ![작업환경](/images/post/exception/exception01.png)
 
-exception 처리 하기위해 test폴더에 파일을 두개 만듭니다.  
+exception 처리 하기위해 test폴더에 파일을 두개 만듭니다.
 
 1. errorPage(에러페이지 이동 링크가 있는 페이지)
 2. 404 ... 처리로 뜨는 페이지
@@ -78,28 +79,29 @@ exception 처리 하기위해 test폴더에 파일을 두개 만듭니다.
 // 원래 json파일은 주석이 없습니다.
 // 편의를 위해 달겠습니다.
 
-[ // List 배열로 받아오기 위해 배열로 열었습니다.
-	{
-		"status":"403",
-		"code":"Forbidden",
-		"reason":"",
-		"message":"잘못된 접근입니다.<a href='/' class='btn btn-info'>메인으로</a>"
-	},
-	{
-		"status":"404",
-		"code":"Not Found",
-		"reason":"",
-		"message":"페이지를 찾을 수 없습니다.<a href='/' class='btn btn-info'>메인으로</a>"
-	},
-	{
-		"status":"500",
-		"code":"Internal Server",
-		"reason":"",
-		"message":"페이지를 처리하는데 오류가 발생했습니다. 오류가 지속된다면 관리자에게 문의해주세요."
-	}
-    // 아래 ExceptionError VO객체와 동일한 정보값으로 설정합니다.
-    // json리스트 받을 시 VO와 타입을 맞추기 위함입니다.
-    // reason을 비워둔 이유는 exception이 발생 이유가 각각 다르기때문에 따로 받기위함입니다.
+[
+  // List 배열로 받아오기 위해 배열로 열었습니다.
+  {
+    "status": "403",
+    "code": "Forbidden",
+    "reason": "",
+    "message": "잘못된 접근입니다.<a href='/' class='btn btn-info'>메인으로</a>"
+  },
+  {
+    "status": "404",
+    "code": "Not Found",
+    "reason": "",
+    "message": "페이지를 찾을 수 없습니다.<a href='/' class='btn btn-info'>메인으로</a>"
+  },
+  {
+    "status": "500",
+    "code": "Internal Server",
+    "reason": "",
+    "message": "페이지를 처리하는데 오류가 발생했습니다. 오류가 지속된다면 관리자에게 문의해주세요."
+  }
+  // 아래 ExceptionError VO객체와 동일한 정보값으로 설정합니다.
+  // json리스트 받을 시 VO와 타입을 맞추기 위함입니다.
+  // reason을 비워둔 이유는 exception이 발생 이유가 각각 다르기때문에 따로 받기위함입니다.
 ]
 ```
 
@@ -114,7 +116,7 @@ public class ExceptionError
 	private String message;
 
     public ExceptionError () {}
-	
+
 	public ExceptionError(String status, String code, String reason, String message) {
 		super();
 		this.status = status;
@@ -136,7 +138,7 @@ public class ExceptionError
 public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitializer
 {
 
-    // RootConfig.class ... 
+    // RootConfig.class ...
     // ServletConfig.class ...
 
     @Override // 에러 처리를 위해 필요한 디스패처 생성
@@ -208,19 +210,23 @@ ModelAndView를 사용하여 응답페이지 경로와 json에서 얻은 에러 
 <h1>에러 페이지</h1>
 
 <div>
-	<h3>${exception.code}</h3> <!-- 에러코드 -->
-	<hr>
-	<div class="mb-5">
-		<div>${exception.status}</div> <!-- 에러 상태 -->
-		<div>${exception.message}</div> <!-- 에러 메세지 -->
-		<div>${exception.reason}</div> <!-- 에러 이유 -->
-	</div>
+  <h3>${exception.code}</h3>
+  <!-- 에러코드 -->
+  <hr />
+  <div class="mb-5">
+    <div>${exception.status}</div>
+    <!-- 에러 상태 -->
+    <div>${exception.message}</div>
+    <!-- 에러 메세지 -->
+    <div>${exception.reason}</div>
+    <!-- 에러 이유 -->
+  </div>
 </div>
 ```
 
 ![404페이지](/images/post/exception/exception05.png)
 
 헤로쿠로 블로그를 만들때에도 방법을 몰라서 그냥 두고 썼는데 속이 뻥 뚫리는 기분입니다. 아직 알아야 할 부분이 많고, 자세히 모르는 부분을 설명없이 방법만 설명해서 글을 써놓고도 부끄럽습니다. httpstatus 코드는 많은 도큐먼트에서 알려주고 있어서 검색하기 쉽습니다.
-혹시 찾기 어려우신 분은 [마이크로소프트 Docs HttpStatusCode](https://docs.microsoft.com/ko-kr/dotnet/api/system.net.httpstatuscode?view=net-5.0 'microsoft HttpStatusCode')를 참고하시면 되겠습니다.
+혹시 찾기 어려우신 분은 [마이크로소프트 Docs HttpStatusCode](https://docs.microsoft.com/ko-kr/dotnet/api/system.net.httpstatuscode?view=net-5.0 "microsoft HttpStatusCode")를 참고하시면 되겠습니다.
 
 자주 사용되는 403, 404, 500에 대한 status와 exception class는 [키워드](#keywords)에 같이 남겨두겠습니다.

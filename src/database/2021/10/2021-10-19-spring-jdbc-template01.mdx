@@ -59,7 +59,7 @@ public class UserDao implements DAOImpl<User>
 {
    @Autowired
 	DataSource source;
-	
+
 	@Override
 	public List<User> getUserList() {
       Connection con = null;
@@ -109,7 +109,7 @@ public class UserDao implements DAOImpl<User>
 {
    @Autowired
 	DataSource source;
-	
+
 	@Override
 	public List<User> getUserList() {
       JdbcTemplate jdbcTemplate = new JdbcTemplate(source);
@@ -140,10 +140,10 @@ JPA를 배워서 나중에는 MyBatis 등 여러가지를 비교하는 포스팅
 @Controller
 @RequestMapping("/")
 public class HomeController {
-	
+
 	@Autowired
 	UserDao dao;
-	
+
 	@GetMapping("")
 	public String home(Model model) {
 		model.addAttribute("list", dao.getUserList());
@@ -156,9 +156,7 @@ template로 연결된 getUserList함수를 사용해서 모든 유저를 가져�
 
 ```html
 <!-- jstl 불러온 후 -->
-<c:forEach var="item" item="${list}">
-   ${item.namz}
-</c:forEach>
+<c:forEach var="item" item="${list}"> ${item.namz} </c:forEach>
 ```
 
 여기까지 기록용으로 남기는 짤막한 jdbc template였습니다. udpate나 delete는 필요할 때 찾아서 사용해도 될 것 같습니다.

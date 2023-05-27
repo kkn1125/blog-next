@@ -25,6 +25,7 @@ keysum: false
 keywords: ""
 published: true
 ---
+
 # 2020 kakao 인턴 키패드 문제
 
 if문을 많이 남발하다가 결국 풀이를 슬쩍 보면서 풀었습니다...
@@ -34,9 +35,8 @@ if문을 많이 남발하다가 결국 풀이를 슬쩍 보면서 풀었습니�
 양손 엄지가 있고 키패드가 `0-9`까지 `*`과 `#`이 있습니다. 그리고 손잡이 유형이 왼쪽이냐 오른쪽이냐가 조건으로 주어집니다.
 
 ![kakao tech](https://tech.kakao.com/wp-content/uploads/2020/07/kakao_phone1-333x333.png)
-{:align="center"}
 
-1. 왼쪽 엄지가 누르는 반경은 1,4,7,*
+1. 왼쪽 엄지가 누르는 반경은 1,4,7,\*
 2. 오른쪽 엄지가 누르는 반경은 3,6,9,#
 3. 중앙 컬럼의 2,5,8,0은 왼쪽 엄지 오른쪽 엄지가 누를 번호와 거리가 같다면 손잡이를 기준으로 해당 엄지가 누릅니다.
    - 만일 엄지가 서로 거리가 다르다면 누를 번호와 가장 가까운 엄지가 번호를 눌러야합니다.
@@ -49,7 +49,7 @@ import java.lang.Math;
 class Solution {
     public String solution(int[] numbers, String hand) {
         String answer = "";
-        
+
         int leftHand = 10;
         int rightHand = 11;
 
@@ -67,15 +67,15 @@ class Solution {
                 // 거리가 가까운 쪽의 엄지를 눌러 *Hand를 갱신해준다.
                 String center = distance(num, leftHand, rightHand, hand);
                 answer += center;
-                
+
                 if(center.equals("R")) rightHand = num;
                 else leftHand = num;
             }
         }
-        
+
         return answer;
     }
-    
+
     public String distance(int num, int left, int right, String hand){
         int[][] pad = {
             {0,1}, // 0
@@ -111,7 +111,7 @@ class Solution {
 }
 ```
 
------
+---
 
 ## 노트
 

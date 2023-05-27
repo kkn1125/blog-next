@@ -144,13 +144,13 @@ def signin(request):
     return render(request, 'todo/signin.html', context)
 ```
 
-{:.blockquote.blockquote-info}
+
 > 잘 안되신다면 이것만 주의하면 될 것 같습니다. `sign_form`을 `if .. else`문 밖에서 `context`로 받아 `render`로 보내고 있습니다.  
 > 위의 코드에서 위치를 보시면 아시겠지만 `sign_form`을 `is_valid`한 이후에 다시 `sign_form`을 재정의하면 당연히 **유효성 검사한 결과를 제대로 전달하지 못합니다**.
 
 그 다음 `template`을 작성해보면 아래와 같습니다.
 
-{%raw%}
+
 
 ```html
 {% extends './layout.html' %}
@@ -183,7 +183,7 @@ def signin(request):
 {% endblock %}
 ```
 
-{%endraw%}
+
 
 `request.GET.error`는 유효성검사가 아닌 db의 데이터와 매치가 되지 않고 `error`값을 파라미터로 받았을 때 나타나게하는 문구입니다.
 
@@ -224,14 +224,14 @@ def signin(request):
 
 설치는 [여기](https://pypi.org/project/django-bootstrap-v5/)를 참고하세요.
 
-{%raw%}
+
 
 ```html
 {% load bootstrap5 %}
 {% bootstrap_form signForm %}
 ```
 
-{%endraw%}
+
 
 기본 form에서와 마찬가지로 에러는 form의 field마다 자동으로 붙습니다. field별로 따로 작업 가능하며, error또한 별도로 제어 가능합니다.
 
@@ -260,7 +260,7 @@ if sign_form.is_valid():
 
 분기문을 통해 기존에 있는 `is_valid`의 기준만이 아닌 사용자의 목적에 따라 `if`문으로 유효성 검사 목록을 더 추가 가능한 것으로 보입니다. 이러한 맥락으로 봤을 때 `add_error`한 시점부터 `form`의 에러 항목이 추가되고 `valid`되는 것 같습니다.
 
-{:.blockquote.blockquote-info}
+
 > 이는 짐작이고 추측이니 더 자세한 것은 해당 함수의 내용을 더 알아보고 해당 포스팅을 수정할 예정입니다.
 
 -----

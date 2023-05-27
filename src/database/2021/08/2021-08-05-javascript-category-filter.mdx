@@ -34,7 +34,7 @@ published: true
 
 # Category Filter
 
-만들어 보고싶은게 한둘이 아니어서 가끔 몸이 모자라다는 생각도 듭니다.  
+만들어 보고싶은게 한둘이 아니어서 가끔 몸이 모자라다는 생각도 듭니다.
 
 오늘 만들어 본 건 카테고리 필터인데요. 우연히 구직 중에 발견한 회사 홈페이지에 있는 카테고리 필터를 보고 만들어 봐야겠다는 생각이 들었습니다.
 
@@ -46,11 +46,11 @@ published: true
 
 예전에 만들던 필터 방식은 vertical 구조의 리스트방식이었습니다.
 
------
+---
 
 ![예전 필터 형태](/images/post/filter/filter01.png)
 
------
+---
 
 hide클래스 css 설정과 setTimeout만 있으면 간단하게 만들 수 있습니다.
 
@@ -74,70 +74,70 @@ hide클래스 css 설정과 setTimeout만 있으면 간단하게 만들 수 있�
 ```html
 <!DOCTYPE html>
 <html>
-    <head>
-        ...
-    </head>
-    <body>
-        <div>
-            <!-- 버튼 요소 -->
-            <button data-value="all">all</button>
-            <button data-value="a">1</button>
-            <button data-value="b">2</button>
-            <button data-value="c">3</button>
-            <button data-value="d">4</button>
-            <button data-value="e">5</button>
-        </div>
-        <div id="wrap">
-            <!-- 카드가 되는 요소들 -->
-            <!-- 그룹에는 값을 띄어쓰기로 구분하고 all은 공통으로 넣습니다 -->
-            <a data-group="all a" href="#1">anchor1</a>
-            <a data-group="all b a" href="#2">anchor2</a>
-            <a data-group="all a" href="#3">anchor3</a>
-            <a data-group="all d" href="#4">anchor4</a>
-            <a data-group="all a b c" href="#5">anchor5</a>
-            <a data-group="all e" href="#6">anchor6</a>
-            <a data-group="all d" href="#7">anchor7</a>
-            <a data-group="all c" href="#8">anchor8</a>
-            <a data-group="all b" href="#9">anchor9</a>
-            <a data-group="all c" href="#10">anchor10</a>
-            <a data-group="all a" href="#11">anchor11</a>
-            <a data-group="all d" href="#12">anchor12</a>
-        </div>
-    </body>
+  <head>
+    ...
+  </head>
+  <body>
+    <div>
+      <!-- 버튼 요소 -->
+      <button data-value="all">all</button>
+      <button data-value="a">1</button>
+      <button data-value="b">2</button>
+      <button data-value="c">3</button>
+      <button data-value="d">4</button>
+      <button data-value="e">5</button>
+    </div>
+    <div id="wrap">
+      <!-- 카드가 되는 요소들 -->
+      <!-- 그룹에는 값을 띄어쓰기로 구분하고 all은 공통으로 넣습니다 -->
+      <a data-group="all a" href="#1">anchor1</a>
+      <a data-group="all b a" href="#2">anchor2</a>
+      <a data-group="all a" href="#3">anchor3</a>
+      <a data-group="all d" href="#4">anchor4</a>
+      <a data-group="all a b c" href="#5">anchor5</a>
+      <a data-group="all e" href="#6">anchor6</a>
+      <a data-group="all d" href="#7">anchor7</a>
+      <a data-group="all c" href="#8">anchor8</a>
+      <a data-group="all b" href="#9">anchor9</a>
+      <a data-group="all c" href="#10">anchor10</a>
+      <a data-group="all a" href="#11">anchor11</a>
+      <a data-group="all d" href="#12">anchor12</a>
+    </div>
+  </body>
 </html>
 ```
 
-카드와 버튼을 만듭니다.  
+카드와 버튼을 만듭니다.
 
 ```css
-#wrap{
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: start;
-    position: relative;
+#wrap {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: start;
+  position: relative;
 }
-.show{
-    transition: .3s ease;
-    opacity: 1;
-}
-
-.hide{
-    transition: .2s ease;
-    opacity: 0;
+.show {
+  transition: 0.3s ease;
+  opacity: 1;
 }
 
-[href^="#"]{
-    /* href속성을 가진 태그 중 값이 #으로 시작하는 것 선택 */
-    width: 100px;
-    height: 150px;
-    display: block;
-    background-color: gray;
-    margin: 1rem;
+.hide {
+  transition: 0.2s ease;
+  opacity: 0;
 }
 
-[data-group]{
-    transition: .3s ease;
-    position: absolute;
+[href^="#"] {
+  /* href속성을 가진 태그 중 값이 #으로 시작하는 것 선택 */
+  width: 100px;
+  height: 150px;
+  display: block;
+  background-color: gray;
+  margin: 1rem;
+}
+
+[data-group] {
+  transition: 0.3s ease;
+  position: absolute;
 }
 ```
 
@@ -150,37 +150,37 @@ href속성과 data-group속성의 태그들은 카드들을 가리킵니다.
 버튼에 data-value를 주었습니다. 각 버튼이 카테고리 값을 가질때 버튼의 value값을 data-group속성 태그들을 조회하여 맞는 값에 show/hide 클래스를 주는 역할입니다.
 
 ```javascript
-let all = document.querySelectorAll('[data-group]');
+let all = document.querySelectorAll("[data-group]");
 let values = document.querySelectorAll("[data-value]");
 
-el.addEventListener('click',function(event){
-    values.forEach((el)=>{
-        // 버튼 하나하나에 이벤트 적용
-        console.log(event.target);
-        // [button, button, button, ...]
-        let val = event.target.dataset.value;
-        // 버튼의 value값 저장
-        all.forEach(el=>{
-            // 카드리스트 순회
-            let arr = el.dataset.group.split(' ');
-            // 카드 데이터 그룹값 배열화
-            for(let a of arr){
-                // 각 그룹값 조회
-                if(a==val){
-                    // 그룹값 내에 클릭한 value 값과 동일하면 show
-                    el.setAttribute("class","show");
-                        /* 클릭시 정렬 기능 자리 */
-                    break;
-                    // break를 한 이유는
-                    // ex) 그룹 값 a, c, b이고 클릭 값 c이면 b를 조회하고 else로 넘어가 show가 작동 안된다.
-                } else {
-                    // 일치하지 않으면 hide
-                    el.setAttribute("class","hide");
-                        /* 클릭시 정렬 기능 자리 */
-                }
-            }
-        });
+el.addEventListener("click", function (event) {
+  values.forEach((el) => {
+    // 버튼 하나하나에 이벤트 적용
+    console.log(event.target);
+    // [button, button, button, ...]
+    let val = event.target.dataset.value;
+    // 버튼의 value값 저장
+    all.forEach((el) => {
+      // 카드리스트 순회
+      let arr = el.dataset.group.split(" ");
+      // 카드 데이터 그룹값 배열화
+      for (let a of arr) {
+        // 각 그룹값 조회
+        if (a == val) {
+          // 그룹값 내에 클릭한 value 값과 동일하면 show
+          el.setAttribute("class", "show");
+          /* 클릭시 정렬 기능 자리 */
+          break;
+          // break를 한 이유는
+          // ex) 그룹 값 a, c, b이고 클릭 값 c이면 b를 조회하고 else로 넘어가 show가 작동 안된다.
+        } else {
+          // 일치하지 않으면 hide
+          el.setAttribute("class", "hide");
+          /* 클릭시 정렬 기능 자리 */
+        }
+      }
     });
+  });
 });
 ```
 
@@ -274,14 +274,26 @@ el.addEventListener("click", function (event) {
 
 아래의 필터를 테스트 해보세요.
 
------
+---
 
-<iframe height="300" style="width: 100%;" scrolling="no" title="javascript-filter-category-example" src="https://codepen.io/kkn1125/embed/yLVpvLK?default-tab=js%2Cresult&theme-id=dark" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
-  See the Pen <a href="https://codepen.io/kkn1125/pen/yLVpvLK">
-  javascript-filter-category-example</a> by kkn1125 (<a href="https://codepen.io/kkn1125">@kkn1125</a>)
-  on <a href="https://codepen.io">CodePen</a>.
+<iframe
+  height={300}
+  style={{ width: "100%" }}
+  scrolling='no'
+  title='javascript-filter-category-example'
+  src='https://codepen.io/kkn1125/embed/yLVpvLK?default-tab=js%2Cresult&theme-id=dark'
+  frameBorder={"no"}
+  loading='lazy'
+  allowtransparency='true'
+  allowFullScreen>
+  See the Pen
+  <a href='https://codepen.io/kkn1125/pen/yLVpvLK'>
+    javascript-filter-category-example
+  </a>
+  by kkn1125 (<a href='https://codepen.io/kkn1125'>@kkn1125</a>) on
+  <a href='https://codepen.io'>CodePen</a>.
 </iframe>
 
------
+---
 
 사용된 속성, 함수들은 [상단](#keywords)의 키워드 리스트를 참고해주세요.

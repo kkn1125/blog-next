@@ -1,20 +1,15 @@
 import { MDXComponents } from "mdx/types";
 import { serialize } from "next-mdx-remote/serialize";
 import React, { useEffect, useState } from "react";
-import SyntaxHighlighter from "react-syntax-highlighter";
 import GenerateHead from "@/components/GenerateHead";
 import PostLayout from "@/layouts/PostLayout";
-import { getArticleFromSlug, getSlugs } from "@/libs/service";
+import { getArticleFromSlug, getSlugs, serializeMdx } from "@/libs/service";
 import { AUTHOR, BRAND_NAME } from "@/util/global";
 import { Box, Divider, Stack, Typography } from "@mui/material";
 import { MDXRemote } from "next-mdx-remote";
-import { tomorrowNight } from "react-syntax-highlighter/dist/cjs/styles/hljs";
 import Image from "next/image";
+import { MDXProvider } from "@mdx-js/react";
 
-interface CodeBlockProps {
-  children: string;
-  className: string;
-}
 const metadatas = (title: string, desc: string) => ({
   title: `${BRAND_NAME.toUpperCase()}::${title}`,
   description: desc
@@ -23,24 +18,6 @@ const metadatas = (title: string, desc: string) => ({
     .trim(),
   author: AUTHOR,
 });
-
-const components = {
-  code: ({ children, className }: CodeBlockProps) => {
-    const language = className?.replace(/language-/, "");
-    return (
-      <SyntaxHighlighter
-        showLineNumbers
-        language={language}
-        style={tomorrowNight}>
-        {children}
-      </SyntaxHighlighter>
-    );
-  },
-  /* pre in p error 해결 */
-  p: ({ children }: { children: React.ReactElement }) => {
-    return <div>{children}</div>;
-  },
-};
 
 function Index({
   slugs,
@@ -78,7 +55,7 @@ function Index({
               {data?.frontmatter?.title || ""}
             </Typography>
             <Divider sx={{ my: 3 }} />
-            <MDXRemote {...data} components={components as MDXComponents} />
+            <MDXRemote {...data} />
           </>
         )}
       </PostLayout>
@@ -89,12 +66,7 @@ function Index({
 export const getStaticProps = async ({ params }: any) => {
   const post = await getArticleFromSlug(params.slug);
 
-  const mdxSource =
-    (await serialize(post.content || "", {
-      mdxOptions: {
-        development: process.env.NODE_ENV !== "production",
-      },
-    })) || {};
+  const mdxSource = (await serializeMdx(post.content || "")) || {};
 
   mdxSource.frontmatter = post.frontmatter;
 

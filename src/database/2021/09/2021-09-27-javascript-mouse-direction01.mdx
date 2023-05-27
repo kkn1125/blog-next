@@ -51,29 +51,28 @@ published: true
 
 ```html
 <div class="card mx-3" style="width: 15rem;">
-	<div>
-		<img class="img-fluid" src="cover01.jpg" alt="test" />
-	</div>
-	<div class="d-flex justify-content-between card-title px-3 pt-3">
-		<div class="h3">Title Of Card</div>
-		<span>🙋‍♂️</span>
-	</div>
-	<div class="card-body">
-		<p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Non veniam
-			doloremque
-			praesentium
-			reprehenderit? Fugit quaerat nam error perferendis, ipsam sed.</p>
-	</div>
-	<div class="card-footer">
-		kimson
-	</div>
+  <div>
+    <img class="img-fluid" src="cover01.jpg" alt="test" />
+  </div>
+  <div class="d-flex justify-content-between card-title px-3 pt-3">
+    <div class="h3">Title Of Card</div>
+    <span>🙋‍♂️</span>
+  </div>
+  <div class="card-body">
+    <p class="card-text">
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Non veniam
+      doloremque praesentium reprehenderit? Fugit quaerat nam error perferendis,
+      ipsam sed.
+    </p>
+  </div>
+  <div class="card-footer">kimson</div>
 </div>
 ```
 
 테스트용 카드입니다. bootstrap 5.0.2를 사용했습니다.
 
 ```javascript
-'use strict';
+"use strict";
 
 let over = 0; // 마우스가 들어왔는지 체크
 let beforeX = 0; // 마우스가 이전에 있던 X좌표 위치
@@ -83,55 +82,55 @@ let beforeY = 0; // 마우스가 이전에 있던 Y좌표 위치
 3가지 변수로 카드에 마우스가 들어왔는지, 어느 방향인지 컨트롤하겠습니다.
 
 ```javascript
-let movementHandler = (ev)=>{ // 움직임 감지
-	let target = ev.target;
-	if(target.classList.contains("card") && over==0){
-        let rgb;
-		let curX = ev.screenX;
-		let curY = ev.screenY;
-        if(target.querySelector("img")){
-            // 타겟에 이미지태그가 있으면 배경색을 바꾸는 함수 실행
-        }
-        if(curX>beforeX && curY==beforeY){
-            // 좌에서 우로
-        } else if (curX==beforeX && curY>beforeY) {
-            // 상에서 하로
-            
-        } else if(curX<beforeX && curY==beforeY){
-            // 우에서 좌로
-            
-        } else if(curX==beforeX && curY<beforeY) {
-            // 하에서 상으로
-        }
-        beforeX = curX;
-        beforeY = curY;
-    } else if(!target.classList.contains("card")){
-        over = 0;
+let movementHandler = (ev) => {
+  // 움직임 감지
+  let target = ev.target;
+  if (target.classList.contains("card") && over == 0) {
+    let rgb;
+    let curX = ev.screenX;
+    let curY = ev.screenY;
+    if (target.querySelector("img")) {
+      // 타겟에 이미지태그가 있으면 배경색을 바꾸는 함수 실행
     }
-}
+    if (curX > beforeX && curY == beforeY) {
+      // 좌에서 우로
+    } else if (curX == beforeX && curY > beforeY) {
+      // 상에서 하로
+    } else if (curX < beforeX && curY == beforeY) {
+      // 우에서 좌로
+    } else if (curX == beforeX && curY < beforeY) {
+      // 하에서 상으로
+    }
+    beforeX = curX;
+    beforeY = curY;
+  } else if (!target.classList.contains("card")) {
+    over = 0;
+  }
+};
 
-let fadeCover = (target, direction, rgb)=>{
-	let origin = document.querySelector(".cover");
-    if(origin){ // 커버 초기화
-        origin.remove();
-    }
-    let cover = document.createElement("div");
-    cover.classList.add("cover", direction);
-    cover.style.backgroundColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.5)`;
-    target.append(cover);
-    over = 1;
-}
+let fadeCover = (target, direction, rgb) => {
+  let origin = document.querySelector(".cover");
+  if (origin) {
+    // 커버 초기화
+    origin.remove();
+  }
+  let cover = document.createElement("div");
+  cover.classList.add("cover", direction);
+  cover.style.backgroundColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.5)`;
+  target.append(cover);
+  over = 1;
+};
 ```
 
 여기서 `cover`클래스와 `direction`인자를 받아 넣는데 `direction`은 미리 css에서 설정한 내용으로 방향에 따라 덮는 방향을 결정하려합니다.
 
 ```css
-body{
-    transition: background-color 1s;
-    -webkit-transition: background-color 1s;
-    -moz-transition: background-color 1s;
-    -ms-transition: background-color 1s;
-    -o-transition: background-color 1s;
+body {
+  transition: background-color 1s;
+  -webkit-transition: background-color 1s;
+  -moz-transition: background-color 1s;
+  -ms-transition: background-color 1s;
+  -o-transition: background-color 1s;
 }
 
 h1,
@@ -140,60 +139,60 @@ h3,
 h4,
 h5,
 h6 {
-    text-transform: capitalize;
+  text-transform: capitalize;
 }
 
-.card::after{
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    display: block;
+.card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  display: block;
 }
 
-.cover{
-    position: absolute;
-    background-color: rgba(0,0,0,0.5);
+.cover {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .cover.start,
-.cover.end{
-    animation: startEnd .5s cubic-bezier(1,0,0,1) both;
-    -webkit-animation: startEnd .5s cubic-bezier(1,0,0,1) both;
+.cover.end {
+  animation: startEnd 0.5s cubic-bezier(1, 0, 0, 1) both;
+  -webkit-animation: startEnd 0.5s cubic-bezier(1, 0, 0, 1) both;
 }
-.cover.end{
-    right: 0;
+.cover.end {
+  right: 0;
 }
 .cover.top,
-.cover.bottom{
-    animation: topBottom 0.5s cubic-bezier(1,0,0,1) both;
-    -webkit-animation: topBottom 0.5s cubic-bezier(1,0,0,1) both;
+.cover.bottom {
+  animation: topBottom 0.5s cubic-bezier(1, 0, 0, 1) both;
+  -webkit-animation: topBottom 0.5s cubic-bezier(1, 0, 0, 1) both;
 }
-.cover.bottom{
-    bottom: 0;
+.cover.bottom {
+  bottom: 0;
 }
 
-@keyframes startEnd{
-    0%{
-        width: 0%;
-        height: 100%;
-    }
-    100%{
-        width: 100%;
-        height: 100%;
-    }
+@keyframes startEnd {
+  0% {
+    width: 0%;
+    height: 100%;
+  }
+  100% {
+    width: 100%;
+    height: 100%;
+  }
 }
-@keyframes topBottom{
-    0%{
-        width: 100%;
-        height: 0%;
-    }
-    100%{
-        width: 100%;
-        height: 100%;
-    }
+@keyframes topBottom {
+  0% {
+    width: 100%;
+    height: 0%;
+  }
+  100% {
+    width: 100%;
+    height: 100%;
+  }
 }
 ```
 
@@ -207,230 +206,63 @@ h6 {
 
 테스트용으로 아래 카드를 두겠습니다.
 
------
+---
 
-<style>
-.card::after{
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    display: block;
-	z-index: 100;
-}
+<iframe height="300" style="width: 100%;" scrolling="no" title="mouse_direction" src="https://codepen.io/kkn1125/embed/YzJMeZQ?default-tab=html%2Cresult" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
+  See the Pen <a href="https://codepen.io/kkn1125/pen/YzJMeZQ">
+  mouse_direction</a> by kkn1125 (<a href="https://codepen.io/kkn1125">@kkn1125</a>)
+  on <a href="https://codepen.io">CodePen</a>.
+</iframe>
 
-.cover{
-    position: absolute;
-    background-color: rgba(0,0,0,0.5);
-}
-
-.cover.start,
-.cover.end{
-    animation: startEnd .5s cubic-bezier(1,0,0,1) both;
-    -webkit-animation: startEnd .5s cubic-bezier(1,0,0,1) both;
-}
-.cover.end{
-    right: 0;
-}
-.cover.top,
-.cover.bottom{
-    animation: topBottom 0.5s cubic-bezier(1,0,0,1) both;
-    -webkit-animation: topBottom 0.5s cubic-bezier(1,0,0,1) both;
-}
-.cover.bottom{
-    bottom: 0;
-}
-
-@keyframes startEnd{
-    0%{
-        width: 0%;
-        height: 100%;
-    }
-    100%{
-        width: 100%;
-        height: 100%;
-    }
-}
-@keyframes topBottom{
-    0%{
-        width: 100%;
-        height: 0%;
-    }
-    100%{
-        width: 100%;
-        height: 100%;
-    }
-}
-</style>
-
-<div class="d-flex justify-content-center">
-	<div class="card mx-3" style="width: 15rem; overflow: hidden">
-		<div class="position-absolute top-0 start-0 h-100">
-			<img class="img-fluid h-100" style="object-fit: cover" src="/images/post/mouseDirection/direction01.png" alt="test" />
-		</div>
-		<div class="d-flex justify-content-between card-title px-3 pt-3" style="z-index: 1;">
-			<div class="h3">Title Of Card</div>
-			<span>🙋‍♂️</span>
-		</div>
-		<div class="card-body" style="z-index: 1;">
-			<p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. At, vero.</p>
-		</div>
-		<div class="card-footer" style="z-index: 1;">
-			kimson
-		</div>
-	</div>
-</div>
-
-<script type="text/javascript">
-let over = 0;
-let beforeX = 0;
-let beforeY = 0;
-
-let fadeCover = (target, direction, rgb)=>{
-    let cover = document.createElement("div");
-    cover.classList.add("cover", direction);
-    cover.style.backgroundColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.5)`;
-    target.append(cover);
-    over = 1;
-}
-
-let movementHandler = (ev)=>{
-    let target = ev.target;
-    
-    if(target.classList.contains("card") && over==0){
-        let rgb;
-        if(target.querySelector("img")){
-            rgb = getAverageRGB(target.querySelector("img"));
-            document.body.style.backgroundColor = 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')';
-        }
-        if(ev.screenX>beforeX && ev.screenY==beforeY){
-            // console.log("오");
-            fadeCover(target, "start", rgb);
-        } else if (ev.screenX==beforeX && ev.screenY>beforeY) {
-            // console.log("아");
-            fadeCover(target, "top", rgb);
-            
-        } else if(ev.screenX<beforeX && ev.screenY==beforeY){
-            // console.log("왼");
-            fadeCover(target, "end", rgb);
-            
-        } else if(ev.screenX==beforeX && ev.screenY<beforeY) {
-            // console.log("위");
-            fadeCover(target, "bottom", rgb);
-        }
-        beforeX = ev.screenX;
-        beforeY = ev.screenY;
-    } else if(!target.classList.contains("card")){
-        over = 0;
-    }
-	if(!target.classList.contains("card") && over==0){
-		document.body.style.backgroundColor = `#2a2b31`;
-		let origin = document.querySelector(".cover");
-		if(origin){
-			origin.remove();
-		}
-	}
-}
-
-
-
-window.addEventListener("mousemove", movementHandler);
-
-function getAverageRGB(imgEl) {
-
-    var blockSize = 5, // only visit every 5 pixels
-        defaultRGB = {r:0,g:0,b:0}, // for non-supporting envs
-        canvas = document.createElement('canvas'),
-        context = canvas.getContext && canvas.getContext('2d'),
-        data, width, height,
-        i = -4,
-        length,
-        rgb = {r:0,g:0,b:0},
-        count = 0;
-    if (!context) {
-        return defaultRGB;
-    }
-    height = canvas.height = imgEl.naturalHeight;
-	// || imgEl.offsetHeight || imgEl.height;
-    width = canvas.width = imgEl.naturalWidth;
-	// || imgEl.offsetWidth || imgEl.width;
-    context.drawImage(imgEl, 0, 0);
-    try {
-        data = context.getImageData(0, 0, width, height);
-    } catch(e) {
-        /* security error, img on diff domain */
-        return defaultRGB;
-    }
-
-    length = data.data.length;
-
-    while ( (i += blockSize * 4) < length ) {
-        ++count;
-        rgb.r += data.data[i];
-        rgb.g += data.data[i+1];
-        rgb.b += data.data[i+2];
-    }
-
-    // ~~ used to floor values
-    rgb.r = ~~(rgb.r/count);
-    rgb.g = ~~(rgb.g/count);
-    rgb.b = ~~(rgb.b/count);
-
-    return rgb;
-
-}
-</script>
-
------
+---
 
 > [stackoverflow :: Get average color of image via Javascript](https://stackoverflow.com/questions/2541481/get-average-color-of-image-via-javascript)
 
 ```javascript
 function getAverageRGB(imgEl) {
+  var blockSize = 5, // only visit every 5 pixels
+    defaultRGB = { r: 0, g: 0, b: 0 }, // for non-supporting envs
+    canvas = document.createElement("canvas"),
+    context = canvas.getContext && canvas.getContext("2d"),
+    data,
+    width,
+    height,
+    i = -4,
+    length,
+    rgb = { r: 0, g: 0, b: 0 },
+    count = 0;
 
-    var blockSize = 5, // only visit every 5 pixels
-        defaultRGB = {r:0,g:0,b:0}, // for non-supporting envs
-        canvas = document.createElement('canvas'),
-        context = canvas.getContext && canvas.getContext('2d'),
-        data, width, height,
-        i = -4,
-        length,
-        rgb = {r:0,g:0,b:0},
-        count = 0;
+  if (!context) {
+    return defaultRGB;
+  }
 
-    if (!context) {
-        return defaultRGB;
-    }
+  height = canvas.height =
+    imgEl.naturalHeight || imgEl.offsetHeight || imgEl.height;
+  width = canvas.width = imgEl.naturalWidth || imgEl.offsetWidth || imgEl.width;
 
-    height = canvas.height = imgEl.naturalHeight || imgEl.offsetHeight || imgEl.height;
-    width = canvas.width = imgEl.naturalWidth || imgEl.offsetWidth || imgEl.width;
+  context.drawImage(imgEl, 0, 0);
 
-    context.drawImage(imgEl, 0, 0);
+  try {
+    data = context.getImageData(0, 0, width, height);
+  } catch (e) {
+    /* security error, img on diff domain */
+    return defaultRGB;
+  }
 
-    try {
-        data = context.getImageData(0, 0, width, height);
-    } catch(e) {
-        /* security error, img on diff domain */
-        return defaultRGB;
-    }
+  length = data.data.length;
 
-    length = data.data.length;
+  while ((i += blockSize * 4) < length) {
+    ++count;
+    rgb.r += data.data[i];
+    rgb.g += data.data[i + 1];
+    rgb.b += data.data[i + 2];
+  }
 
-    while ( (i += blockSize * 4) < length ) {
-        ++count;
-        rgb.r += data.data[i];
-        rgb.g += data.data[i+1];
-        rgb.b += data.data[i+2];
-    }
+  // ~~ used to floor values
+  rgb.r = ~~(rgb.r / count);
+  rgb.g = ~~(rgb.g / count);
+  rgb.b = ~~(rgb.b / count);
 
-    // ~~ used to floor values
-    rgb.r = ~~(rgb.r/count);
-    rgb.g = ~~(rgb.g/count);
-    rgb.b = ~~(rgb.b/count);
-
-    return rgb;
-
+  return rgb;
 }
 ```

@@ -63,7 +63,7 @@ published: true
 
 의존성 추가할 때 발생하는 오류는 `mybatis-spring`과 `mybatis`의 버전에 따라 발생할 수 있으니 `maven repository`에서 확인하시기 바랍니다.
 
-`Spring-Boot`에서는 `application.properties`로 
+`Spring-Boot`에서는 `application.properties`로
 `mybatis.type-aliases-package='package.path'`만 설정해주면 `@Mapper` 어노테이션을 곧바로 사용해서 간단하게 사용했었습니다.
 
 `spring`도 되겠거니하고 달랑 `Mapper` 어노테이션을 붙였더니 엄청나게 긴 빨간글들을 뱉어냈습니다...
@@ -126,7 +126,7 @@ public class RootConfig {
 
 기존에 사용하던 `mysql`드라이버 클래스가 `deprecated`되었으니 `com.mysql.jdbc.Driver`에서 `com.mysql.cj.jdbc.Driver`로 사용하라는 에러 메세지였습니다
 
------
+---
 
 📚 함께 보면 좋은 내용
 

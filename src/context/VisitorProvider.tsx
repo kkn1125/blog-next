@@ -7,7 +7,7 @@ interface VisitorValue {
 }
 
 interface VisitorAction {
-  type: keyof VISITOR_INIT;
+  type: VISITOR_INIT;
 }
 
 const initialValues: VisitorValue = {

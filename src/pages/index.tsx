@@ -14,7 +14,6 @@ const metadatas = {
 const MAIN_POST_LIMIT = 10;
 
 export default function Home({ posts }: any) {
-  console.log(posts)
   return (
     <Stack sx={{ flex: 1 }}>
       <GenerateHead metadatas={metadatas} />
@@ -43,10 +42,10 @@ export default function Home({ posts }: any) {
             {row.map((post, q) => (
               <Card
                 key={q}
-                slug={post.slug}
-                title={post.title}
-                author={post.author || AUTHOR}
-                createdAt={post.date}
+                slug={post.frontmatter.slug}
+                title={post.frontmatter.title}
+                author={post.frontmatter.author || AUTHOR}
+                createdAt={post.frontmatter.date}
                 ordering={i * q}
               />
             ))}

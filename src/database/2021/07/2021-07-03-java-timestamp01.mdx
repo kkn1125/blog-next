@@ -31,7 +31,7 @@ published: true
 
 아주 간단하게 `MySQL`에서 `timestamp`타입을 지정한 것이 `java`에도 `timestamp`라는 타입이 있어 이것으로 선언하고 `SimpleDateFormat`으로 쉽게 표시 가능했습니다.
 
-{%raw%}
+
 
 ```java
 import java.text.SimpleDateFormat;
@@ -59,7 +59,7 @@ public class HomeController {
 <%= formedTime %> 0000년 00월 00일 00:00
 ```
 
-{%endraw%}
+
 
 다시보니 너무 내용이 부실해서 예제를 좀 바꿨습니다. 위에서 누락된 설명은 `service`에서 받아온 `board`의 `regdate`필드인데요. `regdate`는 `mysql`에서 `timestamp`타입으로 작성되어 있습니다.
 

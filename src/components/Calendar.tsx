@@ -1,18 +1,8 @@
-import {
-  Badge,
-  Box,
-  Button,
-  Chip,
-  Grid,
-  Stack,
-  Typography,
-} from "@mui/material";
-import { PickersDay } from "@mui/x-date-pickers";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import React, { memo, useEffect, useState } from "react";
 import todoStorage from "@/todos/list.json";
+import { Button, Chip, Grid, Stack, Typography } from "@mui/material";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { memo, useEffect, useState } from "react";
 
 const tagIcon = {
   undefined: "▷",
@@ -33,17 +23,17 @@ const tagIcon = {
 };
 
 function Calendar() {
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState<Date>(new Date());
   const [todo, setTodo] = useState([]);
   let doneCount = 0;
   let cancelCount = 0;
   let totalCount = 0;
 
-  const handleDate = (newDate) => {
+  const handleDate = (newDate: Date) => {
     const year = newDate.getFullYear();
     const month = newDate.getMonth();
     const date = newDate.getDate();
-    setTodo(todoStorage?.[year]?.[month]?.[date]);
+    setTodo((todoStorage as any)?.[year]?.[month]?.[date]);
     setDate(newDate);
   };
 
@@ -53,8 +43,8 @@ function Calendar() {
 
   Object.values(todoStorage).forEach((year) =>
     Object.values(year).forEach((month) =>
-      Object.values(month).forEach((date) => {
-        date.forEach((date) => {
+      Object.values(month).forEach((date: any) => {
+        date.forEach((date: any) => {
           if (date.tag === "check") {
             doneCount += 1;
           } else {
@@ -91,7 +81,7 @@ function Calendar() {
                 color: (theme) => theme.palette.primary.main,
               },
               "&:first-of-type": {
-                color: (theme) => theme.palette.danger.main,
+                color: (theme) => theme.palette.error.main,
               },
             },
           }}>
@@ -111,8 +101,8 @@ function Calendar() {
               <Typography fontSize='inherit'>🧾{totalCount}</Typography>
             </Stack>
           </Stack>
-          <CalendarPicker
-            date={date}
+          {/* <DateCalendar
+            value={date}
             onChange={handleDate}
             renderDay={(date, selectedDates, pickersDayProps) => {
               const _year = pickersDayProps.day.getFullYear();
@@ -175,13 +165,13 @@ function Calendar() {
                 </Box>
               );
             }}
-          />
+          /> */}
         </Grid>
         <Grid item xs={12} md>
           <Stack gap={3}>
             {todo &&
               todo.length > 0 &&
-              todo.map((item, idx) => (
+              todo.map((item: any, idx) => (
                 <Stack
                   key={item.todo + idx}
                   direction={{
@@ -200,7 +190,7 @@ function Calendar() {
                   <Stack direction='row' gap={1} alignItems='center'>
                     <Chip
                       component='span'
-                      label={tagIcon[item.tag]}
+                      label={(tagIcon as any)[item.tag]}
                       variant='outlined'
                       sx={{
                         fontSize: (theme) => theme.typography.pxToRem(12),
@@ -209,9 +199,8 @@ function Calendar() {
                     <Typography component='span'>{item.todo}</Typography>
                   </Stack>
                   <Typography
-                    component='span'
                     sx={{
-                      color: (theme) => theme.palette.grey,
+                      color: (theme) => theme.palette.grey[300],
                       fontSize: (theme) => theme.typography.pxToRem(12),
                     }}>
                     {item.time}

@@ -49,16 +49,19 @@ published: true
 
 ```html
 <div class="divs controlBtn">
-    <button class="btndir">Up</button>
-    <button class="btndir">Down</button>
+  <button class="btndir">Up</button>
+  <button class="btndir">Down</button>
 </div>
 
 <!-- 3~4개 정도의 샘플 section 태그 -->
 <section class="section">
-    <div style="font-size:54px; color: black !important;">Test1</div>
-    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quo, tenetur blanditiis distinctio consequatur
-        quos vitae iure impedit a quibusdam facere aspernatur nam veritatis quae iusto similique dolores quam
-        earum perferendis.</p>
+  <div style="font-size:54px; color: black !important;">Test1</div>
+  <p>
+    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quo, tenetur
+    blanditiis distinctio consequatur quos vitae iure impedit a quibusdam facere
+    aspernatur nam veritatis quae iusto similique dolores quam earum
+    perferendis.
+  </p>
 </section>
 ```
 
@@ -69,40 +72,40 @@ published: true
 .section,
 .h1,
 .div {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .body {
-    position: relative;
-    overflow: hidden;
+  position: relative;
+  overflow: hidden;
 }
 
 .html,
 .body,
 .section {
-    height: 300px;
-    width: 100%;
+  height: 300px;
+  width: 100%;
 }
 
 .section:nth-child(odd) {
-    background: lightgray;
+  background: lightgray;
 }
 
 .section {
-    position: relative;
+  position: relative;
 }
 
 .body .section {
-    position: absolute;
-    transition: 500ms cubic-bezier(1, 0, 0, 1);
+  position: absolute;
+  transition: 500ms cubic-bezier(1, 0, 0, 1);
 }
 
 .controlBtn {
-    position: absolute;
-    bottom: 3.5%;
-    right: 5%;
-    z-index: 100;
+  position: absolute;
+  bottom: 3.5%;
+  right: 5%;
+  z-index: 100;
 }
 ```
 
@@ -110,50 +113,53 @@ published: true
 
 ```javascript
 const opt = {
-    scrollGauge: 0,
-    // 스크롤 수동 값
-    bodyClass: document.querySelector('div.body'),
-    // 섹션을 감싸는 태그
-    section: document.getElementsByClassName('section'),
-    // 섹션 노드 배열
-    sectionHeight() {
-        return this.section[0].clientHeight
-    },
-    // 섹션 기본 높이
-    maxValue() {
-        return (this.section.length - 1) * this.sectionHeight()
-    },
-    // 섹션 개수에 따른 최대 높이
-    currentSection() {
-        return parseInt(opt.scrollGauge / opt.sectionHeight())
-    },
-    // 현재 섹션 위치 (인덱싱)
-    limitValidate() {
-        if (this.scrollGauge < 0) this.scrollGauge = 0;
-        else if (this.scrollGauge > this.maxValue()) this.scrollGauge = this.maxValue();
-    },
-    // 스크롤 범위 체크
-    applyHeightValue(elem, idx, value) {
-        elem.style.bottom = -(this.sectionHeight() * idx) + value + 'px'
-    },
-    // 높이 값 적용
-    initialTopValue(value) {
-        [...this.section].forEach((elem, idx) => this.applyHeightValue(elem, idx, value))
-    },
-    // 섹션 전체에 높이 값 적용
-    scrollValue(value) {
-        return this.sectionHeight() * value
-    },
-    // 섹션 높이 값
-    controlSections(value) {
-        this.initialTopValue(this.scrollValue(value));
-    },
-    // 섹션 전체에 높이 값 적용
-    changeSection(val) {
-        return (opt.currentSection() - val) * opt.sectionHeight();
-    },
-    // 섹션 위치 값 변경 - 버튼 이벤트
-}
+  scrollGauge: 0,
+  // 스크롤 수동 값
+  bodyClass: document.querySelector("div.body"),
+  // 섹션을 감싸는 태그
+  section: document.getElementsByClassName("section"),
+  // 섹션 노드 배열
+  sectionHeight() {
+    return this.section[0].clientHeight;
+  },
+  // 섹션 기본 높이
+  maxValue() {
+    return (this.section.length - 1) * this.sectionHeight();
+  },
+  // 섹션 개수에 따른 최대 높이
+  currentSection() {
+    return parseInt(opt.scrollGauge / opt.sectionHeight());
+  },
+  // 현재 섹션 위치 (인덱싱)
+  limitValidate() {
+    if (this.scrollGauge < 0) this.scrollGauge = 0;
+    else if (this.scrollGauge > this.maxValue())
+      this.scrollGauge = this.maxValue();
+  },
+  // 스크롤 범위 체크
+  applyHeightValue(elem, idx, value) {
+    elem.style.bottom = -(this.sectionHeight() * idx) + value + "px";
+  },
+  // 높이 값 적용
+  initialTopValue(value) {
+    [...this.section].forEach((elem, idx) =>
+      this.applyHeightValue(elem, idx, value)
+    );
+  },
+  // 섹션 전체에 높이 값 적용
+  scrollValue(value) {
+    return this.sectionHeight() * value;
+  },
+  // 섹션 높이 값
+  controlSections(value) {
+    this.initialTopValue(this.scrollValue(value));
+  },
+  // 섹션 전체에 높이 값 적용
+  changeSection(val) {
+    return (opt.currentSection() - val) * opt.sectionHeight();
+  },
+  // 섹션 위치 값 변경 - 버튼 이벤트
+};
 
 let scrollHandler, btnHandler;
 // 이후 변수에 대한 내용이 나옵니다.
@@ -166,16 +172,16 @@ let scrollHandler, btnHandler;
 
 ```javascript
 scrollHandler = function (e) {
-    if (!e.target.closest('div.body')) return;
+  if (!e.target.closest("div.body")) return;
 
-    opt.scrollGauge += e.deltaY;
+  opt.scrollGauge += e.deltaY;
 
-    opt.limitValidate();
-    opt.controlSections(opt.currentSection());
-}
+  opt.limitValidate();
+  opt.controlSections(opt.currentSection());
+};
 
 // 휠 이벤트 등록
-window.addEventListener('wheel', scrollHandler);
+window.addEventListener("wheel", scrollHandler);
 ```
 
 코드를 새로 짜고 작성해서 변수, 함수의 이름 등과 기능 일부가 변경되면서, 내용자체를 다시 쓰게 좋을 것 같아 새로 쓰게 되었습니다.
@@ -190,198 +196,76 @@ window.addEventListener('wheel', scrollHandler);
 
 ```javascript
 btnHandler = function (e) {
-    const target = e.target;
+  const target = e.target;
 
-    if(!target.classList.contains('btndir')) return;
+  if (!target.classList.contains("btndir")) return;
 
-    switch(target.textContent.toLowerCase()){
-        case 'up': opt.scrollGauge = opt.changeSection(1); break;
-        case 'down': opt.scrollGauge = opt.changeSection(-1); break;
-    }
+  switch (target.textContent.toLowerCase()) {
+    case "up":
+      opt.scrollGauge = opt.changeSection(1);
+      break;
+    case "down":
+      opt.scrollGauge = opt.changeSection(-1);
+      break;
+  }
 
-    // 중복 부분!
-    opt.limitValidate();
-    opt.controlSections(opt.currentSection());
-}
+  // 중복 부분!
+  opt.limitValidate();
+  opt.controlSections(opt.currentSection());
+};
 
-window.addEventListener('click', btnHandler);
+window.addEventListener("click", btnHandler);
 ```
 
 뭔가 중복되는 느낌이 있는 부분이 있어 이 부분만 정리를 해보자면 아래와 같습니다.
 
 ```javascript
 const opt = {
-    // ...
-    moveSectionWithinLimit() { // +
-        this.limitValidate();
-        this.controlSections(this.currentSection());
-    }
-    // ...
-}
+  // ...
+  moveSectionWithinLimit() {
+    // +
+    this.limitValidate();
+    this.controlSections(this.currentSection());
+  },
+  // ...
+};
 
 scrollHandler = function (e) {
-    if (!e.target.closest('div.body')) return;
+  if (!e.target.closest("div.body")) return;
 
-    opt.scrollGauge += e.deltaY;
+  opt.scrollGauge += e.deltaY;
 
-
-    opt.moveSectionWithinLimit(); // +
-}
+  opt.moveSectionWithinLimit(); // +
+};
 
 btnHandler = function (e) {
-    const target = e.target;
+  const target = e.target;
 
-    if(!target.classList.contains('btndir')) return;
+  if (!target.classList.contains("btndir")) return;
 
-    switch(target.textContent.toLowerCase()){
-        case 'up': opt.scrollGauge = opt.changeSection(1); break;
-        case 'down': opt.scrollGauge = opt.changeSection(-1); break;
-    }
+  switch (target.textContent.toLowerCase()) {
+    case "up":
+      opt.scrollGauge = opt.changeSection(1);
+      break;
+    case "down":
+      opt.scrollGauge = opt.changeSection(-1);
+      break;
+  }
 
-    opt.moveSectionWithinLimit(); // +
-}
+  opt.moveSectionWithinLimit(); // +
+};
 ```
 
 이전에 거창했던 설명보다는 함수를 하나씩 쪼개고 합쳐서 사용하면 오히려 설명이 줄어드는 것 같습니다. 기존에 엉망이던, 말도 안되던 코드를 다듬고 재작성하다보니 감회가 새롭습니다.
 
 변경된 코드로 아래 샘플을 교체했습니다.
 
------
+---
 
 > 아래 샘플 영역 내에 마우스를 두고 슬라이드하셔야 합니다. 버튼 작동합니다.
 
-<style>
-    .html,
-    .body,
-    .section,
-    .h1,
-    .div {
-        margin: 0;
-        padding: 0;
-    }
-
-    .body {
-        position: relative;
-        overflow: hidden;
-    }
-
-    .html,
-    .body,
-    .section {
-        height: 300px;
-        width: 100%;
-    }
-
-    .section:nth-child(odd) {
-        background: lightgray;
-    }
-
-    .section {
-        position: relative;
-    }
-
-    .body .section {
-        position: absolute;
-        transition: 500ms cubic-bezier(1, 0, 0, 1);
-    }
-
-    .controlBtn {
-        position: absolute;
-        bottom: 3.5%;
-        right: 5%;
-        z-index: 100;
-    }
-</style>
-<div class="body" style="box-shadow: 0 0 0 3px salmon; margin: 3rem 0;">
-    <div class="divs controlBtn">
-        <button class="btndir">Up</button>
-        <button class="btndir">Down</button>
-    </div>
-    <section class="section">
-        <div style="font-size:54px; color: black !important;">Test1</div>
-        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quo, tenetur blanditiis distinctio consequatur quos vitae iure impedit a quibusdam facere aspernatur nam veritatis quae iusto similique dolores quam earum perferendis.</p>
-    </section>
-    <section class="section">
-        <div style="font-size:54px; color: black !important;">Test2</div>
-        <p style="color: black !important;">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quo, tenetur blanditiis distinctio consequatur quos vitae iure impedit a quibusdam facere aspernatur nam veritatis quae iusto similique dolores quam earum perferendis.</p>
-    </section>
-    <section class="section">
-        <div style="font-size:54px; color: black !important;">Test3</div>
-        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quo, tenetur blanditiis distinctio consequatur quos vitae iure impedit a quibusdam facere aspernatur nam veritatis quae iusto similique dolores quam earum perferendis.</p>
-    </section>
-    <section class="section">
-        <div style="font-size:54px; color: black !important;">Test4</div>
-        <p style="color: black !important;">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quo, tenetur blanditiis distinctio consequatur quos vitae iure impedit a quibusdam facere aspernatur nam veritatis quae iusto similique dolores quam earum perferendis.</p>
-    </section>
-    <section class="section">
-        <div style="font-size:54px; color: black !important;">Test5</div>
-        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quo, tenetur blanditiis distinctio consequatur quos vitae iure impedit a quibusdam facere aspernatur nam veritatis quae iusto similique dolores quam earum perferendis.</p>
-    </section>
-    <script>
-        const opt = {
-            scrollGauge: 0,
-            bodyClass: document.querySelector('div.body'),
-            section: document.getElementsByClassName('section'),
-            sectionHeight() {
-                return this.section[0].clientHeight
-            },
-            maxValue() {
-                return (this.section.length - 1) * this.sectionHeight()
-            },
-            currentSection() {
-                return parseInt(opt.scrollGauge / opt.sectionHeight())
-            },
-            limitValidate() {
-                if (this.scrollGauge < 0) this.scrollGauge = 0;
-                else if (this.scrollGauge > this.maxValue()) this.scrollGauge = this.maxValue();
-            },
-            applyHeightValue(elem, idx, value) {
-                elem.style.bottom = -(this.sectionHeight() * idx) + value + 'px'
-            },
-            initialTopValue(value) {
-                [...this.section].forEach((elem, idx) => this.applyHeightValue(elem, idx, value))
-            },
-            scrollValue(value) {
-                return this.sectionHeight() * value
-            },
-            controlSections(value) {
-                this.initialTopValue(this.scrollValue(value));
-            },
-            changeSection(val) {
-                return (opt.currentSection() - val) * opt.sectionHeight();
-            },
-            moveSectionWithinLimit() {
-                this.limitValidate();
-                this.controlSections(this.currentSection());
-            }
-        }
-        let scrollHandler, btnHandler;
-        scrollHandler = function (e) {
-            if (!e.target.closest('div.body')) return;
-            opt.scrollGauge += e.deltaY;
-            opt.moveSectionWithinLimit();
-        }
-        btnHandler = function (e) {
-            const target = e.target;
-            if (!target.classList.contains('btndir')) return;
-            switch (target.textContent.toLowerCase()) {
-                case 'up':
-                    opt.scrollGauge = opt.changeSection(1);
-                    break;
-                case 'down':
-                    opt.scrollGauge = opt.changeSection(-1);
-                    break;
-            }
-            opt.moveSectionWithinLimit();
-        }
-        opt.initialTopValue(opt.currentSection());
-        window.addEventListener('wheel', scrollHandler);
-        window.addEventListener('click', btnHandler);
-        document.querySelector('div.body').addEventListener('mouseenter', e => {
-            document.body.classList.add('noscroll');
-        });
-        document.querySelector('div.body').addEventListener('mouseleave', e => {
-            document.body.classList.remove('noscroll');
-        });
-    </script>
-</div>
+<iframe height="300" style="width: 100%;" scrolling="no" title="Untitled" src="https://codepen.io/kkn1125/embed/mdzgXwp?default-tab=html%2Cresult" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
+  See the Pen <a href="https://codepen.io/kkn1125/pen/mdzgXwp">
+  Untitled</a> by kkn1125 (<a href="https://codepen.io/kkn1125">@kkn1125</a>)
+  on <a href="https://codepen.io">CodePen</a>.
+</iframe>

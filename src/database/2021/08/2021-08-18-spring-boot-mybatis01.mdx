@@ -64,7 +64,7 @@ mybatis.type-aliases-package=com.bootstart.startweb.entity
 
 ![mybatis backup](/images/post/springboot/mybatis/batis01.png)
 
-<span class="text-muted">- 불쌍한 config</span>
+<span class='text-muted'>- 불쌍한 config</span>
 
 이제는 힘겹게 `Connection`하고 select, insert, update, delete 하나하나 `try catch` 써가면서 노가다를 안해도 되는 상황이 됐습니다. 이런 수고스런 녀석들을 `back`확장자로 감금시켜두겠습니다.
 
@@ -87,8 +87,8 @@ public interface UserMapper {
     // #{foo} ... @Param("foo") int bar 여도 가능
 
     @Insert("INSERT INTO user(id,pw,email,comment,profileImg,name,birth,gender,phone,address,zip,question,answer) VALUES(
-        #{id}, #{pw}, #{email}, #{comment}, #{profileImg}, 
-        #{name}, #{birth}, #{gender}, #{phone}, #{address}, 
+        #{id}, #{pw}, #{email}, #{comment}, #{profileImg},
+        #{name}, #{birth}, #{gender}, #{phone}, #{address},
         #{zip}, #{question}, #{answer}
     )")
     // @Options(useGeneratedKeys = true, keyProperty = "num")
@@ -103,7 +103,7 @@ public interface UserMapper {
 ```java
 @Service
 public class UserService {
-    
+
     @Autowired
     private UserMapper userMapper;
 
@@ -163,11 +163,10 @@ public String AllUsers(Model model) {
 
 ![mybatis backup](/images/post/springboot/mybatis/batis02.png)
 
-
 `Postman`은 `Json`이 깔끔하게 나와서 `json`출력 보기용으로 자주 사용하고 있습니다. (원래 이 용도가 아닐텐데...)
 
 오늘은 `select`구문만 해보았습니다. `MyBatis`를 시작했다는 것에 만족을 하고 `CRUD`를 구현하면서 고급 SQL적용까지 공부해서 다시 포스팅하겠습니다.
 
------
+---
 
 [DI에 관한 이해 - HeeJeong Kwon님의 블로그](https://gmlwjd9405.github.io/2018/11/09/dependency-injection.html)

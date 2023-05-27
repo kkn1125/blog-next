@@ -39,7 +39,7 @@ Vue를 이번에 배우면서 기록하려고 합니다. 물론 Vue의 공식 �
 </div>
 ```
 
-{%endraw%}
+
 
 ```javascript
 var app = new Vue({
@@ -56,7 +56,7 @@ var app = new Vue({
 
 
 `data`가 가지는 프로터피 `message`명칭과 `html`의 `{{ ... }}`표현식 내의 `message`와 대응됩니다.
-{%endraw%}
+
 
 콘솔에서 `app.message = 'wow'`라고 입력한다면 변경되는 결과를 확인 할 수 있습니다. 이로서 `app`변수를 통해서 지정한 데이터를 조정할 수 있다는 것을 알아냈습니다.
 
@@ -88,7 +88,7 @@ var app = new Vue({
 </div>
 ```
 
-{%endraw%}
+
 
 ```javascript
 var app2 = new Vue({
@@ -122,7 +122,7 @@ var app2 = new Vue({
 </div>
 ```
 
-{%endraw%}
+
 
 ```javascript
 var app3 = new Vue({
@@ -144,7 +144,7 @@ var app3 = new Vue({
 
 
 `for`문은 `for in`을 쓰듯이 텍스트로 적어주면 됩니다. `array`는 데이터 프로퍼티의 `array`와 대응하고, `item`은 변수로 지정되어 `{{...}}`에서 사용가능합니다.
-{%endraw%}
+
 
 메서드는 `methods`프로퍼티를 주고 그 안에 함수를 선언합니다. 버튼 태그의 `v-on:click`의 텍스트와 메서드 안의 함수 명칭과 대응합니다.
 
@@ -161,7 +161,7 @@ var app3 = new Vue({
     <input type="text" v-model="message">
 </div>
 ```
-{%endraw%}
+
 
 여기서 `v-model`말고 `v-bind:value`로 같은 값을 출력해 낼 수는 있습니다만, 기능이 다릅니다. `v-bind`는 `value`속성에 데이터 값을 전달해줍니다. 또한 `app.message`의 내용을 바꾸면 둘 다 변경 됩니다.
 

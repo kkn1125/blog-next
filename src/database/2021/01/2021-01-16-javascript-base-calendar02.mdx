@@ -35,24 +35,26 @@ published: true
 5. 그다음엔 words라는 배열에 쓴 글들을 push
 
 ```javascript
-var indexs = { // index Obj
-    2020: { // year Obj
-        1: {
-            25: [
-                1, 2, 3 // 각 숫자를 글이담긴 객체라 생각
-            ],
-            26: [
-                1, 5, 7,
-            ]
-        }
-    }
-}
+var indexs = {
+  // index Obj
+  2020: {
+    // year Obj
+    1: {
+      25: [
+        1,
+        2,
+        3, // 각 숫자를 글이담긴 객체라 생각
+      ],
+      26: [1, 5, 7],
+    },
+  },
+};
 ```
 
 대략 내가 생각한 객체 트리 구조
 
 ```javascript
-target.innerHTML = indexs[2021][1][16][1]
+target.innerHTML = indexs[2021][1][16][1];
 ```
 
 오늘(2021.01.16)의 두번째 글을 보고싶다! 그러면 위 명령어로 불러줍니다. 제 생각엔 객체의 키로 연월일을 구분해서 각 키에 폴더 형식으로 담는 것이 효율적이라 생각했습니다.
@@ -61,22 +63,20 @@ target.innerHTML = indexs[2021][1][16][1]
 
 ```html
 <!-- 먼저 테스트용 HTML 구조입니다. -->
- 
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>write test</title>
-  <link rel="stylesheet" href="style.css">
-</head>
- 
-<body>
-  <input type="button" value="add" onclick="javascript:addwords()"/>
-  <div id="output">
-    
-  </div>
-</body>
- 
+  <head>
+    <meta charset="UTF-8" />
+    <title>write test</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <input type="button" value="add" onclick="javascript:addwords()" />
+    <div id="output"></div>
+  </body>
+
   <script src="main.js"></script>
 </html>
 ```
@@ -90,18 +90,20 @@ target.innerHTML = indexs[2021][1][16][1]
 3. 2번이 중복생성되는 것을 막고, 마지막 day배열에 글 객체를 push
 
 ```javascript
-function dump() { // [object Object]형태를 읽기위해 만든 확인용 함수
-  var str = '';
+function dump() {
+  // [object Object]형태를 읽기위해 만든 확인용 함수
+  var str = "";
   for (var i in indexs) {
-    str += i + ' => ' + JSON.stringify(indexs[i]) + '<br/>';
+    str += i + " => " + JSON.stringify(indexs[i]) + "<br/>";
   }
-  document.querySelector('#output').innerHTML = str;
+  document.querySelector("#output").innerHTML = str;
 }
- 
+
 var indexs = {}; // indexs 객체 ***** 이후 검색기능 할 예정
 var today = new Date(); // 나중에 달력에 필요한 현재 표준시
- 
-function wordsobj() { // 글 객체 원형 ***** 글 객체 기본 틀
+
+function wordsobj() {
+  // 글 객체 원형 ***** 글 객체 기본 틀
   this.title;
   this.descriptions;
   this.id; // 글 번호
@@ -110,15 +112,16 @@ function wordsobj() { // 글 객체 원형 ***** 글 객체 기본 틀
 /////////////////////////////////////////////////////////////////////////
 //이 다음부터 addwords()함수를 수정하기에 윗 부분은 컷, 가독성을 위해서//
 /////////////////////////////////////////////////////////////////////////
-function addwords() { // 글 추가 기능 함수
-  var nyear = prompt('yyyy'); // 테스트용으로 prompt를 썼지만 나중에는 클릭된 일자의 연도를 받을 예정
-  var nmonth = prompt('mm'); // 연도와 마찬가지
-  var nday = prompt('dd'); // 이하 생략
-  var words = new wordsobj; // 새로운 글 객체 생성
-  words.title = prompt('title'); // todo list 글제목
-  words.memo = prompt('memo'); // todo list 메모
-  words.user_id = 'chocode1'; // 차후 로그인 기능 만들고 받을 놈
- 
+function addwords() {
+  // 글 추가 기능 함수
+  var nyear = prompt("yyyy"); // 테스트용으로 prompt를 썼지만 나중에는 클릭된 일자의 연도를 받을 예정
+  var nmonth = prompt("mm"); // 연도와 마찬가지
+  var nday = prompt("dd"); // 이하 생략
+  var words = new wordsobj(); // 새로운 글 객체 생성
+  words.title = prompt("title"); // todo list 글제목
+  words.memo = prompt("memo"); // todo list 메모
+  words.user_id = "chocode1"; // 차후 로그인 기능 만들고 받을 놈
+
   dump(); // 객체,배열 형태 출력
 }
 ```
@@ -134,7 +137,7 @@ function addwords() { // 혼동을 줄이기 위해 이전에 썼던 주석우�
   words.title = prompt('title');
   words.memo = prompt('memo');
   words.user_id = 'chocode1';
- 
+
   for (var i = 0; i < 3; i++) {  // 기나긴 고민과 착오 끝에 간추린 빈 키에 빈 객체 넣기
     if (indexs[nyear] == undefined) { // nyear키가 없다면
       indexs[nyear] = new Object(); // 빈 객체를 만듦
@@ -147,11 +150,11 @@ function addwords() { // 혼동을 줄이기 위해 이전에 썼던 주석우�
     }
   }
   // 분기를 세번 실행시켜 이미 생성된 객체가 있으면 건너뛰는 필터 기능
-  
+
   words.id = indexs[nyear][nmonth][nday].length;
   // 글객체 id를 뒤로 뺀 이유는 for문 필터를 지난후에 마지막 nday의 배열이 생성됨으로
   글의 순서에따라 매겨지는 id를 push전에 두었다
-  
+
   indexs[nyear][nmonth][nday].push(words);
   // 드디어 글 객체 push
   dump();
@@ -171,9 +174,9 @@ function addwords() { // 혼동을 줄이기 위해 이전에 썼던 주석우�
 
 그리고 indexs[year][month][day]배열에 push합니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="/images/post/back/back01.png" alt="sample" title="sample" />
-   <figcaption>kimson</figcaption>
-</span>
+<figure className='text-center'>
+  <span className='w-inline-block'>
+    <img src='/images/post/back/back01.png' alt='sample' title='sample' />
+    <figcaption>kimson</figcaption>
+  </span>
 </figure>

@@ -2,12 +2,12 @@
 slug: "/javascript-base-calendar03/"
 layout: post
 modified: 2022-03-14 00:09:35 +0000
-date:   2021-01-20 21:25:04 +0000
-title:  "[JAVASCRIPT] 달력 만들기 (달력 기본 틀)"
+date: 2021-01-20 21:25:04 +0000
+title: "[JAVASCRIPT] 달력 만들기 (달력 기본 틀)"
 author: Kimson
-categories: [ javascript ]
+categories: [javascript]
 image: /images/post/covers/TIL-javascript.png
-tags: [ calendar, backup, til ]
+tags: [calendar, backup, til]
 description: "달력 만들기 날짜 관련 변수 선언 저번 글에서 var today = new Date();로 현재 날짜를 전역변수로 저장했었습니다."
 featured: false
 hidden: false
@@ -26,13 +26,13 @@ published: true
 
 ```javascript
 // 달력, 날짜 관련 변수 선언
-var calendar = document.querySelector('#calendar');
-var select_ym = document.querySelector('#select_ym');
-var output = document.querySelector('#output');
- 
+var calendar = document.querySelector("#calendar");
+var select_ym = document.querySelector("#select_ym");
+var output = document.querySelector("#output");
+
 var v_date = today.getDate(); // 오늘 일수
 var v_day = today.getDay(); // 오늘 요일
- 
+
 var year = today.getFullYear(); // 올해
 var month = today.getMonth(); // 이번 달
 var v_year = today.getFullYear(); // 올해 (변함)
@@ -51,23 +51,28 @@ var v_month = today.getMonth(); // 이번 달 (변함)
 
 ```javascript
 function calendar_make(a, b) {
-  if (a != undefined && b != undefined) { // 인수를 전달 받을 시 (달력 넘기기)
+  if (a != undefined && b != undefined) {
+    // 인수를 전달 받을 시 (달력 넘기기)
     v_year = a;
     v_month = b;
-  } else { // 오늘로 이동
+  } else {
+    // 오늘로 이동
     v_year = year;
     v_month = month;
   }
   // 인수 받는 것을 처음에 둬야 이후 변수들에 대입되어 오류가 안 난다.
   var last_date = new Date(v_year, v_month + 1, 0).getDate(); // 이번달 마지막 일
   var first_day = new Date(v_year, v_month, 1).getDay(); // 이번 달 시작 요일 (0=>일, 1=>월 ...)
-  select_ym.innerHTML = '<div>' + v_year + '년 ' + (v_month + 1) + '월' + '</div>';
- 
+  select_ym.innerHTML =
+    "<div>" + v_year + "년 " + (v_month + 1) + "월" + "</div>";
+
   var row = calendar.insertRow();
-  for (var i = 0; i < first_day; i++) { // 월의 시작일 전의 빈 칸
+  for (var i = 0; i < first_day; i++) {
+    // 월의 시작일 전의 빈 칸
     var cell = row.insertCell();
   }
-  for (var i = 1; i <= last_date; i++) { // 빈칸 이후의 달의 일수
+  for (var i = 1; i <= last_date; i++) {
+    // 빈칸 이후의 달의 일수
     if (first_day != 7) {
       cell = row.insertCell();
       first_day += 1;
@@ -76,11 +81,16 @@ function calendar_make(a, b) {
       cell = row.insertCell();
       first_day -= 6;
     }
-    cell.setAttribute('id', i);
-    cell.setAttribute('class', 'days');
-    cell.addEventListener('click', function (self) {
-      document.querySelector('#word_add').setAttribute('onclick', 'javascript:words_add(' + self.target.id + ')');
-    })
+    cell.setAttribute("id", i);
+    cell.setAttribute("class", "days");
+    cell.addEventListener("click", function (self) {
+      document
+        .querySelector("#word_add")
+        .setAttribute(
+          "onclick",
+          "javascript:words_add(" + self.target.id + ")"
+        );
+    });
     cell.innerHTML = i;
   }
 }
@@ -93,7 +103,7 @@ last_date에서 v_month+1을 한 이유는 입력한 달의 0은 입력한 달�
 즉, 내가 2월의 마지막 일인 28일을 반환 받고 싶다면 아래처럼 불러올수 있다.
 
 ```javascript
-var newdate = new Date(2021,2+1,0).getDate(); // 2월의 마지막 일수를 반환 (28일)
+var newdate = new Date(2021, 2 + 1, 0).getDate(); // 2월의 마지막 일수를 반환 (28일)
 ```
 
 여기서 각자가 for문을 통해 알아볼 수는 있지만 0대신 1을 넣으면 해당 달의 시작일이 나온다.
@@ -104,7 +114,7 @@ var newdate = new Date(2021,2+1,0).getDate(); // 2월의 마지막 일수를 반
 
 ```javascript
 var firstday = new Date(2021, 2, 1).getDate(); // 2월의 1일이 반환
- 
+
 var firstday = new Date(2021, 2, 1).getDay(); // 2021년 2월의 시작 요일 => "5" (금요일)
 ```
 
@@ -122,63 +132,79 @@ for문으로 줄바꿈한 곳에서 insertCell로 시작요일까지의 빈칸�
 
 아래 예시를 보시면 무슨 말인지 이해 되실겁니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="/images/post/back/back03.png" alt="sample" title="sample" />
-   <figcaption>kimson</figcaption>
-</span>
+<figure className='text-center'>
+  <span className='w-inline-block'>
+    <img src='/images/post/back/back03.png' alt='sample' title='sample' />
+    <figcaption>kimson</figcaption>
+  </span>
 </figure>
 
 ```html
 <!DOCTYPE html>
 <html lang="ko">
- 
-<head>
-  <meta charset="UTF-8">
-  <title>HTML</title>
-  <link rel="stylesheet" href="css.css">
-</head>
- 
-<body>
-  <div id="setcal">
-    <div>
-      <div id="calcss">
-        <table id="calendar">
-          <thead>
-            <tr>
-              <td><input type="button" value="&lt&lt" onclick="javascript:before_after(this)"></td>
-              <td id="select_ym" colspan="5">yyyy-mm</td>
-              <td><input type="button" value="&gt&gt" onclick="javascript:before_after(this)"></td>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- tbody에 tr가 하나라도 있어야 insertRow()가 tbody에 추가 됨 -->
-            <tr>
-              <td>일</td>
-              <td>월</td>
-              <td>화</td>
-              <td>수</td>
-              <td>목</td>
-              <td>금</td>
-              <td>토</td>
-            </tr>
-          </tbody>
-        </table>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML</title>
+    <link rel="stylesheet" href="css.css" />
+  </head>
+
+  <body>
+    <div id="setcal">
+      <div>
+        <div id="calcss">
+          <table id="calendar">
+            <thead>
+              <tr>
+                <td>
+                  <input
+                    type="button"
+                    value="&lt&lt"
+                    onclick="javascript:before_after(this)"
+                  />
+                </td>
+                <td id="select_ym" colspan="5">yyyy-mm</td>
+                <td>
+                  <input
+                    type="button"
+                    value="&gt&gt"
+                    onclick="javascript:before_after(this)"
+                  />
+                </td>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- tbody에 tr가 하나라도 있어야 insertRow()가 tbody에 추가 됨 -->
+              <tr>
+                <td>일</td>
+                <td>월</td>
+                <td>화</td>
+                <td>수</td>
+                <td>목</td>
+                <td>금</td>
+                <td>토</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <button id="go_today" onclick="javascript:calendar_today()">
+          <span>Today</span>
+        </button>
       </div>
-      <button id="go_today" onclick="javascript:calendar_today()"><span>Today</span></button>
-    </div>
-    <div>
-      <div id="wordzone">
-        <div id="crnt_ym"></div>
-        <div id="output"></div>
+      <div>
+        <div id="wordzone">
+          <div id="crnt_ym"></div>
+          <div id="output"></div>
+        </div>
+        <input
+          id="word_add"
+          type="button"
+          value="Words add"
+          onclick="javascript:words_add()"
+        />
       </div>
-      <input id="word_add" type="button" value="Words add" onclick="javascript:words_add()" />
     </div>
-  </div>
- 
-</body>
- 
-<script src="js.js"></script>
- 
+  </body>
+
+  <script src="js.js"></script>
 </html>
 ```
