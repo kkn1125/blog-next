@@ -48,10 +48,9 @@ export default function MyApp(props: MyAppProps) {
                 }
                 ::-webkit-scrollbar-thumb {
                   width: 8px;
-                  ${
-                    "" /* border-left: 3px solid #8a8a7e;
+                  ${"" /* border-left: 3px solid #8a8a7e;
               border-right: 3px solid #8a8a7e; */
-                  }
+                }
                   background-color: #373C00;
                   ${"" /* border-radius: 5px; */}
                 }
@@ -68,6 +67,24 @@ export default function MyApp(props: MyAppProps) {
                   #__next {
                     height: 100%;
                     font-family: "IBM Plex Sans KR", sans-serif;
+                  }
+
+                  .w-inline-block {
+                    position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    img {
+                      width: 100%;
+                    }
+                    figcaption {
+                      font-family: "IBM Plex Sans KR", sans-serif;
+                      font-size: 14px; 
+                      padding-top: 0.3rem;
+                      padding-bottom: 0.3rem;
+                      text-align: center;
+                      background-color: #000000a6;
+                      color: #ffffff;
+                    }
                   }
                 }
               `}

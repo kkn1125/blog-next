@@ -11,7 +11,10 @@ const metadatas = {
   author: AUTHOR,
 };
 
+const MAIN_POST_LIMIT = 10;
+
 export default function Home({ posts }: any) {
+  console.log(posts)
   return (
     <Stack sx={{ flex: 1 }}>
       <GenerateHead metadatas={metadatas} />
@@ -40,6 +43,7 @@ export default function Home({ posts }: any) {
             {row.map((post, q) => (
               <Card
                 key={q}
+                slug={post.slug}
                 title={post.title}
                 author={post.author || AUTHOR}
                 createdAt={post.date}
@@ -56,7 +60,7 @@ export default function Home({ posts }: any) {
 
 export async function getStaticProps() {
   try {
-    const articles = await getAllArticles();
+    const articles = await getAllArticles(MAIN_POST_LIMIT);
 
     articles
       .map((article: any) => article.data)

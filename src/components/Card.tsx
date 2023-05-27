@@ -1,24 +1,25 @@
 import {
   Box,
-  Divider,
-  keyframes,
-  Paper,
+  Divider, Paper,
   Stack,
-  Typography,
+  Typography
 } from "@mui/material";
 import Image from "next/image";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
+import { slugToBlogTrailingSlash } from "@/util/tool";
 import anime from "animejs";
+import Link from "next/link";
 
 interface CardInfo {
+  slug: string;
   title: string;
   author: string;
   createdAt: string;
   ordering: number;
 }
 
-function Card({ title, author, createdAt, ordering }: CardInfo) {
+function Card({ slug, title, author, createdAt, ordering }: CardInfo) {
   useEffect(() => {
     setTimeout(() => {
       anime({
@@ -48,17 +49,19 @@ function Card({ title, author, createdAt, ordering }: CardInfo) {
             maskImage:
               "linear-gradient(#000000 70%, #00000036 85%, transparent 90%)",
           }}>
-          <Image
-            src='https://picsum.photos/500/300?random=1'
-            alt='test'
-            // width={500}
-            // height={300}
-            fill
-            priority
-            style={{
-              transition: "ease-in-out 150ms",
-            }}
-          />
+          <Link href={slugToBlogTrailingSlash(slug)}>
+            <Image
+              src='https://picsum.photos/500/300?random=1'
+              alt='test'
+              // width={500}
+              // height={300}
+              fill
+              priority
+              style={{
+                transition: "ease-in-out 150ms",
+              }}
+            />
+          </Link>
         </Box>
         <Box
           sx={{
@@ -66,11 +69,16 @@ function Card({ title, author, createdAt, ordering }: CardInfo) {
             zIndex: 1,
           }}>
           <Typography
+            component={Link}
+            href={slugToBlogTrailingSlash(slug)}
             fontFamily={`"IBM Plex Sans KR", sans-serif`}
             fontWeight={700}
             fontSize={(theme) => theme.typography.pxToRem(18)}
             sx={{
-              mb: 3,
+              display: 'inline-block',
+              mb: 1,
+              color: theme => `${theme.palette.text.primary} !important`,
+              textDecoration: 'none'
             }}>
             {title}
           </Typography>

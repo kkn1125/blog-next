@@ -1,0 +1,107 @@
+---
+slug: "/shell01/"
+layout: post
+modified: 2022-03-14 00:09:35 +0000
+date:   2022-03-02 22:04:53 +0000
+title:  "[SHELL] Shell Script 공부 시작"
+author: Kimson
+categories: [ shell ]
+image: /images/post/covers/TIL-shell.png
+tags: [ shell, first, til ]
+description: "알아볼까 말까하던 Shell Script를 알아보자
+
+Batch는 뭘까
+
+`bat`확장자로 실행되던 파일에 관심이 생겼는데요. 이전에 설게 회사에서 근무하면서 `bat`으로 자동화 되던 프로그램이 기억나서 검색하고 몇가지 만져보았습니다."
+featured: false
+hidden: false
+rating: 4
+toc: true
+profile: false
+istop: true
+keysum: false
+keywords: ""
+published: true
+---
+
+# 알아볼까 말까하던 Shell Script를 알아보자
+
+## Batch는 뭘까
+
+`bat`확장자로 실행되던 파일에 관심이 생겼는데요. 이전에 설게 회사에서 근무하면서 `bat`으로 자동화 되던 프로그램이 기억나서 검색하고 몇가지 만져보았습니다.
+
+구문과 사용법을 알면 괜찮은 것을 자동화로 만들 수 있을 것 같은 느낌에 시작하려합니다.
+
+`batch`는 `script` 포맷입니다. 명령 인터프리터에 의해 실행이 됩니다. `Shell`과 닮아 있지만 구문과 명령어가 제한되어 있어 일반 목적의 프로그래밍에 적합하지 않습니다.
+
+## 그러면 Shell은 뭘까
+
+쉘은 상위 수준에서 네가지 일을 수행합니다.
+
+- 프로그램 실행
+- 데이터 저장
+- 컴퓨터간 상호 커뮤니케이션
+- 사람과 상호작용
+
+쉘은 다른 것과 마찬가지로 프로그램입니다. 명령어를 컴퓨터에게 수행하도록 지시합니다. bash(Bourne Again Shell)와 유닉스 쉘이 보편적입니다.(Stephen Bourne가 작성한 쉘에서 나와서 bash라 불립니다.)
+
+쉘은 명령어를 해석하고 운영체제가 알아들을 수 있게 지시해서 사용자와 커널을 이어주는 것입니다. 쉘을 실행하기 위한 글자 입력을 받아 컴퓨터에게 직접 명령할 수 있고, 터미널이나 콘솔은 글자를 입력받고 컴퓨터에 전달하거나 출력해서 보여주는 프로그램입니다.
+
+## 간단하게 배포 github push 자동화를 해보자
+
+Shell 중에서 sh를 사용한 자동화를 해봅시다.
+
+여러 명령어들이 있는데 그중에서 `date`를 써서 시간을 받고 commit message에 같이 묶어 push 해봅시다.
+
+```sh
+#!/usr/bin/env sh
+
+# 오류 발생시 중단한다.
+set -e
+
+today=`date` # 변수에 시간을 담음
+
+# init + add + commit을 해준 다음
+git init
+git add -A
+git commit -m "deploy $today"
+
+git push -f https://github.com/kkn1125/wikimson.git main
+```
+
+아주 간단하게 `today`변수에 현재 시간을 담아 push까지 자동으로 해줍니다. node를 사용하다보면 `build`하고 배포할 때가 있는데, `build`된 `dist`의 내용을 `branch switch`하고 등등 조금 번거로운 부분을 많이 덜어줍니다.
+
+## 기본 명령어
+
+> 여기서 상단에 #!은 시스템에 셸 스크립트를 쓴다는 사실을 알려주기 위함입니다. 독자적인 기능을 사용하는 경우에는 #!/usr/bin/env sh라 표기 합니다. bash는 sh 대신 #!/usr/bin/env bash라 적습니다.
+
+```sh
+#!/usr/bin/env sh
+
+read NAME # 사용자 입력을 받습니다. 그리고 NAME 변수에 저장됩니다.
+
+echo "Hello, $NAME!" # echo로 출력하고 $var로 변수를 사용합니다.
+echo -e "test\nwow" # escape처리로 개행 할 수 있습니다.
+```
+
+더 많은 내용은 제일 하단의 링크를 참조하시면 좋습니다.
+
+-----
+
+📚 함께 보면 좋은 내용
+
+[kpl5672님 - shell script 기초](https://velog.io/@kpl5672/shell-script-%EA%B8%B0%EC%B4%88)
+
+[Jo's Log님 - [batch] 기초! 배치파일 만드는 방법!](https://jolog.tistory.com/30)
+
+[학식님 - 윈도우 진단 스크립트 – 0.1 배치파일 기초](https://hagsig.tistory.com/2)
+
+[Skdjjdje님 - [Bat배치파일]Echo와 @Echo off 그리고 pause](https://skdjjdje.tistory.com/2)
+
+[이엠지님 - [Batch file] 기초 정리 및 사용방법](https://emgblog.tistory.com/7)
+
+[정보처리마법사님 - [Batch] 배치파일 기초: 폴더 만들기 (feat. 디렉토리 생성 명령어) a.k.a make directories](https://ssscool.tistory.com/412)
+
+[Pilo님 - 윈도우 자동화 배치파일(bat) 만드는 방법](https://coconuts.tistory.com/358)
+
+[두더지 개발자님 - 쉘 스크립트(Shell script) 기초](https://engineer-mole.tistory.com/200)

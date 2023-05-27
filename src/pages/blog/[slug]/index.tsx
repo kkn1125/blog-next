@@ -1,15 +1,15 @@
 import { MDXComponents } from "mdx/types";
 import { serialize } from "next-mdx-remote/serialize";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SyntaxHighlighter from "react-syntax-highlighter";
-// import { tomorrowNight } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import GenerateHead from "@/components/GenerateHead";
+import PostLayout from "@/layouts/PostLayout";
+import { getArticleFromSlug, getSlugs } from "@/libs/service";
+import { AUTHOR, BRAND_NAME } from "@/util/global";
+import { Box, Divider, Stack, Typography } from "@mui/material";
 import { MDXRemote } from "next-mdx-remote";
 import { tomorrowNight } from "react-syntax-highlighter/dist/cjs/styles/hljs";
-import { getArticleFromSlug, getSlugs } from "@/libs/service";
-import { Stack, Typography } from "@mui/material";
-import PostLayout from "@/layouts/PostLayout";
-import GenerateHead from "@/components/GenerateHead";
-import { BRAND_NAME, BRAND_DESC, AUTHOR } from "@/util/global";
+import Image from "next/image";
 
 interface CodeBlockProps {
   children: string;
@@ -26,8 +26,7 @@ const metadatas = (title: string, desc: string) => ({
 
 const components = {
   code: ({ children, className }: CodeBlockProps) => {
-    const language = className.replace(/language-/, "");
-
+    const language = className?.replace(/language-/, "");
     return (
       <SyntaxHighlighter
         showLineNumbers
@@ -36,6 +35,10 @@ const components = {
         {children}
       </SyntaxHighlighter>
     );
+  },
+  /* pre in p error 해결 */
+  p: ({ children }: { children: React.ReactElement }) => {
+    return <div>{children}</div>;
   },
 };
 
@@ -48,6 +51,12 @@ function Index({
   origin: any;
   post: any;
 }) {
+  const [data, setData] = useState<any>(null);
+
+  useEffect(() => {
+    setData(post);
+  }, []);
+
   return (
     <Stack sx={{ flex: 1 }}>
       <GenerateHead
@@ -56,14 +65,20 @@ function Index({
           post.frontmatter.description
         )}
       />
-      <Typography fontSize={30} fontWeight={700}>
-        Blog
-      </Typography>
       <PostLayout>
-        {post && (
+        {data && (
           <>
-            <div>{post?.frontmatter?.title || ""}</div>
-            <MDXRemote {...post} components={components as MDXComponents} />
+            <Box component={"img"} src={`/static${data.frontmatter.image}`} />
+            <Typography
+              fontSize={(theme) => theme.typography.pxToRem(32)}
+              fontWeight={700}
+              fontFamily={`"IBM Plex Sans KR", sans-serif`}
+              align='center'
+              gutterBottom>
+              {data?.frontmatter?.title || ""}
+            </Typography>
+            <Divider sx={{ my: 3 }} />
+            <MDXRemote {...data} components={components as MDXComponents} />
           </>
         )}
       </PostLayout>

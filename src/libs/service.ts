@@ -1,11 +1,14 @@
+import { convertDate } from "@/util/tool";
 import fs from "fs";
-import { globSync, sync } from "glob";
+import { glob, globSync, sync } from "glob";
 import matter from "gray-matter";
 import { serialize } from "next-mdx-remote/serialize";
 import path from "path";
 import readingTime from "reading-time";
 
-const basePath = "src/database";
+const basePath = "src/database/**/*.mdx";
+
+const blogMdxDirs = ['src/database/**/*.md', 'src/database/**/*.mdx']
 
 export const serializeMdx = (source: string) => {
   return serialize(source, {
@@ -30,26 +33,33 @@ export async function getAllSlugNames() {
 }
 
 export async function getSlugs() {
-  const paths = sync(`${basePath}/*.mdx`);
-  const pathList = paths.map((path) => {
-    // holds the paths to the directory of the article
-    const pathContent = path.split(/\/+|\\+/);
-    const fileName = pathContent[pathContent.length - 1];
-    const [slug, _extension] = fileName.split(".");
+  // const paths = sync(`${basePath}/*.mdx`);
+  // const articles = globSync(blogMdxDirs);
 
-    return slug;
-  });
-  return pathList;
+  // const pathList = articles.map((path) => {
+  //   // holds the paths to the directory of the article
+  //   const pathContent = path.split(/\/+|\\+/);
+  //   const fileName = pathContent[pathContent.length - 1];
+  //   const [slug, _extension] = fileName.split(".");
+
+  //   return slug;
+  // });
+  // console.log('pathList',pathList)
+  const articles = await getAllArticles();
+  const slugs = articles.map((article: any) => article.slug.replace(/(\/|\\)+/g, '').trim());
+  return slugs;
 }
 
 export async function getArticleFromSlug(slug: string) {
-  const articleDir = path.join(articlesPath, `${slug}.mdx`);
+  // const articleDir = path.join(articlesPath, `${slug}.mdx`);
 
   // const source = execSync(`cat ${articleDir}`).toString('utf-8')
 
-  const source = fs.readFileSync(articleDir) as unknown as string;
+  const articles = await getAllArticles();
+  const article = articles.find((article: any) => article.slug.match(slug))
+  const source = fs.readFileSync(article.originPath) as unknown as string;
   const { content, data } = matter(source);
-
+  console.log(data)
   return {
     content,
     frontmatter: {
@@ -63,9 +73,35 @@ export async function getArticleFromSlug(slug: string) {
   };
 }
 
-export async function getAllArticles() {
-  const articles = fs.readdirSync(articlesPath);
+export async function getAllArticles(limit?: number) {
+  const articles = globSync(blogMdxDirs);
 
+  return articles.reduce((allArticles: any, articleSlug) => {
+    // get parsed data from mdx files in the "articles" dir
+    const source = fs.readFileSync(
+      path.join(articleSlug),
+      "utf-8"
+    );
+    const { data } = matter(source);
+
+    if (articleSlug.match(/\.md(x)?/)) {
+      return [
+        {
+          ...data,
+          // slug: articleSlug.replace(".mdx", "").replace(/(\\|\/)+/, '/'),
+          readingTime: readingTime(source).text,
+          originPath: articleSlug
+        },
+        ...allArticles,
+      ];
+    } else {
+      return allArticles;
+    }
+  }, []).sort((a: any, b: any) => b.date.localeCompare(a.date)).slice(0, limit || undefined);
+}
+
+export async function getArticlesByCategory(category: string) {
+  const articles = globSync(blogMdxDirs);
   return articles.reduce((allArticles: any, articleSlug) => {
     // get parsed data from mdx files in the "articles" dir
     const source = fs.readFileSync(
@@ -73,7 +109,6 @@ export async function getAllArticles() {
       "utf-8"
     );
     const { data } = matter(source);
-    console.log("matter data", data);
 
     if (articleSlug.match(/\.mdx/)) {
       return [
@@ -87,5 +122,5 @@ export async function getAllArticles() {
     } else {
       return allArticles;
     }
-  }, []);
+  }, []).sort((a: any, b: any) => b.date.localeCompare(a.date)).filter((article: any) => article.categories === category);
 }

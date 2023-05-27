@@ -17,7 +17,7 @@ const nextConfig = {
   pageExtensions: ["ts", "tsx", "js", "jsx", "md", "mdx"],
   output: "export",
   distDir: "out",
-  reactStrictMode: true,
+  // reactStrictMode: true,
   swcMinify: true,
   trailingSlash: true,
   transpilePackages: ["react-syntax-highlighter"],
