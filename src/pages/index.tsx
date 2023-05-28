@@ -1,5 +1,6 @@
 import Card from "@/components/Card";
 import GenerateHead from "@/components/GenerateHead";
+import MainCard from "@/components/MainCard";
 import { getAllArticles } from "@/libs/service";
 import { AUTHOR, BRAND_DESC, BRAND_NAME } from "@/util/global";
 import { slicedBundle } from "@/util/tool";
@@ -11,7 +12,7 @@ const metadatas = {
   author: AUTHOR,
 };
 
-const MAIN_POST_LIMIT = 10;
+const MAIN_POST_LIMIT = 4;
 
 export default function Home({ posts }: any) {
   return (
@@ -36,9 +37,32 @@ export default function Home({ posts }: any) {
         </Typography>
       </Box>
       <Toolbar />
-      <Stack component={"section"}>
-        {slicedBundle(3, posts).map((row, i) => (
-          <Stack key={i} direction='row' justifyContent={"center"} gap={10}>
+      <Stack component={"section"} alignItems='center'>
+        <MainCard
+          slug={posts[0].frontmatter.slug}
+          title={posts[0].frontmatter.title}
+          author={posts[0].frontmatter.author || AUTHOR}
+          createdAt={posts[0].frontmatter.date}
+          ordering={1}
+        />
+        <Toolbar />
+        <Typography
+          fontSize={(theme) => theme.typography.pxToRem(48)}
+          fontWeight={300}
+          align='center'
+          gutterBottom
+          fontFamily={`"IBM Plex Sans KR", sans-serif`}>
+          Latest Posts
+        </Typography>
+        {slicedBundle(3, posts.slice(1)).map((row, i) => (
+          <Stack
+            key={i}
+            direction='row'
+            justifyContent={"space-between"}
+            gap={10}
+            sx={{
+              width: "100%",
+            }}>
             {row.map((post, q) => (
               <Card
                 key={q}

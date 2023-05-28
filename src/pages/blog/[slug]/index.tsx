@@ -45,7 +45,11 @@ function Index({
       <PostLayout>
         {data && (
           <>
-            <Box component={"img"} src={`/static${data.frontmatter.image}`} />
+            <Box
+              component={"img"}
+              src={`/static${data.frontmatter.image}`}
+              width={"100%"}
+            />
             <Typography
               fontSize={(theme) => theme.typography.pxToRem(32)}
               fontWeight={700}

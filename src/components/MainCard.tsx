@@ -14,7 +14,7 @@ interface CardInfo {
   ordering: number;
 }
 
-function Card({ slug, title, author, createdAt, ordering }: CardInfo) {
+function MainCard({ slug, title, author, createdAt, ordering }: CardInfo) {
   useEffect(() => {
     setTimeout(() => {
       anime({
@@ -30,21 +30,21 @@ function Card({ slug, title, author, createdAt, ordering }: CardInfo) {
       className='card-test'
       elevation={3}
       sx={{
-        // width: 300,
-        flex: 1,
         overflow: "hidden",
+        width: "100%",
         "&:hover img": {
           transform: "scale(1.1)",
         },
       }}>
-      <Stack>
+      <Stack direction='row'>
         <Box
           sx={{
             position: "relative",
             width: "auto",
             height: 300,
+            aspectRatio: "16/10",
             maskImage:
-              "linear-gradient(#000000 70%, #00000036 85%, transparent 90%)",
+              "linear-gradient(to right, transparent 0%, #00000036 15%, #000000 30%, #000000 70%, #00000036 85%, transparent 90%), linear-gradient(to bottom, transparent 0%, #00000036 15%, #000000 30%, #000000 70%, #00000036 85%, transparent 90%)",
           }}>
           <Link href={slugToBlogTrailingSlash(slug)}>
             <Image
@@ -106,4 +106,4 @@ function Card({ slug, title, author, createdAt, ordering }: CardInfo) {
   );
 }
 
-export default Card;
+export default MainCard;

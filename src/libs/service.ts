@@ -119,7 +119,6 @@ export async function getArticleFromSlug(slug: string) {
 
 export async function getAllArticles(limit?: number) {
   const articles = globSync(blogMdxDirs);
-  console.log(articles);
 
   let convert: any = [];
 
@@ -174,7 +173,6 @@ export async function getAllArticles(limit?: number) {
   //   },
   //   []
   // );
-  console.log(convert);
   return convert
     .sort((a: any, b: any) =>
       b.frontmatter.date.localeCompare(a.frontmatter.date)
@@ -184,6 +182,7 @@ export async function getAllArticles(limit?: number) {
 
 export async function getArticlesByCategory(category: string) {
   const articles = globSync(blogMdxDirs);
+  console.log('articles???',articles)
   return articles
     .reduce((allArticles: any, articleSlug) => {
       // get parsed data from mdx files in the "articles" dir

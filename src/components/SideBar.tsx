@@ -25,7 +25,7 @@ export default function SideBar() {
       sx={{
         position: "sticky",
         top: 69,
-        width: "100%",
+        width: 300,
         bgcolor: "background.paper",
       }}
       component='nav'

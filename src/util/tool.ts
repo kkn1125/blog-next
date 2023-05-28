@@ -16,7 +16,7 @@ export const slugToBlogTrailingSlash = (slug: string) => {
 
 export const duplicateRemoveArray = (array: any[]) =>
   array.reduce((acc, cur) => {
-    for (let category of cur.categories) {
+    for (let category of cur.frontmatter.categories) {
       if (acc.includes(category)) continue;
       acc.push(category);
     }
