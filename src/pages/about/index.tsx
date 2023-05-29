@@ -28,6 +28,7 @@ function Index() {
       sx={{
         height: "100%",
       }}>
+      <Toolbar />
       <GenerateHead
         metadatas={{
           title: BRAND_NAME + "::About",

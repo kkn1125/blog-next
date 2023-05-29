@@ -13,7 +13,7 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import StarBorder from "@mui/icons-material/StarBorder";
 import { Toolbar } from "@mui/material";
 
-export default function SideBar() {
+export default function SideBar({ list }: { list: any[] }) {
   const [open, setOpen] = useState(true);
 
   const handleClick = () => {
@@ -24,14 +24,15 @@ export default function SideBar() {
     <List
       sx={{
         position: "sticky",
-        top: 69,
+        top: 0,
         width: 300,
         bgcolor: "background.paper",
+        // height: "calc(100vh - 68px)",
+        overflow: "auto",
       }}
       component='nav'
       subheader={
         <>
-          <Toolbar />
           {/* <ListSubheader
           component='div'
           sx={{
@@ -42,35 +43,22 @@ export default function SideBar() {
         </ListSubheader> */}
         </>
       }>
-      <ListItemButton>
-        <ListItemIcon>
-          <SendIcon />
-        </ListItemIcon>
-        <ListItemText primary='Sent mail' />
-      </ListItemButton>
-      <ListItemButton>
-        <ListItemIcon>
-          <DraftsIcon />
-        </ListItemIcon>
-        <ListItemText primary='Drafts' />
-      </ListItemButton>
-      <ListItemButton onClick={handleClick}>
-        <ListItemIcon>
-          <InboxIcon />
-        </ListItemIcon>
-        <ListItemText primary='Inbox' />
-        {open ? <ExpandLess /> : <ExpandMore />}
-      </ListItemButton>
-      <Collapse in={open} timeout='auto' unmountOnExit>
-        <List component='div' disablePadding>
-          <ListItemButton sx={{ pl: 4 }}>
-            <ListItemIcon>
-              <StarBorder />
-            </ListItemIcon>
-            <ListItemText primary='Starred' />
-          </ListItemButton>
-        </List>
-      </Collapse>
+      {list.map((item) => (
+        <ListItemButton
+          sx={{ ml: (item.match(/#/gm).length - 1) * 5 }}
+          onClick={() => {
+            (document.getElementById("post") as HTMLDivElement).scrollTo({
+              behavior: "smooth",
+              top: 68,
+              left: 0,
+            });
+          }}>
+          <ListItemIcon>
+            <SendIcon />
+          </ListItemIcon>
+          <ListItemText primary={item.replace(/#+/, "").trim()} />
+        </ListItemButton>
+      ))}
     </List>
   );
 }

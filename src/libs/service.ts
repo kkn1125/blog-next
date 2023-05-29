@@ -152,7 +152,6 @@ export async function getAllArticles(limit?: number) {
 }
 
 export async function getArticlesByCategory(category: string) {
-  console.log("category:", category);
   const articles = globSync(blogMdxDirs);
   let convert: any = [];
 

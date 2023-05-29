@@ -112,7 +112,6 @@ export default Index;
 export async function getStaticProps({ params }: any) {
   try {
     const posts = await getArticlesByTag(params.tag);
-    console.log("tag!!!!", params.tag, posts.length);
     return {
       props: {
         posts: posts,
@@ -137,7 +136,7 @@ export const getStaticPaths = async () => {
   return {
     paths: tags.map((tag: any) => ({
       params: {
-        tag,
+        tag: tag.toLowerCase(),
       },
     })),
     fallback: false,

@@ -83,6 +83,7 @@ export default function MyApp(props: MyAppProps) {
 
                 html,
                 body {
+                  overflow: hidden;
                   height: 100%;
                   margin: 0;
 

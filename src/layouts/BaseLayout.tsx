@@ -19,31 +19,21 @@ function BaseLayout({
     <Stack
       sx={{
         height: "100%",
+        maxHeight: "100vh",
       }}>
       <Header />
-      <Toolbar />
       <Toolbar />
       <Stack
         direction='row'
         sx={{
           width: "100%",
           flex: 1,
+          overflow: "auto",
+          position: "relative",
         }}>
-        {/* <Box
-          sx={{
-            position: "relative",
-            minWidth: sidebarSize.min,
-            maxWidth: sidebarSize.max,
-            zIndex: 500,
-            bgcolor: "background.paper",
-            boxShadow: "0 0 10px #00000056",
-          }}>
-          <SideBar />
-        </Box> */}
-        <Box sx={{ flex: 1 }}>{children}</Box>
+        {children}
       </Stack>
       <Modal />
-      <Toolbar />
       <Footer />
     </Stack>
   );

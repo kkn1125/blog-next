@@ -60,6 +60,7 @@ function Index({ posts, totalCount }: any) {
       sx={{
         height: "100%",
       }}>
+      <Toolbar />
       <Stack sx={{ flex: 1 }}>
         <GenerateHead metadatas={metadatas} />
         <Typography

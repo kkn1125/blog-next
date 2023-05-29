@@ -27,6 +27,7 @@ export default function Home({ posts }: any) {
 
   return (
     <Container maxWidth='lg'>
+      <Toolbar />
       <Stack sx={{ flex: 1 }}>
         <GenerateHead metadatas={metadatas} />
         <Box component={"section"}>

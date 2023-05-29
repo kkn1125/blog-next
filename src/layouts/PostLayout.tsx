@@ -12,12 +12,9 @@ function PostLayout({
   children: React.ReactElement | React.ReactElement[];
 }) {
   return (
-    <Stack component='div' direction='row'>
-      <SideBar />
-      <Container maxWidth='md' sx={{ position: "relative", flex: 1 }}>
-        {children}
-      </Container>
-    </Stack>
+    <Container maxWidth='md' sx={{ flex: 1 }} id='post'>
+      {children}
+    </Container>
   );
 }
 

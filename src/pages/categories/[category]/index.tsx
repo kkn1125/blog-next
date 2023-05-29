@@ -139,11 +139,10 @@ export const getStaticPaths = async () => {
 
   const articles = await getAllArticles();
   const categories = duplicateRemoveArrayFromCategory(articles);
-  console.log(categories);
   return {
     paths: categories.map((category: any) => ({
       params: {
-        category,
+        category: category.toLowerCase(),
       },
     })),
     fallback: false,
