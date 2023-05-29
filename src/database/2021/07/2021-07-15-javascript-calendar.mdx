@@ -23,16 +23,16 @@ Todo List를 연습삼아 만들면서 캘린더가 필요할 것 같아 만들�
 
 ```html
 <html>
-    <head>
-         <script src="devkalendar.js">
-             //head안에 devkalendar.js 를 불러옵니다.
-         </script>   
-    </head>
-    <body>
-        <div>
-            <table id="example"></table>
-        </div>
-    </body>
+  <head>
+    <script src="devkalendar.js">
+      //head안에 devkalendar.js 를 불러옵니다.
+    </script>
+  </head>
+  <body>
+    <div>
+      <table id="example"></table>
+    </div>
+  </body>
 </html>
 ```
 
@@ -57,13 +57,12 @@ const example = com.devkimson.calendar.create(document.getElementById("example")
          padding: "1rem" /* table tag padding default auto */
          collapse: "separate", /* default collapse */
          spacing: "1rem" /* cell-padding default auto */
-     }   
+     }
 });
 ```
 
 namespace ( com.devkimson.calendar )를 작성하고 인자 값으로 html에서 설정한 table의 id값을 적어줍니다.
 중괄호의 settings는 필요한 부분만 커스터마이징하여 사용하면 됩니다.
-
 
 ## 기본 설정
 
@@ -73,4 +72,6 @@ namespace ( com.devkimson.calendar )를 작성하고 인자 값으로 html에서
 
 ![cal2](/images/post/jsdevKal/devkal-2.png)
 
-<a href="/download/kalendarJS.zip" download>캘린더 js 파일 다운로드</a>
+<a href='/download/kalendarJS.zip' download>
+  캘린더 js 파일 다운로드
+</a>

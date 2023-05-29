@@ -40,80 +40,85 @@ published: true
 
 ```html
 <div>
-    <h2>Test Tagging</h2>
-    <div class="box">
-        <span class="innerBox"></span>
-        <input type="text" style="width: 5rem;">
-    </div>
+  <h2>Test Tagging</h2>
+  <div class="box">
+    <span class="innerBox"></span>
+    <input type="text" style="width: 5rem;" />
+  </div>
 </div>
 ```
 
 `box`를 클릭하면 `input`에 포커스 되고, 입력 후 엔터키를 누르면 태그가 `innerBox`에 생성 됩니다.
 
 ```javascript
-'use strict';
+"use strict";
 
-const box = document.querySelector('.box');
-const innerBox = document.querySelector('.innerBox');
-const input = document.querySelector('input');
+const box = document.querySelector(".box");
+const innerBox = document.querySelector(".innerBox");
+const input = document.querySelector("input");
 let tags = [];
 ```
 
 기능은 크게 로컬스토리지 업데이트와 가져오기, 태그 추가, 태그 제거, 출력부 입니다.
 
 ```javascript
-function initHandler(){ // 초기화
-    let repo = localStorage.getItem("list_tag");
+function initHandler() {
+  // 초기화
+  let repo = localStorage.getItem("list_tag");
 
-    if(typeof JSON.parse(repo) === "string"){
-        localStorage.setItem("list_tag", "[]");
-    }
-    // Events
-    box.addEventListener('click', ()=>{ input.focus() });
-    box.addEventListener('click', removeTagHandler);
-    input.addEventListener('keydown', addTagHandler);
-    render();
+  if (typeof JSON.parse(repo) === "string") {
+    localStorage.setItem("list_tag", "[]");
+  }
+  // Events
+  box.addEventListener("click", () => {
+    input.focus();
+  });
+  box.addEventListener("click", removeTagHandler);
+  input.addEventListener("keydown", addTagHandler);
+  render();
 }
 
 // 로컬스토리지 가져오기
-function getStorage(){
-    tags = localStorage.list_tag?JSON.parse(localStorage.list_tag):[];
+function getStorage() {
+  tags = localStorage.list_tag ? JSON.parse(localStorage.list_tag) : [];
 }
 
 // 로컬스토리지 업데이트
-function updateStorage(){
-    localStorage.list_tag = JSON.stringify(tags);
-    render();
+function updateStorage() {
+  localStorage.list_tag = JSON.stringify(tags);
+  render();
 }
 
 // 태그 추가
-function addTagHandler(ev){ // 태그 추가
-    if(ev.key === "Enter"){
-        tags.push(input.value);
-        updateStorage();
-        input.value = "";
-    }
+function addTagHandler(ev) {
+  // 태그 추가
+  if (ev.key === "Enter") {
+    tags.push(input.value);
+    updateStorage();
+    input.value = "";
+  }
 }
 
 // 태그 제거
-function removeTagHandler(ev){
-    let target = ev.target;
-    let textNode = target.previousElementSibling.innerText.trim();
-    if(target.tagName === "SPAN" && target.className === "close"){
-        tags = tags.filter(tag=> textNode !== tag);
-        updateStorage();
-    }
+function removeTagHandler(ev) {
+  let target = ev.target;
+  let textNode = target.previousElementSibling.innerText.trim();
+  if (target.tagName === "SPAN" && target.className === "close") {
+    tags = tags.filter((tag) => textNode !== tag);
+    updateStorage();
+  }
 }
 
 // 출력부
-function render(){
-    getStorage();
-    let tmp = '';
-    let template = tag => `<span class="tag"><span>${tag}</span><span class="close">&times;</span></span>`;
-    tags.forEach(tag=>{
-        tmp += template(tag);
-    });
-    innerBox.innerHTML = tmp;
+function render() {
+  getStorage();
+  let tmp = "";
+  let template = (tag) =>
+    `<span class="tag"><span>${tag}</span><span class="close">&times;</span></span>`;
+  tags.forEach((tag) => {
+    tmp += template(tag);
+  });
+  innerBox.innerHTML = tmp;
 }
 ```
 
@@ -124,78 +129,87 @@ function render(){
 `css`는 그저 모양만 잡기 위함이라 언급 안했지만 아래에 코드를 남겨두었습니다.
 
 ```css
-*{
-    box-sizing: border-box;
+* {
+  box-sizing: border-box;
 }
 
-html,body{
-    margin: 0;
-    padding: 0;
+html,
+body {
+  margin: 0;
+  padding: 0;
 }
 
-body{
-    height: 100%;
+body {
+  height: 100%;
 }
 
-
-input{
-    border: none;
-    outline: none;
-    height: 2rem;
-    padding: .3rem;
-    font-size: 1rem;
+input {
+  border: none;
+  outline: none;
+  height: 2rem;
+  padding: 0.3rem;
+  font-size: 1rem;
 }
 
-body>div{
-    width: 30rem;
-    margin-left: auto;
-    margin-right: auto;
+body > div {
+  width: 30rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.box{
-    border: 1px solid rgba(0,0,0,0.2);
-    padding: .3rem;
-    border-radius: 0.3rem;
-    -webkit-border-radius: 0.3rem;
-    -moz-border-radius: 0.3rem;
-    -ms-border-radius: 0.3rem;
-    -o-border-radius: 0.3rem;
+.box {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 0.3rem;
+  border-radius: 0.3rem;
+  -webkit-border-radius: 0.3rem;
+  -moz-border-radius: 0.3rem;
+  -ms-border-radius: 0.3rem;
+  -o-border-radius: 0.3rem;
 }
 
-.tag{
-    display: inline-block;
-    text-align: center;
-    height: 2rem;
-    padding: .3rem .5rem;
-    margin: auto;
-    font-size: .9rem;
-    background-color: rgba(29, 212, 105, 0.719);
-    color: white;
-    font-weight: 700;
-    border-radius: 0.3rem;
-    -webkit-border-radius: 0.3rem;
-    -moz-border-radius: 0.3rem;
-    -ms-border-radius: 0.3rem;
-    -o-border-radius: 0.3rem;
-    margin: 0.2rem;
-    transition: .5s ease;
-    -webkit-transition: .5s ease;
-    -moz-transition: .5s ease;
-    -ms-transition: .5s ease;
-    -o-transition: .5s ease;
+.tag {
+  display: inline-block;
+  text-align: center;
+  height: 2rem;
+  padding: 0.3rem 0.5rem;
+  margin: auto;
+  font-size: 0.9rem;
+  background-color: rgba(29, 212, 105, 0.719);
+  color: white;
+  font-weight: 700;
+  border-radius: 0.3rem;
+  -webkit-border-radius: 0.3rem;
+  -moz-border-radius: 0.3rem;
+  -ms-border-radius: 0.3rem;
+  -o-border-radius: 0.3rem;
+  margin: 0.2rem;
+  transition: 0.5s ease;
+  -webkit-transition: 0.5s ease;
+  -moz-transition: 0.5s ease;
+  -ms-transition: 0.5s ease;
+  -o-transition: 0.5s ease;
 }
 
-.close{
-    cursor: pointer;
+.close {
+  cursor: pointer;
 }
 ```
 
------
+---
 
 아래는 테스트용으로 두었습니다.
 
-<iframe height="300" style="width: 100%;" scrolling="no" title="add_tag" src="https://codepen.io/kkn1125/embed/PoygQmR?default-tab=html%2Cresult" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
-  See the Pen <a href="https://codepen.io/kkn1125/pen/PoygQmR">
-  add_tag</a> by kkn1125 (<a href="https://codepen.io/kkn1125">@kkn1125</a>)
-  on <a href="https://codepen.io">CodePen</a>.
+<iframe
+  height={300}
+  style={{ width: "100%" }}
+  scrolling='no'
+  title='add_tag'
+  src='https://codepen.io/kkn1125/embed/PoygQmR?default-tab=html%2Cresult'
+  frameBorder='no'
+  loading='lazy'
+  allowtransparency='true'
+  allowFullScreen={true}>
+  See the Pen <a href='https://codepen.io/kkn1125/pen/PoygQmR'>add_tag</a> by
+  kkn1125 (<a href='https://codepen.io/kkn1125'>@kkn1125</a>) on{" "}
+  <a href='https://codepen.io'>CodePen</a>.
 </iframe>

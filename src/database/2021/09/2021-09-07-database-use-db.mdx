@@ -32,13 +32,15 @@ published: true
 정적웹에서 데이터베이스를 이용하자니 java나 nodejs등을 써야하는데 nodejs는 그저 조금 써봤고, java를 구동하자니 github 페이지를 spring으로 구현하는 방법은 모르겠고 해서 조금의 꼼수를 생각해봤습니다.
 
 > 필요한 준비물
+
 1. heroku app
 2. jquery ( AJAX )
 3. MySQL
 4. Spring Boot (Spring이나 JSP도 가능하다 생각됩니다.)
 
 > Used
-1. spring-boot-starter-* 2.5.4
+
+1. spring-boot-starter-\* 2.5.4
 2. spring-boot-configuration-processor 2.5.4
 3. tomcat-embed0jasper[privided] 9.0.52
 4. mybatis-spring-boot-starter 2.2.0
@@ -98,7 +100,7 @@ public class ServletConfig implements WebMvcConfigurer {
             HttpMethod.GET.name(), HttpMethod.HEAD.name(), HttpMethod.POST.name(), HttpMethod.PUT.name(),
             HttpMethod.DELETE.name());
     }
-    
+
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/resources/**") // 매핑 URI 설정
@@ -135,7 +137,7 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
 	{
 		return new String[] {"/"};
 	}
-	
+
 	@Override
 	protected Filter[] getServletFilters() {
 		HiddenHttpMethodFilter httpMethodFilter = new HiddenHttpMethodFilter();
@@ -176,38 +178,38 @@ public interface MemberMapper {
 @RequestMapping("/")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class HomeController {
-	
+
 	@Autowired
 	MemberServiceImpl service;
-	
+
 	@GetMapping("")
 	public String home() {
 		return "hello world";
 	}
-	
+
 	@GetMapping("member")
 	public List<Member> memberlist() {
 		return service.getList();
 	}
-	
+
 	@GetMapping("member/{word}")
 	public List<Member> memberadd(@PathVariable("word") String word) {
 		return service.getListByWord(word);
 	}
-	
+
 	@PostMapping("member")
 	public List<Member> memberadd(Member member) {
 		service.addMember(member);
 		return service.getList();
 	}
-	
+
 	@PutMapping("member/{id}")
 	public List<Member> memberedit(Member member, @PathVariable("id") int id) {
 		member.setId(id);
 		service.editMember(member);
 		return service.getList();
 	}
-	
+
 	@DeleteMapping("member/{id}")
 	public List<Member> memberremove(@PathVariable("id") int id) {
 		service.removeMember(id);
@@ -265,111 +267,119 @@ git push heroku master
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-	<title>Document</title>
-</head>
-<body>
-	<h1>외부 저장소 테스트</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>외부 저장소 테스트</h1>
 
-	<div id="result"></div>
+    <div id="result"></div>
 
-	<div id="pagination">
-		<nav aria-label="Page navigation">
-			<ul id="paging" class="pagination justify-content-center">
-
-			</ul>
-		</nav>
-	</div>
-</body>
+    <div id="pagination">
+      <nav aria-label="Page navigation">
+        <ul id="paging" class="pagination justify-content-center"></ul>
+      </nav>
+    </div>
+  </body>
 </html>
 ```
 
 ```javascript
-let query = location.search.slice(1).split('&');
+let query = location.search.slice(1).split("&");
 let params = {};
-query.forEach(x=>{
-    let param = x.split("=");
-    let k = param[0];
-    let v = param[1];
-    params[k] = v;
+query.forEach((x) => {
+  let param = x.split("=");
+  let k = param[0];
+  let v = param[1];
+  params[k] = v;
 });
 let request = {
-    getParameter: function(key){
-        return params[key];
-    }
-}
+  getParameter: function (key) {
+    return params[key];
+  },
+};
 
 let pagination = 5;
-let pageNum = request.getParameter('pageNum') || 1;
+let pageNum = request.getParameter("pageNum") || 1;
 
-function getList(data){
-    for(let i=(pageNum-1)*pagination; i<(pagination*pageNum); i++){
-        if(data[i]!=undefined){
-            let reg = new Date(data[i].regdate);
-            let regs = `${reg.getFullYear()}-${reg.getMonth()}-${reg.getDate()} ${reg.getHours()}:${reg.getMinutes()}:${reg.getSeconds()}`;
-            let update = new Date(data[i].updates);
-            let updates = `${update.getFullYear()}-${update.getMonth()}-${update.getDate()} ${update.getHours()}:${update.getMinutes()}:${update.getSeconds()}`;
-            document.getElementById('result').innerHTML += `
-                <div class="container">
-                    <div class="p-3 border rounded-3 mb-3">
-                        <div><span class="badge bg-info">${data[i].id}</span><span>${data[i].name}</span></div>
-                        <div class="badge bg-primary">나이 ${data[i].age}</div>
-                        <div class="badge bg-primary">성별 ${data[i].gender==1?'남':data[i].gender==2?'여':''}</div>
-                        <div><span class="badge bg-success">regdate</span> <span class="badge bg-secondary">${regs}</span></div>
-                        <div><span class="badge bg-success">update</span> <span class="badge bg-secondary">${updates}</span></div>
-                    </div>
-                </div>
-            `;
-        }
+function getList(data) {
+  for (let i = (pageNum - 1) * pagination; i < pagination * pageNum; i++) {
+    if (data[i] != undefined) {
+      let reg = new Date(data[i].regdate);
+      let regs = `${reg.getFullYear()}-${reg.getMonth()}-${reg.getDate()} ${reg.getHours()}:${reg.getMinutes()}:${reg.getSeconds()}`;
+      let update = new Date(data[i].updates);
+      let updates = `${update.getFullYear()}-${update.getMonth()}-${update.getDate()} ${update.getHours()}:${update.getMinutes()}:${update.getSeconds()}`;
+      document.getElementById("result").innerHTML += `
+				<div class="container">
+					<div class="p-3 border rounded-3 mb-3">
+						<div><span class="badge bg-info">${
+							data[i].id
+						}</span><span>${data[i].name}</span></div>
+						<div class="badge bg-primary">나이 ${data[i].age}</div>
+						<div class="badge bg-primary">성별 ${
+							data[i].gender == 1
+								? "남"
+								: data[i].gender == 2
+								? "여"
+								: ""
+						}</div>
+						<div><span class="badge bg-success">regdate</span> <span class="badge bg-secondary">${regs}</span></div>
+						<div><span class="badge bg-success">update</span> <span class="badge bg-secondary">${updates}</span></div>
+					</div>
+				</div>
+			`;
     }
+  }
 }
 
-function getPage(data){
-    let len = Math.ceil(data.length/pagination);
-    let cur = request.getParameter('pageNum');
-    // console.log(len)
-    let pages = ``;
-    for(let i=1; i<=len; i++){
-        pages += `
-        <li class="page-item"><a class="page-link" href="?pageNum=${i}">${i}</a></li>
-        `;
-    }
-    document.getElementById('paging').innerHTML = `
-        <li class="page-item">
-            <a class="page-link" href="pageNum=${cur>1?cur-1:1}" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
-        </li>
+function getPage(data) {
+  let len = Math.ceil(data.length / pagination);
+  let cur = request.getParameter("pageNum");
+  let pages = ``;
+  for (let i = 1; i <= len; i++) {
+    pages += `
+			<li class="page-item"><a class="page-link" href="?pageNum=${i}">${i}</a></li>
+			`;
+  }
+  document.getElementById("paging").innerHTML = `
+		<li class="page-item">
+			<a class="page-link" href="pageNum=${
+				cur > 1 ? cur - 1 : 1
+			}" aria-label="Previous">
+				<span aria-hidden="true">&laquo;</span>
+			</a>
+		</li>
 
-        ${pages}
+		${pages}
 
-        <li class="page-item">
-            <a class="page-link" href="pageNum=${cur<len?cur+1:len}" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-            </a>
-        </li>
-    `;
+		<li class="page-item">
+			<a class="page-link" href="pageNum=${
+				cur < len ? cur + 1 : len
+			}" aria-label="Next">
+				<span aria-hidden="true">&raquo;</span>
+			</a>
+		</li>
+	`;
 }
 
-window.addEventListener('load',()=>{
-
-    const url = 'https://yourappname.herokuapp.com/';
-    let tmp = [];
-    $.ajax({
-        url: `${url}/member`,
-        method:'get',
-        success:(data)=>{
-            console.log(data);
-            getList(data);
-        },
-        error:(xhr, err)=>{
-            console.error(err);
-        } 
-    });
+window.addEventListener("load", () => {
+  const url = "https://yourappname.herokuapp.com/";
+  let tmp = [];
+  $.ajax({
+    url: `${url}/member`,
+    method: "get",
+    success: (data) => {
+      console.log(data);
+      getList(data);
+    },
+    error: (xhr, err) => {
+      console.error(err);
+    },
+  });
 });
 ```
 
@@ -385,7 +395,7 @@ postman으로 데이터를 조금 더 추가한 후 테스트를 해봤습니다
 
 2페이지 일때도 나머지 내용이 잘 출력 됩니다.
 
------
+---
 
 머리로 그려만 보다가 직접 테스트 하고 잘 되는 결과를 보니 뿌듯합니다. 그런데 이러한 방식을 누구라도 생각할 수 있지만 잘 안 쓰는 것을 보면 이유가 있을 것이라 생각합니다.
 
