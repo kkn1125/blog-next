@@ -170,7 +170,6 @@ function Index({
       commentEl.current?.appendChild(scriptEl);
     }, 500);
   }, [theme.palette.mode]);
-  console.log(responsivePost?.frontmatter);
   return (
     <>
       <SideBar

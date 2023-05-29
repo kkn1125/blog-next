@@ -1,6 +1,5 @@
-import { convertDate } from "@/util/tool";
 import fs from "fs";
-import { glob, globSync, sync } from "glob";
+import { globSync } from "glob";
 import matter from "gray-matter";
 import { serialize } from "next-mdx-remote/serialize";
 import path from "path";
