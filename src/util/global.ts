@@ -8,6 +8,7 @@ export const WIKI = process.env.NEXT_PUBLIC_WIKI as string;
 export const PORTFOLIO = process.env.NEXT_PUBLIC_PORTFOLIO as string;
 export const NICKNAME = process.env.NEXT_PUBLIC_NICKNAME as string;
 export const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY as string;
+export const PROFILE = process.env.NEXT_PUBLIC_PROFILE as string;
 export const BLOG_PATH = process.env.BLOG_PATH as string;
 export const BASEPATH = "127.0.0.1";
 

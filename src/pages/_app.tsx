@@ -69,12 +69,7 @@ export default function MyApp(props: MyAppProps) {
                 }
                 ::-webkit-scrollbar-thumb {
                   width: 8px;
-                  ${
-                    "" /* border-left: 3px solid #8a8a7e;
-              border-right: 3px solid #8a8a7e; */
-                  }
-                  background-color: #373C00;
-                  ${"" /* border-radius: 5px; */}
+                  background-color: #373c00;
                 }
                 ::selection {
                   color: inherit;
@@ -109,6 +104,10 @@ export default function MyApp(props: MyAppProps) {
                       color: #ffffff;
                     }
                   }
+                }
+
+                .MuiChip-root {
+                  font-family: "IBM Plex Sans KR", sans-serif !important;
                 }
               `}
             />

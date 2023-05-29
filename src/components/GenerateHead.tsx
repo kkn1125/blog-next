@@ -14,11 +14,21 @@ function convertToMetadata(metadatas: Metadata) {
       dataSet.push(<title>{v}</title>);
       dataSet.push(<meta name={k} content={v} />);
       dataSet.push(<meta name={`og:${k}`} content={v} />);
+    } else if (k === "category" || k === "tag") {
+      // (v as unknown as any[]).forEach((vv: string) => {
+      dataSet.push(
+        <meta name={k} content={(v as unknown as any[]).join(",")} />
+      );
+      dataSet.push(
+        <meta name={`og:${k}`} content={(v as unknown as any[]).join(",")} />
+      );
+      // });
     } else {
       dataSet.push(<meta name={k} content={v} />);
       dataSet.push(<meta name={`og:${k}`} content={v} />);
     }
   });
+  console.log(dataSet);
   return dataSet;
 }
 

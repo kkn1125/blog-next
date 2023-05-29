@@ -20,12 +20,6 @@ import Card from "@/components/Card";
 import { AUTHOR, BRAND_DESC, BRAND_NAME } from "@/util/global";
 import GenerateHead from "@/components/GenerateHead";
 
-const metadatas = {
-  title: BRAND_NAME.toUpperCase(),
-  description: BRAND_DESC,
-  author: AUTHOR,
-};
-
 const PAGINATION_AMOUNT = 6;
 
 function Index({ posts, totalCount }: any) {
@@ -34,6 +28,12 @@ function Index({ posts, totalCount }: any) {
   const [postList, setPostList] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPageCount, setTotalPageCount] = useState(0);
+  const metadatas = {
+    title:
+      BRAND_NAME.toUpperCase() + "::Category" + "-" + router.query.category,
+    description: BRAND_DESC,
+    author: AUTHOR,
+  };
 
   useEffect(() => {
     setTotalPageCount(Math.ceil(totalCount / PAGINATION_AMOUNT));
@@ -66,6 +66,7 @@ function Index({ posts, totalCount }: any) {
         height: "100%",
       }}>
       <GenerateHead metadatas={metadatas} />
+      <Toolbar />
       <Typography
         fontSize={(theme) => theme.typography.pxToRem(52)}
         fontWeight={500}
@@ -108,6 +109,7 @@ function Index({ posts, totalCount }: any) {
           onChange={handleChange}
         />
       </Stack>
+      <Toolbar />
     </Stack>
   );
 }

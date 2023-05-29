@@ -1,3 +1,4 @@
+import Calendar from "@/components/Calendar";
 import Card from "@/components/Card";
 import GenerateHead from "@/components/GenerateHead";
 import MainCard from "@/components/MainCard";
@@ -52,16 +53,6 @@ export default function Home({ posts }: any) {
         <Stack component={"section"} alignItems='center'>
           <MainCard post={posts[0]} />
           <Toolbar />
-          <Typography
-            fontSize={(theme) => theme.typography.pxToRem(48)}
-            fontWeight={500}
-            align='center'
-            fontFamily={`"IBM Plex Sans KR", sans-serif`}
-            sx={{
-              mb: 5,
-            }}>
-            Latest Posts
-          </Typography>
           <Stack gap={5}>
             {slicedBundle(
               useMediaQuery(theme.breakpoints.up("md")) ? 3 : 1,
@@ -76,20 +67,14 @@ export default function Home({ posts }: any) {
                   width: "100%",
                 }}>
                 {row.map((post, q) => (
-                  <Card
-                    key={q}
-                    post={post}
-                    // slug={post.frontmatter.slug}
-                    // title={post.frontmatter.title}
-                    // author={post.frontmatter.author || AUTHOR}
-                    // createdAt={post.frontmatter.date}
-                    // ordering={i * q}
-                  />
+                  <Card key={q} post={post} />
                 ))}
               </Stack>
             ))}
           </Stack>
         </Stack>
+        <Toolbar />
+        <Calendar />
         <Toolbar />
       </Stack>
     </Container>
@@ -99,20 +84,6 @@ export default function Home({ posts }: any) {
 export async function getStaticProps() {
   try {
     const articles = await getAllArticles(MAIN_POST_LIMIT);
-
-    // articles
-    //   .map((article: any) => article.data)
-    //   .sort(
-    //     (
-    //       a: { data: { publishedAt: number } },
-    //       b: { data: { publishedAt: number } }
-    //     ) => {
-    //       if (a.data.publishedAt > b.data.publishedAt) return 1;
-    //       if (a.data.publishedAt < b.data.publishedAt) return -1;
-
-    //       return 0;
-    //     }
-    //   );
 
     return {
       props: {

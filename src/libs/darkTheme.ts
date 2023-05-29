@@ -2,17 +2,18 @@ import { green, grey, red } from "@mui/material/colors";
 
 const darkTheme = {
   primary: {
-    main: "#234841",
+    main: "#65ecdb",
   },
   secondary: {
     main: "#537871",
     dark: "#344c47",
   },
   info: {
-    main: "#AEAC99",
+    main: "#ffa653",
   },
   success: {
     main: green[500],
+    dark: green[900],
   },
   danger: {
     main: red[500],

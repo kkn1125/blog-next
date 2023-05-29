@@ -1,20 +1,41 @@
-import React, { useState } from "react";
-import ListSubheader from "@mui/material/ListSubheader";
+import SendIcon from "@mui/icons-material/Send";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import Collapse from "@mui/material/Collapse";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import DraftsIcon from "@mui/icons-material/Drafts";
-import SendIcon from "@mui/icons-material/Send";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
-import StarBorder from "@mui/icons-material/StarBorder";
-import { Toolbar } from "@mui/material";
+import { useEffect, useState } from "react";
 
 export default function SideBar({ list }: { list: any[] }) {
   const [open, setOpen] = useState(true);
+  const [index, setIndex] = useState<any[]>([]);
+
+  useEffect(() => {
+    setIndex(new Array(list.length).fill(0));
+
+    // window.addEventListener("wheel", handleScrollMove);
+    return () => {
+      // window.removeEventListener("wheel", handleScrollMove);
+    };
+  }, []);
+
+  const convertIdString = (str: string) =>
+    str.replace(/#+/gm, "").trim().replace(/[\s]+/gm, "_");
+
+  // function handleScrollMove(e: MouseEvent) {
+  //   const main = document.querySelector("#main") as HTMLDivElement;
+  //   console.log(main.scrollTop);
+  //   const copy = index.map((i) => 0);
+  //   const idx =
+  //     list.findIndex(
+  //       (sub) =>
+  //         (document.getElementById(convertIdString(sub))?.offsetTop || 0) >=
+  //         main.scrollTop + 100
+  //     ) - 1 || 0;
+  //   if (idx > -1) {
+  //     copy[idx] = 1;
+  //   }
+  //   setIndex(copy.slice(0));
+  // }
 
   const handleClick = () => {
     setOpen(!open);
@@ -43,13 +64,22 @@ export default function SideBar({ list }: { list: any[] }) {
         </ListSubheader> */}
         </>
       }>
-      {list.map((item) => (
+      {list.map((item, i) => (
         <ListItemButton
-          sx={{ ml: (item.match(/#/gm).length - 1) * 5 }}
+          key={i}
+          sx={{
+            ml: (item.match(/#/gm).length - 1) * 5,
+          }}
           onClick={() => {
-            (document.getElementById("post") as HTMLDivElement).scrollTo({
+            const ii = document.getElementById(`${convertIdString(item)}`);
+            console.log(ii);
+            (document.getElementById("main") as HTMLDivElement).scrollTo({
               behavior: "smooth",
-              top: 68,
+              top:
+                Number(
+                  document.getElementById(`${convertIdString(item)}`)
+                    ?.offsetTop || 0
+                ) - 0,
               left: 0,
             });
           }}>

@@ -12,13 +12,15 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
-import { AUTHOR, BRAND_COLOR_LOGO, BRAND_NAME } from "@/util/global";
+import { AUTHOR, BRAND_COLOR_LOGO, BRAND_NAME, PROFILE } from "@/util/global";
 import { useRouter } from "next/navigation";
 import { useRouter as useNavigate } from "next/router";
 import Link from "next/link";
 import Image from "next/image";
 import { ColorModeContext } from "@/context/ThemeModeProvider";
-import { Stack } from "@mui/material";
+import { Stack, useTheme } from "@mui/material";
+import NightsStayIcon from "@mui/icons-material/NightsStay";
+import WbSunnyIcon from "@mui/icons-material/WbSunny";
 
 const pages = [
   {
@@ -34,6 +36,7 @@ const pages = [
 // const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function ResponsiveAppBar() {
+  const theme = useTheme();
   const colorMode = useContext(ColorModeContext) as any;
   const router = useRouter();
   const navigate = useNavigate();
@@ -46,9 +49,22 @@ function ResponsiveAppBar() {
 
   const settings = [
     {
-      name: "theme",
+      name:
+        theme.palette.mode === "dark" ? <WbSunnyIcon /> : <NightsStayIcon />,
       feature: () => {
         colorMode.toggleColorMode();
+      },
+    },
+    {
+      name: "portfolio",
+      feature: () => {
+        router.push("https://kkn1125.github.io/portfolio/#home");
+      },
+    },
+    {
+      name: "wiki",
+      feature: () => {
+        router.push("https://kkn1125.github.io/wikimson/");
       },
     },
   ];
@@ -94,7 +110,14 @@ function ResponsiveAppBar() {
               color: "inherit",
               textDecoration: "none",
             }}>
-            <Image width={40} height={40} alt='logo' src={BRAND_COLOR_LOGO} />
+            <Box
+              component='img'
+              width={40}
+              height={40}
+              alt='logo'
+              src={BRAND_COLOR_LOGO}
+              sx={{ display: { xs: "none", md: "flex" } }}
+            />
             <Typography
               variant='h6'
               noWrap
@@ -162,14 +185,24 @@ function ResponsiveAppBar() {
           </Box>
 
           {/* mobile middle */}
+
           <Box
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
               flex: 1,
               justifyContent: "center",
+              alignItems: "center",
+              gap: 1,
             }}>
-            <Typography
+            <Box
+              component='img'
+              width={40}
+              height={40}
+              alt='logo'
+              src={BRAND_COLOR_LOGO}
+            />
+            {/* <Typography
               variant='h5'
               noWrap
               component={Link}
@@ -182,7 +215,7 @@ function ResponsiveAppBar() {
                 textDecoration: "none",
               }}>
               {BRAND_NAME.toUpperCase()}
-            </Typography>
+            </Typography> */}
           </Box>
 
           {/* desktop menu */}
@@ -205,9 +238,9 @@ function ResponsiveAppBar() {
           </Box>
 
           <Box sx={{ flex: 0 }}>
-            <Tooltip title='Open settings'>
+            <Tooltip title="Owner's Profile">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt='Remy Sharp' src='/static/images/avatar/2.jpg' />
+                <Avatar alt={"devkimson"} src={PROFILE} />
               </IconButton>
             </Tooltip>
             <Menu
@@ -228,14 +261,19 @@ function ResponsiveAppBar() {
                 handleCloseNavMenu();
                 handleCloseUserMenu();
               }}>
-              {settings.map(({ name, feature }) => (
+              {settings.map(({ name, feature }, i) => (
                 <MenuItem
-                  key={name}
+                  key={i}
                   onClick={() => {
                     handleCloseUserMenu();
                     feature();
+                  }}
+                  sx={{
+                    justifyContent: "center",
                   }}>
-                  <Typography textAlign='center'>{name}</Typography>
+                  <Typography textAlign='center'>
+                    {typeof name === "string" ? name.toUpperCase() : name}
+                  </Typography>
                 </MenuItem>
               ))}
             </Menu>

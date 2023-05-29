@@ -43,9 +43,9 @@ function Index() {
         fontFamily={`"IBM Plex Sans KR", sans-serif`}>
         About
       </Typography>
-      <Alert>
-        <AlertTitle>블로그 디자인 변경</AlertTitle>
-        2023. 05. 29 일자로 블로그 UI가 업데이트 되었습니다.
+      <Alert color='success'>
+        <AlertTitle>블로그 디자인 변경 ⇒ Next.js 13!</AlertTitle>
+        2023. 05. 29 일자로 블로그 UI가 업데이트 되었습니다. 실험적이거나 불필요한 기능을 모두 제거하고 포스팅을 이전보다 편하게 볼 수 있습니다.
       </Alert>
 
       <Typography fontWeight={200} sx={{ my: 1 }}>
@@ -55,7 +55,6 @@ function Index() {
       </Typography>
 
       <List
-        dense={true}
         sx={{
           "& .MuiTypography-root.MuiListItemText-secondary": {
             color: "inherit",
@@ -64,19 +63,46 @@ function Index() {
         <ListItem>
           <ListItemText
             primary={"BLOG"}
-            secondary={<Link href={BLOG}>{BLOG}</Link>}
+            secondary={
+              <Typography
+                component={Link}
+                href={BLOG}
+                sx={{
+                  color: (theme) => theme.palette.text.disabled,
+                }}>
+                {BLOG}
+              </Typography>
+            }
           />
         </ListItem>
         <ListItem>
           <ListItemText
             primary='PORTFOLIO'
-            secondary={<Link href={PORTFOLIO}>{PORTFOLIO}</Link>}
+            secondary={
+              <Typography
+                component={Link}
+                href={PORTFOLIO}
+                sx={{
+                  color: (theme) => theme.palette.text.disabled,
+                }}>
+                {PORTFOLIO}
+              </Typography>
+            }
           />
         </ListItem>
         <ListItem>
           <ListItemText
             primary='GITHUB'
-            secondary={<Link href={GITHUB}>{GITHUB}</Link>}
+            secondary={
+              <Typography
+                component={Link}
+                href={GITHUB}
+                sx={{
+                  color: (theme) => theme.palette.text.disabled,
+                }}>
+                {GITHUB}
+              </Typography>
+            }
           />
         </ListItem>
       </List>

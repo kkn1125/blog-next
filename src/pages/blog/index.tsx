@@ -104,6 +104,7 @@ function Index({ posts, totalCount }: any) {
           onChange={handleChange}
         />
       </Stack>
+      <Toolbar />
     </Stack>
   );
 }

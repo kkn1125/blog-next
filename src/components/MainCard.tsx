@@ -32,6 +32,18 @@ function MainCard({ post }: CardInfo) {
         position: "relative",
         width: "100%",
         height: 500,
+        "& a": {
+          transition: "150ms ease-in-out",
+        },
+        "&:hover :is(a, .time)": {
+          color: "#000000",
+        },
+        "&:hover .dot": {
+          backgroundColor: "#000000",
+        },
+        "&:hover > a": {
+          filter: "brightness(0.9)",
+        },
       }}>
       <Box
         component={Link}
@@ -51,13 +63,11 @@ function MainCard({ post }: CardInfo) {
           backgroundImage: `url(${getReponsiveImageUrl(
             post.frontmatter.image
           )})`,
+
           // maskImage:
           //   "linear-gradient(to right, transparent 0%, #00000036 3%, #000000 5%, #000000 95%, #00000036 97%, transparent 100%)",
           transition: "ease-in-out 150ms",
           filter: "brightness(0.8)",
-          "&:hover::before": {
-            filter: "brightness(1)",
-          },
         }}
       />
       <Stack
@@ -66,11 +76,11 @@ function MainCard({ post }: CardInfo) {
           pt: 3,
           pr: 3,
           pb: 5,
-          pl: 10,
+          pl: 5,
           zIndex: 1,
           color: "#ffffff",
         }}>
-        <Stack direction='row' gap={1} alignItems='center'>
+        <Stack direction='row' gap={1} alignItems='center' className='time'>
           <Typography
             fontFamily={`"IBM Plex Sans KR", sans-serif`}
             fontWeight={200}
@@ -78,6 +88,7 @@ function MainCard({ post }: CardInfo) {
             {post.frontmatter.author || AUTHOR}
           </Typography>
           <Box
+            className='dot'
             sx={{
               width: 5,
               height: 5,

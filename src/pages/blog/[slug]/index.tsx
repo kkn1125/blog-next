@@ -75,44 +75,57 @@ const components: MDXComponents | MergeComponents = {
   ),
   hr: ({ children }) => <Box component='hr' />,
   h1: ({ children }) => (
-    <Box component='h1' id={(children as string).trim().replace(/[\s]+/, "_")}>
+    <Box
+      component='h1'
+      id={(children as string).trim().replace(/[\s]+/gm, "_")}>
       {children}
     </Box>
   ),
   h2: ({ children }) => (
-    <Box component='h2' id={(children as string).trim().replace(/[\s]+/, "_")}>
+    <Box
+      component='h2'
+      id={(children as string).trim().replace(/[\s]+/gm, "_")}>
       {children}
     </Box>
   ),
   h3: ({ children }) => (
-    <Box component='h3' id={(children as string).trim().replace(/[\s]+/, "_")}>
+    <Box
+      component='h3'
+      id={(children as string).trim().replace(/[\s]+/gm, "_")}>
       {children}
     </Box>
   ),
   h4: ({ children }) => (
-    <Box component='h4' id={(children as string).trim().replace(/[\s]+/, "_")}>
+    <Box
+      component='h4'
+      id={(children as string).trim().replace(/[\s]+/gm, "_")}>
       {children}
     </Box>
   ),
   h5: ({ children }) => (
-    <Box component='h5' id={(children as string).trim().replace(/[\s]+/, "_")}>
+    <Box
+      component='h5'
+      id={(children as string).trim().replace(/[\s]+/gm, "_")}>
       {children}
     </Box>
   ),
   h6: ({ children }) => (
-    <Box component='h6' id={(children as string).trim().replace(/[\s]+/, "_")}>
+    <Box
+      component='h6'
+      id={(children as string).trim().replace(/[\s]+/gm, "_")}>
       {children}
     </Box>
   ),
 };
 
-const metadatas = (title: string, desc: string) => ({
-  title: `${BRAND_NAME.toUpperCase()}::${title}`,
-  description: desc
-    .slice(0, 50)
-    .replace(/[<>']+/g, "")
-    .trim(),
+const metadatas = (frontmatter: any) => ({
+  title: `${BRAND_NAME.toUpperCase()}::${frontmatter.title}`,
+  description: frontmatter.description.trim(),
   author: AUTHOR,
+  url: location.origin + "/blog" + frontmatter.slug,
+  category: frontmatter.categories,
+  tag: frontmatter.tags,
+  image: frontmatter.image,
 });
 
 function Index({
@@ -157,7 +170,7 @@ function Index({
       commentEl.current?.appendChild(scriptEl);
     }, 500);
   }, [theme.palette.mode]);
-
+  console.log(responsivePost?.frontmatter);
   return (
     <>
       <SideBar
@@ -168,12 +181,7 @@ function Index({
       <Stack direction='row' sx={{ flex: 1 }}>
         {responsivePost && (
           <>
-            <GenerateHead
-              metadatas={metadatas(
-                responsivePost.frontmatter.title,
-                responsivePost.frontmatter.description
-              )}
-            />
+            <GenerateHead metadatas={metadatas(responsivePost.frontmatter)} />
             <PostLayout>
               <Box
                 component={"img"}

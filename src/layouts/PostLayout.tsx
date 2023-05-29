@@ -12,7 +12,7 @@ function PostLayout({
   children: React.ReactElement | React.ReactElement[];
 }) {
   return (
-    <Container maxWidth='md' sx={{ flex: 1 }} id='post'>
+    <Container maxWidth='md' sx={{ flex: 1 }}>
       {children}
     </Container>
   );

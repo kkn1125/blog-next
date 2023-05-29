@@ -51,7 +51,7 @@ export async function getSlugs() {
     if (articleSlug.match(/\.md(x)?/)) {
       convert.push({
         ...sources,
-        readingTime: readingTime("source").text,
+        readingTime: readingTime(source).text,
         originPath: articleSlug,
       });
     } else {
@@ -104,7 +104,7 @@ export async function getPaginationArticles(start: number, end: number) {
     if (articleSlug.match(/\.md(x)?/)) {
       convert.push({
         ...sources,
-        readingTime: readingTime("source").text,
+        readingTime: readingTime(source).text,
         originPath: articleSlug,
       });
     } else {
@@ -116,6 +116,7 @@ export async function getPaginationArticles(start: number, end: number) {
       .sort((a: any, b: any) =>
         b.frontmatter.date.localeCompare(a.frontmatter.date)
       )
+      .filter((article: any) => article.frontmatter.published)
       .slice(start, end + 1),
     totalAmount: articles.length,
   };
@@ -137,7 +138,7 @@ export async function getAllArticles(limit?: number) {
     if (articleSlug.match(/\.md(x)?/)) {
       convert.push({
         ...sources,
-        readingTime: readingTime("source").text,
+        readingTime: readingTime(source).text,
         originPath: articleSlug,
       });
     } else {
@@ -148,6 +149,7 @@ export async function getAllArticles(limit?: number) {
     .sort((a: any, b: any) =>
       b.frontmatter.date.localeCompare(a.frontmatter.date)
     )
+    .filter((article: any) => article.frontmatter.published)
     .slice(0, limit || undefined);
 }
 
@@ -167,7 +169,7 @@ export async function getArticlesByCategory(category: string) {
     if (articleSlug.match(/\.md(x)?/)) {
       convert.push({
         ...sources,
-        readingTime: readingTime("source").text,
+        readingTime: readingTime(source).text,
         originPath: articleSlug,
       });
     } else {
@@ -179,8 +181,12 @@ export async function getArticlesByCategory(category: string) {
     .sort((a: any, b: any) =>
       b.frontmatter.date.localeCompare(a.frontmatter.date)
     )
-    .filter((article: any) =>
-      article.frontmatter.categories.includes(category)
+    .filter(
+      (article: any) =>
+        article.frontmatter.published &&
+        article.frontmatter.categories
+          .map((category: string) => category.toLowerCase())
+          .includes(category.toLowerCase())
     );
 }
 
@@ -200,7 +206,7 @@ export async function getArticlesByTag(tag: string) {
     if (articleSlug.match(/\.md(x)?/)) {
       convert.push({
         ...sources,
-        readingTime: readingTime("source").text,
+        readingTime: readingTime(source).text,
         originPath: articleSlug,
       });
     } else {
@@ -212,5 +218,11 @@ export async function getArticlesByTag(tag: string) {
     .sort((a: any, b: any) =>
       b.frontmatter.date.localeCompare(a.frontmatter.date)
     )
-    .filter((article: any) => article.frontmatter.tags.includes(tag));
+    .filter(
+      (article: any) =>
+        article.frontmatter.published &&
+        article.frontmatter.tags
+          .map((tag: string) => tag.toLowerCase())
+          .includes(tag.toLowerCase())
+    );
 }

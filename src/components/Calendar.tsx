@@ -1,8 +1,10 @@
 import todoStorage from "@/todos/list.json";
-import { Button, Chip, Grid, Stack, Typography } from "@mui/material";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { Box, Button, Stack, Typography } from "@mui/material";
+import { DateCalendar } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { memo, useEffect, useState } from "react";
+import dayjs, { Dayjs } from "dayjs";
 
 const tagIcon = {
   undefined: "▷",
@@ -22,198 +24,81 @@ const tagIcon = {
   prj: "🔮",
 };
 
+const now = new Date();
+
 function Calendar() {
-  const [date, setDate] = useState<Date>(new Date());
+  const [date, setDate] = useState<string | dayjs.Dayjs | null>(null);
   const [todo, setTodo] = useState([]);
+
   let doneCount = 0;
   let cancelCount = 0;
   let totalCount = 0;
 
   const handleDate = (newDate: Date) => {
     const year = newDate.getFullYear();
-    const month = newDate.getMonth();
+    const month = newDate.getMonth() + 1;
     const date = newDate.getDate();
     setTodo((todoStorage as any)?.[year]?.[month]?.[date]);
-    setDate(newDate);
+    setDate(dayjs(`${year}-${month}-${date}`));
   };
 
   useEffect(() => {
     handleDate(new Date());
   }, []);
 
-  Object.values(todoStorage).forEach((year) =>
-    Object.values(year).forEach((month) =>
-      Object.values(month).forEach((date: any) => {
-        date.forEach((date: any) => {
-          if (date.tag === "check") {
-            doneCount += 1;
-          } else {
-            if (date.tag === "cancel" || date.tag === "rest") {
-              cancelCount += 1;
-            }
-          }
-        });
-        totalCount += date.length;
-      })
-    )
-  );
+  // Object.values(todoStorage).forEach((year) =>
+  //   Object.values(year).forEach((month) =>
+  //     Object.values(month).forEach((date: any) => {
+  //       date.forEach((date: any) => {
+  //         if (date.tag === "check") {
+  //           doneCount += 1;
+  //         } else {
+  //           if (date.tag === "cancel" || date.tag === "rest") {
+  //             cancelCount += 1;
+  //           }
+  //         }
+  //       });
+  //       totalCount += date.length;
+  //     })
+  //   )
+  // );
 
   const handleToday = () => {
-    handleDate(new Date());
+    setDate(
+      dayjs(`${now.getFullYear()}=${now.getMonth() + 1}-${now.getDate()}`)
+    );
   };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Grid container gap={3} justifyContent='center' alignItems='flex-start'>
-        <Grid
-          item
-          sx={{
-            "& .PrivatePickersSlideTransition-root.MuiDayPicker-slideTransition":
-              {
-                overflowX: "inherit",
-              },
-            "& .MuiDayPicker-monthContainer": {
-              overflow: "inherit",
-            },
-            "& .MuiTypography-root.MuiTypography-caption": {
-              color: (theme) => theme.palette.text.primary,
-              "&:last-child": {
-                color: (theme) => theme.palette.primary.main,
-              },
-              "&:first-of-type": {
-                color: (theme) => theme.palette.error.main,
-              },
-            },
-          }}>
-          <Stack
-            direction='row'
-            justifyContent='space-between'
-            alignItems='center'
-            sx={{
-              px: 3,
-            }}>
-            <Button onClick={handleToday}>Today</Button>
-            <Stack direction='row' sx={{ fontSize: 12 }}>
-              <Typography fontSize='inherit'>✅{doneCount}</Typography>
-              <Typography fontSize='inherit'>/</Typography>
-              <Typography fontSize='inherit'>❌{cancelCount}</Typography>
-              <Typography fontSize='inherit'>/</Typography>
-              <Typography fontSize='inherit'>🧾{totalCount}</Typography>
-            </Stack>
-          </Stack>
-          {/* <DateCalendar
+    <Stack direction={{ sm: "column", md: "row" }}>
+      <Box>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DateCalendar
             value={date}
-            onChange={handleDate}
-            renderDay={(date, selectedDates, pickersDayProps) => {
-              const _year = pickersDayProps.day.getFullYear();
-              const _month = pickersDayProps.day.getMonth();
-              const _date = pickersDayProps.day.getDate();
-              const isTodo = todoStorage?.[_year]?.[_month]?.[_date];
-              const today = new Date();
-              const year = today.getFullYear();
-              const month = today.getMonth();
-              const isSameYear = _year >= year;
-              const isSameMonth = _month >= month;
-              const isSameDay = _date === new Date().getDate();
-              const isHalfDone = () => {
-                if (isTodo) {
-                  const percent = parseInt(
-                    (isTodo.filter(
-                      (todo) =>
-                        todo.tag === "check" ||
-                        todo.tag === "rest" ||
-                        todo.tag === "cancel"
-                    ).length /
-                      isTodo.length) *
-                      100
-                  );
-                  return percent > 50;
-                }
-              };
-              return (
-                <Box component='div' role='row' key={date}>
-                  <Badge
-                    component='div'
-                    color={isHalfDone() ? "success" : "warning"}
-                    variant='dot'
-                    invisible={!isTodo}
-                    sx={{
-                      ...(_year === year &&
-                        _month === month &&
-                        isSameDay && {
-                          ".MuiTouchRipple-root": {
-                            borderRadius: "50%",
-                            border: "2px solid #2196f3",
-                          },
-                        }),
-                    }}>
-                    <PickersDay
-                      {...pickersDayProps}
-                      sx={{
-                        color: (theme) =>
-                          isSameYear && isSameMonth
-                            ? theme.palette.text.primary
-                            : theme.palette.text.primary + 66,
-                      }}
-                      outsideCurrentMonth={
-                        false
-                        // !(isSameYear && isSameMonth)
-                      }
-                      today
-                    />
-                  </Badge>
-                </Box>
-              );
-            }}
-          /> */}
-        </Grid>
-        <Grid item xs={12} md>
-          <Stack gap={3}>
-            {todo &&
-              todo.length > 0 &&
-              todo.map((item: any, idx) => (
-                <Stack
-                  key={item.todo + idx}
-                  direction={{
-                    xs: "column",
-                    md: "row",
-                  }}
-                  alignItems={{
-                    xs: "flex-start",
-                    md: "center",
-                  }}
-                  gap={{
-                    xs: 1,
-                    md: 3,
-                  }}>
-                  {/* <Chip component='span' label={idx + 1} color='info' /> */}
-                  <Stack direction='row' gap={1} alignItems='center'>
-                    <Chip
-                      component='span'
-                      label={(tagIcon as any)[item.tag]}
-                      variant='outlined'
-                      sx={{
-                        fontSize: (theme) => theme.typography.pxToRem(12),
-                      }}
-                    />
-                    <Typography component='span'>{item.todo}</Typography>
-                  </Stack>
-                  <Typography
-                    sx={{
-                      color: (theme) => theme.palette.grey[300],
-                      fontSize: (theme) => theme.typography.pxToRem(12),
-                    }}>
-                    {item.time}
-                  </Typography>
-                </Stack>
-              ))}
-            {(!todo || todo.length === 0) && (
-              <Typography>등록된 일정 없습니다.</Typography>
-            )}
-          </Stack>
-        </Grid>
-      </Grid>
-    </LocalizationProvider>
+            onChange={(newValue) => newValue && setDate(newValue)}
+          />
+        </LocalizationProvider>
+      </Box>
+      <Stack gap={1} sx={{ flex: 1 }}>
+        <Typography
+          fontWeight={700}
+          fontSize={(theme) => theme.typography.pxToRem(24)}>
+          {(date as Dayjs)?.format("YYYY. MM. DD / ddd")}
+        </Typography>
+        <Stack sx={{ flex: 1 }}>
+          <Typography
+            fontWeight={200}
+            fontSize={(theme) => theme.typography.pxToRem(14)}>
+            데이터 이관 중...
+          </Typography>
+        </Stack>
+        <Box>
+          <Button variant='outlined' color='success' onClick={handleToday}>
+            Today
+          </Button>
+        </Box>
+      </Stack>
+    </Stack>
   );
 }
 

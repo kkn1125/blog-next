@@ -24,6 +24,7 @@ function BaseLayout({
       <Header />
       <Toolbar />
       <Stack
+        id='main'
         direction='row'
         sx={{
           width: "100%",
