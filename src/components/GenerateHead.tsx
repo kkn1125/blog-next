@@ -28,7 +28,6 @@ function convertToMetadata(metadatas: Metadata) {
       dataSet.push(<meta name={`og:${k}`} content={v} />);
     }
   });
-  console.log(dataSet);
   return dataSet;
 }
 
