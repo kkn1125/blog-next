@@ -6,6 +6,7 @@ const lightTheme = {
   },
   secondary: {
     main: "#005248",
+    dark: "#2d3e3c",
   },
   info: {
     main: "#B8B27A",

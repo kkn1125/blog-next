@@ -2,19 +2,18 @@ import { Box, Divider, Paper, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import { useEffect } from "react";
 
-import { slugToBlogTrailingSlash } from "@/util/tool";
+import { getReponsiveImageUrl, slugToBlogTrailingSlash } from "@/util/tool";
 import anime from "animejs";
 import Link from "next/link";
+import { AUTHOR } from "@/util/global";
+
+const DESC_LIMIT = 70;
 
 interface CardInfo {
-  slug: string;
-  title: string;
-  author: string;
-  createdAt: string;
-  ordering: number;
+  post: any;
 }
 
-function MainCard({ slug, title, author, createdAt, ordering }: CardInfo) {
+function MainCard({ post }: CardInfo) {
   useEffect(() => {
     setTimeout(() => {
       anime({
@@ -26,83 +25,101 @@ function MainCard({ slug, title, author, createdAt, ordering }: CardInfo) {
   }, []);
 
   return (
-    <Paper
-      className='card-test'
-      elevation={3}
+    <Stack
+      direction='row'
+      alignItems={"flex-end"}
       sx={{
-        overflow: "hidden",
+        position: "relative",
         width: "100%",
-        "&:hover img": {
-          transform: "scale(1.1)",
-        },
+        height: 500,
       }}>
-      <Stack direction='row'>
-        <Box
-          sx={{
-            position: "relative",
-            width: "auto",
-            height: 300,
-            aspectRatio: "16/10",
-            maskImage:
-              "linear-gradient(to right, transparent 0%, #00000036 15%, #000000 30%, #000000 70%, #00000036 85%, transparent 90%), linear-gradient(to bottom, transparent 0%, #00000036 15%, #000000 30%, #000000 70%, #00000036 85%, transparent 90%)",
-          }}>
-          <Link href={slugToBlogTrailingSlash(slug)}>
-            <Image
-              src='https://picsum.photos/500/300?random=1'
-              alt='test'
-              // width={500}
-              // height={300}
-              fill
-              priority
-              style={{
-                transition: "ease-in-out 150ms",
-              }}
-            />
-          </Link>
-        </Box>
-        <Box
-          sx={{
-            p: 3,
-            zIndex: 1,
-          }}>
+      <Box
+        component={Link}
+        href={slugToBlogTrailingSlash(post.frontmatter.slug)}
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          // width: "100%",
+          // height: "100%",
+          content: '""',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundImage: `url(${getReponsiveImageUrl(
+            post.frontmatter.image
+          )})`,
+          // maskImage:
+          //   "linear-gradient(to right, transparent 0%, #00000036 3%, #000000 5%, #000000 95%, #00000036 97%, transparent 100%)",
+          transition: "ease-in-out 150ms",
+          filter: "brightness(0.8)",
+          "&:hover::before": {
+            filter: "brightness(1)",
+          },
+        }}
+      />
+      <Stack
+        gap={2}
+        sx={{
+          pt: 3,
+          pr: 3,
+          pb: 5,
+          pl: 10,
+          zIndex: 1,
+          color: "#ffffff",
+        }}>
+        <Stack direction='row' gap={1} alignItems='center'>
           <Typography
-            component={Link}
-            href={slugToBlogTrailingSlash(slug)}
             fontFamily={`"IBM Plex Sans KR", sans-serif`}
-            fontWeight={700}
-            fontSize={(theme) => theme.typography.pxToRem(18)}
-            sx={{
-              display: "inline-block",
-              mb: 1,
-              color: (theme) => `${theme.palette.text.primary} !important`,
-              textDecoration: "none",
-            }}>
-            {title}
+            fontWeight={200}
+            fontSize={(theme) => theme.typography.pxToRem(12)}>
+            {post.frontmatter.author || AUTHOR}
           </Typography>
-          <Stack direction='row' justifyContent={"space-between"} gap={1}>
-            <Typography
-              fontFamily={`"IBM Plex Sans KR", sans-serif`}
-              fontWeight={200}
-              fontSize={(theme) => theme.typography.pxToRem(12)}>
-              {author}
-            </Typography>
-            <Divider
-              orientation='vertical'
-              flexItem
-              sx={{
-                borderColor: "green",
-              }}
-            />
-            <Typography
-              fontFamily={`"IBM Plex Sans KR", sans-serif`}
-              fontWeight={200}
-              fontSize={(theme) => theme.typography.pxToRem(12)}>
-              {new Date(createdAt.slice(0, -6)).toLocaleString()}
-            </Typography>
-          </Stack>
-        </Box>
+          <Box
+            sx={{
+              width: 5,
+              height: 5,
+              borderRadius: "50%",
+              backgroundColor: "#ffffff",
+            }}
+          />
+          <Typography
+            fontFamily={`"IBM Plex Sans KR", sans-serif`}
+            fontWeight={200}
+            fontSize={(theme) => theme.typography.pxToRem(12)}>
+            {new Date(post.frontmatter.date.slice(0, -6)).toLocaleString()}
+          </Typography>
+        </Stack>
+        <Typography
+          component={Link}
+          href={slugToBlogTrailingSlash(post.frontmatter.slug)}
+          fontFamily={`"IBM Plex Sans KR", sans-serif`}
+          fontWeight={700}
+          fontSize={(theme) => theme.typography.pxToRem(28)}
+          sx={{
+            display: "inline-block",
+            color: "inherit",
+            textDecoration: "none",
+          }}>
+          {post.frontmatter.title}
+        </Typography>
+        <Typography
+          component={Link}
+          href={slugToBlogTrailingSlash(post.frontmatter.slug)}
+          fontFamily={`"IBM Plex Sans KR", sans-serif`}
+          fontWeight={200}
+          fontSize={(theme) => theme.typography.pxToRem(16)}
+          sx={{
+            display: "inline-block",
+            color: "inherit",
+            textDecoration: "none",
+          }}>
+          {post.frontmatter.description.slice(0, DESC_LIMIT) + "..."}
+        </Typography>
       </Stack>
-    </Paper>
+    </Stack>
   );
 }
 

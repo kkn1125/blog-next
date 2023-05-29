@@ -46,12 +46,18 @@ const components: MDXComponents | MergeComponents = {
   img: ({ children, ...rest }: any) => <img {...rest} children={children} />,
 };
 
-function PostLayout({ children }: { children: React.ReactElement }) {
+function PostLayout({
+  children,
+}: {
+  children: React.ReactElement | React.ReactElement[];
+}) {
   return (
     <MDXProvider components={components as MDXComponents | MergeComponents}>
       <Stack component='div' direction='row'>
         <SideBar />
-        <Container maxWidth="md" sx={{ position: "relative", flex:1 }}>{children}</Container>
+        <Container maxWidth='md' sx={{ position: "relative", flex: 1 }}>
+          {children}
+        </Container>
       </Stack>
     </MDXProvider>
   );

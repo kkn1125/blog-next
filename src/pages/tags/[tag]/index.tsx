@@ -1,8 +1,12 @@
 import Card from "@/components/Card";
 import GenerateHead from "@/components/GenerateHead";
-import { getAllArticles, getPaginationArticles } from "@/libs/service";
+import { getAllArticles, getArticlesByTag } from "@/libs/service";
 import { AUTHOR, BRAND_DESC, BRAND_NAME } from "@/util/global";
-import { slicedBundle } from "@/util/tool";
+import {
+  capitalize,
+  duplicateRemoveArrayFromTag,
+  slicedBundle,
+} from "@/util/tool";
 import {
   Container,
   Pagination,
@@ -13,10 +17,10 @@ import {
   useTheme,
 } from "@mui/material";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
 const metadatas = {
-  title: `${BRAND_NAME.toUpperCase()}::Blog`,
+  title: BRAND_NAME.toUpperCase(),
   description: BRAND_DESC,
   author: AUTHOR,
 };
@@ -32,9 +36,6 @@ function Index({ posts, totalCount }: any) {
 
   useEffect(() => {
     setTotalPageCount(Math.ceil(totalCount / PAGINATION_AMOUNT));
-    return () => {
-      setPostList((postList) => []);
-    };
   }, []);
 
   useEffect(() => {
@@ -49,8 +50,7 @@ function Index({ posts, totalCount }: any) {
   }, [router.query, posts]);
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    router.push(`/blog/?page=${value}/`);
-    setPage((page) => value);
+    router.push(`/tags/${router.query.tag}/?page=${value}/`);
   };
 
   return (
@@ -60,16 +60,16 @@ function Index({ posts, totalCount }: any) {
       sx={{
         height: "100%",
       }}>
-      <Stack sx={{ flex: 1 }}>
-        <GenerateHead metadatas={metadatas} />
-        <Typography
-          fontSize={(theme) => theme.typography.pxToRem(52)}
-          fontWeight={500}
-          gutterBottom
-          fontFamily={`"IBM Plex Sans KR", sans-serif`}>
-          All Blogs
-        </Typography>
-      </Stack>
+      <GenerateHead metadatas={metadatas} />
+      <Typography
+        fontSize={(theme) => theme.typography.pxToRem(52)}
+        fontWeight={500}
+        align='center'
+        gutterBottom
+        fontFamily={`"IBM Plex Sans KR", sans-serif`}>
+        🔎 Tag [ "{capitalize(router.query.tag as string)}" ]
+      </Typography>
+      <Toolbar />
       <Stack
         gap={5}
         sx={{
@@ -109,51 +109,37 @@ function Index({ posts, totalCount }: any) {
 
 export default Index;
 
-export const getStaticProps = async () => {
-  const posts = await getAllArticles();
+export async function getStaticProps({ params }: any) {
+  try {
+    const posts = await getArticlesByTag(params.tag);
+    console.log("tag!!!!", params.tag, posts.length);
+    return {
+      props: {
+        posts: posts,
+        totalCount: posts.length,
+      },
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
 
+export const getStaticPaths = async () => {
+  if (process.env.SKIP_BUILD_STATIC_GENERATION) {
+    return {
+      paths: [],
+      fallback: "blocking",
+    };
+  }
+
+  const articles = await getAllArticles();
+  const tags = duplicateRemoveArrayFromTag(articles);
   return {
-    props: {
-      posts: posts,
-      totalCount: posts.length,
-    },
+    paths: tags.map((tag: any) => ({
+      params: {
+        tag,
+      },
+    })),
+    fallback: false,
   };
 };
-
-/* post paginations */
-// export const getStaticProps = async ({ params }: any) => {
-//   const currentPage = Number(params.page);
-//   const start = (currentPage - 1) * PAGINATION_AMOUNT;
-//   const end = PAGINATION_AMOUNT * currentPage;
-//   const { posts, totalAmount } = await getPaginationArticles(start, end);
-
-//   return {
-//     props: {
-//       posts: posts,
-//       totalCount: totalAmount,
-//     },
-//   };
-// };
-
-// export const getStaticPaths = async () => {
-//   if (process.env.SKIP_BUILD_STATIC_GENERATION) {
-//     return {
-//       paths: [],
-//       fallback: "blocking",
-//     };
-//   }
-
-//   const posts = await getAllArticles();
-
-//   const totalPages = Math.ceil(posts.length / PAGINATION_AMOUNT);
-//   const dummyArray = new Array(totalPages).fill(0);
-
-//   return {
-//     paths: dummyArray.map((num, i) => ({
-//       params: {
-//         page: String(i + 1),
-//       },
-//     })),
-//     fallback: false,
-//   };
-// };

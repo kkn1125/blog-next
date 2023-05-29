@@ -9,6 +9,7 @@ import { Box, Divider, Stack, Typography } from "@mui/material";
 import { MDXRemote } from "next-mdx-remote";
 import Image from "next/image";
 import { MDXProvider } from "@mdx-js/react";
+import { getReponsiveImageUrl } from "@/util/tool";
 
 const metadatas = (title: string, desc: string) => ({
   title: `${BRAND_NAME.toUpperCase()}::${title}`,
@@ -28,12 +29,6 @@ function Index({
   origin: any;
   post: any;
 }) {
-  const [data, setData] = useState<any>(null);
-
-  useEffect(() => {
-    setData(post);
-  }, []);
-
   return (
     <Stack sx={{ flex: 1 }}>
       <GenerateHead
@@ -43,25 +38,21 @@ function Index({
         )}
       />
       <PostLayout>
-        {data && (
-          <>
-            <Box
-              component={"img"}
-              src={`/static${data.frontmatter.image}`}
-              width={"100%"}
-            />
-            <Typography
-              fontSize={(theme) => theme.typography.pxToRem(32)}
-              fontWeight={700}
-              fontFamily={`"IBM Plex Sans KR", sans-serif`}
-              align='center'
-              gutterBottom>
-              {data?.frontmatter?.title || ""}
-            </Typography>
-            <Divider sx={{ my: 3 }} />
-            <MDXRemote {...data} />
-          </>
-        )}
+        <Box
+          component={"img"}
+          src={getReponsiveImageUrl(post.frontmatter.image)}
+          width={"100%"}
+        />
+        <Typography
+          fontSize={(theme) => theme.typography.pxToRem(32)}
+          fontWeight={700}
+          fontFamily={`"IBM Plex Sans KR", sans-serif`}
+          align='center'
+          gutterBottom>
+          {post.frontmatter.title || ""}
+        </Typography>
+        <Divider sx={{ my: 3 }} />
+        <MDXRemote {...post} />
       </PostLayout>
     </Stack>
   );

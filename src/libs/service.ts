@@ -35,20 +35,7 @@ export async function getAllSlugNames() {
 }
 
 export async function getSlugs() {
-  // const paths = sync(`${basePath}/*.mdx`);
-  // const articles = globSync(blogMdxDirs);
-
-  // const pathList = articles.map((path) => {
-  //   // holds the paths to the directory of the article
-  //   const pathContent = path.split(/\/+|\\+/);
-  //   const fileName = pathContent[pathContent.length - 1];
-  //   const [slug, _extension] = fileName.split(".");
-
-  //   return slug;
-  // });
-  // console.log('pathList',pathList)
   const articles = globSync(blogMdxDirs);
-  console.log(articles);
 
   let convert: any = [];
 
@@ -61,17 +48,13 @@ export async function getSlugs() {
 
     const sources = mdx || data;
 
-    // console.log("data", sources);
-
     if (articleSlug.match(/\.md(x)?/)) {
       convert.push({
         ...sources,
-        // slug: articleSlug.replace(".mdx", "").replace(/(\\|\/)+/, '/'),
         readingTime: readingTime("source").text,
         originPath: articleSlug,
       });
     } else {
-      // return allArticles;
     }
   }
   const slugs = convert
@@ -80,20 +63,10 @@ export async function getSlugs() {
     )
     .map((a: any) => a.frontmatter.slug.replace(/(\/|\\)+/g, "").trim());
 
-  // const slugs = articles.map((article: any) =>
-  //   article.slug.replace(/(\/|\\)+/g, "").trim()
-  // );
   return slugs;
 }
 
 export async function getArticleFromSlug(slug: string) {
-  // const articleDir = path.join(articlesPath, `${slug}.mdx`);
-
-  // const source = execSync(`cat ${articleDir}`).toString('utf-8')
-
-  // const articles = globSync("src/database/**/*.mdx");
-  // console.log(articles);
-
   const articles = await getAllArticles();
   const article = articles.find((article: any) =>
     article.frontmatter.slug.match(slug)
@@ -113,13 +86,10 @@ export async function getArticleFromSlug(slug: string) {
       ...Object.fromEntries(Object.entries(data).map(([k, v]) => [k, v || ""])),
     },
   };
-  // const sources = serializeMdx(source);
-  // return sources;
 }
 
-export async function getAllArticles(limit?: number) {
+export async function getPaginationArticles(start: number, end: number) {
   const articles = globSync(blogMdxDirs);
-
   let convert: any = [];
 
   for (let i = 0; i < articles.length; i++) {
@@ -131,48 +101,49 @@ export async function getAllArticles(limit?: number) {
 
     const sources = mdx || data;
 
-    // console.log("data", sources);
-
     if (articleSlug.match(/\.md(x)?/)) {
       convert.push({
         ...sources,
-        // slug: articleSlug.replace(".mdx", "").replace(/(\\|\/)+/, '/'),
         readingTime: readingTime("source").text,
         originPath: articleSlug,
       });
     } else {
-      // return allArticles;
     }
   }
 
-  // const convert = await articles.reduce(
-  //   async (allArticles: any, articleSlug) => {
-  //     // get parsed data from mdx files in the "articles" dir
-  //     const source = fs.readFileSync(path.join(articleSlug), "utf-8");
+  return {
+    posts: convert
+      .sort((a: any, b: any) =>
+        b.frontmatter.date.localeCompare(a.frontmatter.date)
+      )
+      .slice(start, end + 1),
+    totalAmount: articles.length,
+  };
+}
 
-  //     const mdx = await serializeMdx(source);
-  //     const { data } = matter(source);
+export async function getAllArticles(limit?: number) {
+  const articles = globSync(blogMdxDirs);
+  let convert: any = [];
 
-  //     const sources = mdx || data;
+  for (let i = 0; i < articles.length; i++) {
+    const articleSlug = articles[i];
+    const source = fs.readFileSync(path.join(articleSlug), "utf-8");
 
-  //     // console.log("data", sources);
+    const mdx = await serializeMdx(source);
+    const { data } = matter(source);
 
-  //     if (articleSlug.match(/\.md(x)?/)) {
-  //       return [
-  //         {
-  //           ...sources,
-  //           // slug: articleSlug.replace(".mdx", "").replace(/(\\|\/)+/, '/'),
-  //           readingTime: readingTime("source").text,
-  //           originPath: articleSlug,
-  //         },
-  //         ...allArticles,
-  //       ];
-  //     } else {
-  //       return allArticles;
-  //     }
-  //   },
-  //   []
-  // );
+    const sources = mdx || data;
+
+    if (articleSlug.match(/\.md(x)?/)) {
+      convert.push({
+        ...sources,
+        readingTime: readingTime("source").text,
+        originPath: articleSlug,
+      });
+    } else {
+    }
+  }
+
   return convert
     .sort((a: any, b: any) =>
       b.frontmatter.date.localeCompare(a.frontmatter.date)
@@ -181,30 +152,66 @@ export async function getAllArticles(limit?: number) {
 }
 
 export async function getArticlesByCategory(category: string) {
+  console.log("category:", category);
   const articles = globSync(blogMdxDirs);
-  console.log('articles???',articles)
-  return articles
-    .reduce((allArticles: any, articleSlug) => {
-      // get parsed data from mdx files in the "articles" dir
-      const source = fs.readFileSync(
-        path.join(process.cwd(), basePath, articleSlug),
-        "utf-8"
-      );
-      const { data } = matter(source);
+  let convert: any = [];
 
-      if (articleSlug.match(/\.mdx/)) {
-        return [
-          {
-            ...data,
-            slug: articleSlug.replace(".mdx", ""),
-            readingTime: readingTime(source).text,
-          },
-          ...allArticles,
-        ];
-      } else {
-        return allArticles;
-      }
-    }, [])
-    .sort((a: any, b: any) => b.date.localeCompare(a.date))
-    .filter((article: any) => article.categories === category);
+  for (let i = 0; i < articles.length; i++) {
+    const articleSlug = articles[i];
+    const source = fs.readFileSync(path.join(articleSlug), "utf-8");
+
+    const mdx = await serializeMdx(source);
+    const { data } = matter(source);
+
+    const sources = mdx || data;
+
+    if (articleSlug.match(/\.md(x)?/)) {
+      convert.push({
+        ...sources,
+        readingTime: readingTime("source").text,
+        originPath: articleSlug,
+      });
+    } else {
+      // return allArticles;
+    }
+  }
+
+  return convert
+    .sort((a: any, b: any) =>
+      b.frontmatter.date.localeCompare(a.frontmatter.date)
+    )
+    .filter((article: any) =>
+      article.frontmatter.categories.includes(category)
+    );
+}
+
+export async function getArticlesByTag(tag: string) {
+  const articles = globSync(blogMdxDirs);
+  let convert: any = [];
+
+  for (let i = 0; i < articles.length; i++) {
+    const articleSlug = articles[i];
+    const source = fs.readFileSync(path.join(articleSlug), "utf-8");
+
+    const mdx = await serializeMdx(source);
+    const { data } = matter(source);
+
+    const sources = mdx || data;
+
+    if (articleSlug.match(/\.md(x)?/)) {
+      convert.push({
+        ...sources,
+        readingTime: readingTime("source").text,
+        originPath: articleSlug,
+      });
+    } else {
+      // return allArticles;
+    }
+  }
+
+  return convert
+    .sort((a: any, b: any) =>
+      b.frontmatter.date.localeCompare(a.frontmatter.date)
+    )
+    .filter((article: any) => article.frontmatter.tags.includes(tag));
 }

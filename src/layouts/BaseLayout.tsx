@@ -1,5 +1,4 @@
-"use client";
-
+import { Modal } from "@/components/dev/Modal";
 import { Stack, Box, Toolbar, Container } from "@mui/material";
 import React from "react";
 import Footer from "../components/Footer";
@@ -23,6 +22,7 @@ function BaseLayout({
       }}>
       <Header />
       <Toolbar />
+      <Toolbar />
       <Stack
         direction='row'
         sx={{
@@ -40,11 +40,10 @@ function BaseLayout({
           }}>
           <SideBar />
         </Box> */}
-        <Container maxWidth='xl'>
-          <Toolbar />
-          {children}
-        </Container>
+        <Box sx={{ flex: 1 }}>{children}</Box>
       </Stack>
+      <Modal />
+      <Toolbar />
       <Footer />
     </Stack>
   );

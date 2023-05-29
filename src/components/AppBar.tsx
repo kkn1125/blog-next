@@ -12,11 +12,13 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
-import { AUTHOR, BRAND_NAME } from "@/util/global";
+import { AUTHOR, BRAND_COLOR_LOGO, BRAND_NAME } from "@/util/global";
 import { useRouter } from "next/navigation";
 import { useRouter as useNavigate } from "next/router";
 import Link from "next/link";
+import Image from "next/image";
 import { ColorModeContext } from "@/context/ThemeModeProvider";
+import { Stack } from "@mui/material";
 
 const pages = [
   {
@@ -82,23 +84,31 @@ function ResponsiveAppBar() {
       }}>
       <Container maxWidth='xl'>
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
-          <Typography
-            variant='h6'
-            noWrap
+          <Stack
             component={Link}
             href='/'
-            fontWeight={700}
-            letterSpacing={"0.3rem"}
-            fontFamily={`"IBM Plex Sans KR", sans-serif`}
+            direction='row'
+            alignItems='center'
+            gap={1}
             sx={{
-              mr: 2,
-              display: { xs: "none", md: "flex" },
               color: "inherit",
               textDecoration: "none",
             }}>
-            {BRAND_NAME.toUpperCase()}
-          </Typography>
+            <Image width={40} height={40} alt='logo' src={BRAND_COLOR_LOGO} />
+            <Typography
+              variant='h6'
+              noWrap
+              fontWeight={700}
+              letterSpacing={"0.3rem"}
+              fontFamily={`"IBM Plex Sans KR", sans-serif`}
+              sx={{
+                mr: 2,
+                display: { xs: "none", md: "flex" },
+                color: "inherit",
+              }}>
+              {BRAND_NAME.toUpperCase()}
+            </Typography>
+          </Stack>
 
           <Box
             sx={{

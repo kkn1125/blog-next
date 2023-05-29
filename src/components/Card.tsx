@@ -1,20 +1,21 @@
-import { Box, Divider, Paper, Stack, Typography } from "@mui/material";
-import Image from "next/image";
+import { Box, Chip, Paper, Stack, Typography } from "@mui/material";
 import { useEffect } from "react";
 
-import { slugToBlogTrailingSlash } from "@/util/tool";
+import { AUTHOR } from "@/util/global";
+import { getReponsiveImageUrl, slugToBlogTrailingSlash } from "@/util/tool";
 import anime from "animejs";
 import Link from "next/link";
+import FolderOpenIcon from "@mui/icons-material/FolderOpen";
+import TagIcon from "@mui/icons-material/Tag";
+import { useRouter } from "next/router";
 
 interface CardInfo {
-  slug: string;
-  title: string;
-  author: string;
-  createdAt: string;
-  ordering: number;
+  post: any;
 }
 
-function Card({ slug, title, author, createdAt, ordering }: CardInfo) {
+function Card({ post }: CardInfo) {
+  const router = useRouter();
+
   useEffect(() => {
     setTimeout(() => {
       anime({
@@ -32,6 +33,7 @@ function Card({ slug, title, author, createdAt, ordering }: CardInfo) {
       sx={{
         // width: 300,
         flex: 1,
+        maxWidth: 350,
         overflow: "hidden",
         "&:hover img": {
           transform: "scale(1.1)",
@@ -42,32 +44,38 @@ function Card({ slug, title, author, createdAt, ordering }: CardInfo) {
           sx={{
             position: "relative",
             width: "auto",
-            height: 300,
+            height: 250,
             maskImage:
               "linear-gradient(#000000 70%, #00000036 85%, transparent 90%)",
           }}>
-          <Link href={slugToBlogTrailingSlash(slug)}>
-            <Image
-              src='https://picsum.photos/500/300?random=1'
-              alt='test'
-              // width={500}
-              // height={300}
-              fill
-              priority
-              style={{
+          <Link href={slugToBlogTrailingSlash(post.frontmatter.slug)}>
+            <Box
+              // component={"img"}
+              // src={}
+              // alt='test'
+              sx={{
+                backgroundImage: `url(${getReponsiveImageUrl(
+                  post.frontmatter.image
+                )})`,
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "center 0px",
+                backgroundSize: "cover",
+                width: "100%",
+                height: "100%",
                 transition: "ease-in-out 150ms",
               }}
             />
           </Link>
         </Box>
-        <Box
+        <Stack
+          gap={1}
           sx={{
             p: 3,
             zIndex: 1,
           }}>
           <Typography
             component={Link}
-            href={slugToBlogTrailingSlash(slug)}
+            href={slugToBlogTrailingSlash(post.frontmatter.slug)}
             fontFamily={`"IBM Plex Sans KR", sans-serif`}
             fontWeight={700}
             fontSize={(theme) => theme.typography.pxToRem(18)}
@@ -77,30 +85,77 @@ function Card({ slug, title, author, createdAt, ordering }: CardInfo) {
               color: (theme) => `${theme.palette.text.primary} !important`,
               textDecoration: "none",
             }}>
-            {title}
+            {post.frontmatter.title}
           </Typography>
-          <Stack direction='row' justifyContent={"space-between"} gap={1}>
+          <Stack direction='row' gap={1} alignItems={"center"}>
             <Typography
               fontFamily={`"IBM Plex Sans KR", sans-serif`}
               fontWeight={200}
               fontSize={(theme) => theme.typography.pxToRem(12)}>
-              {author}
+              {post.frontmatter.author || AUTHOR}
             </Typography>
-            <Divider
-              orientation='vertical'
-              flexItem
+            <Box
               sx={{
-                borderColor: "green",
+                width: 3,
+                height: 3,
+                borderRadius: "50%",
+                backgroundColor: (theme) => theme.palette.text.primary + "a6",
               }}
             />
             <Typography
               fontFamily={`"IBM Plex Sans KR", sans-serif`}
               fontWeight={200}
               fontSize={(theme) => theme.typography.pxToRem(12)}>
-              {new Date(createdAt.slice(0, -6)).toLocaleString()}
+              {new Date(post.frontmatter.date.slice(0, -6)).toLocaleString()}
             </Typography>
           </Stack>
-        </Box>
+          <Stack direction='row' gap={1} flexWrap='wrap'>
+            {post.frontmatter.categories.map((category: string, i: number) => (
+              <Link key={i} href={`/categories/${category}/`}>
+                <Chip
+                  size='small'
+                  icon={<FolderOpenIcon />}
+                  label={category}
+                  variant={
+                    router.query.category === category ? "filled" : "outlined"
+                  }
+                  color='info'
+                  sx={{
+                    cursor: "pointer",
+                    px: 1,
+                    "&:hover": {
+                      color: (theme) =>
+                        theme.palette.mode === "dark" ? "#000000" : "#ffffff",
+                      backgroundColor: (theme) => theme.palette.text.primary,
+                    },
+                  }}
+                />
+              </Link>
+            ))}
+          </Stack>
+          <Stack direction='row' gap={1} flexWrap='wrap'>
+            {post.frontmatter.tags.map((tag: string, i: number) => (
+              <Link key={i} href={`/tags/${tag}/`}>
+                <Chip
+                  size='small'
+                  icon={<TagIcon />}
+                  label={tag}
+                  variant={router.query.tag === tag ? "filled" : "outlined"}
+                  color='primary'
+                  sx={{
+                    cursor: "pointer",
+                    px: 1,
+                    "&:hover": {
+                      color: (theme) =>
+                        theme.palette.mode === "dark" ? "#000000" : "#ffffff",
+                      backgroundColor: (theme) => theme.palette.text.primary,
+                    },
+                  }}
+                />
+              </Link>
+            ))}
+          </Stack>
+        </Stack>
       </Stack>
     </Paper>
   );
