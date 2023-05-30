@@ -60,6 +60,7 @@ export async function getSlugs() {
     .sort((a: any, b: any) =>
       b.frontmatter.date.localeCompare(a.frontmatter.date)
     )
+    .filter((article: any) => article.frontmatter.published)
     .map((a: any) => a.frontmatter.slug.replace(/(\/|\\)+/g, "").trim());
 
   return slugs;

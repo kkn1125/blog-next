@@ -187,6 +187,8 @@ function ResponsiveAppBar() {
           {/* mobile middle */}
 
           <Box
+            component={Link}
+            href='/'
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },

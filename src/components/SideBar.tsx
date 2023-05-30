@@ -1,4 +1,5 @@
 import SendIcon from "@mui/icons-material/Send";
+import { Toolbar } from "@mui/material";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -44,16 +45,17 @@ export default function SideBar({ list }: { list: any[] }) {
   return (
     <List
       sx={{
-        position: "sticky",
+        position: { xs: "static", md: "sticky" },
         top: 0,
         width: 300,
-        bgcolor: "background.paper",
+        bgcolor: "inherit",
         // height: "calc(100vh - 68px)",
         overflow: "auto",
       }}
       component='nav'
       subheader={
         <>
+          <Toolbar />
           {/* <ListSubheader
           component='div'
           sx={{

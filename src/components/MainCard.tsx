@@ -63,7 +63,6 @@ function MainCard({ post }: CardInfo) {
           backgroundImage: `url(${getReponsiveImageUrl(
             post.frontmatter.image
           )})`,
-
           // maskImage:
           //   "linear-gradient(to right, transparent 0%, #00000036 3%, #000000 5%, #000000 95%, #00000036 97%, transparent 100%)",
           transition: "ease-in-out 150ms",

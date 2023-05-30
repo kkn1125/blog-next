@@ -1,0 +1,46 @@
+Loaded env from C:\kkn_folder\test\blog3\.env
+✨ [next-sitemap] Loading next-sitemap config: file:///C:/kkn_folder/test/blog3/next-sitemap.config.js
+✅ [next-sitemap] Generation completed
+┌───────────────┬────────┐
+│    (index)    │ Values │
+├───────────────┼────────┤
+│ indexSitemaps │   1    │
+│   sitemaps    │   1    │
+└───────────────┴────────┘
+-----------------------------------------------------
+ SITEMAP INDICES 
+-----------------------------------------------------
+
+   ○ https://kkn1125.github.io/sitemap.xml
+
+
+-----------------------------------------------------
+ SITEMAPS 
+-----------------------------------------------------
+
+   ○ https://kkn1125.github.io/sitemap-0.xml
+
+
+Loaded env from C:\kkn_folder\test\blog3\.env
+✨ [next-sitemap] Loading next-sitemap config: file:///C:/kkn_folder/test/blog3/next-sitemap.config.js
+✅ [next-sitemap] Generation completed
+┌───────────────┬────────┐
+│    (index)    │ Values │
+├───────────────┼────────┤
+│ indexSitemaps │   1    │
+│   sitemaps    │   1    │
+└───────────────┴────────┘
+-----------------------------------------------------
+ SITEMAP INDICES 
+-----------------------------------------------------
+
+   ○ https://kkn1125.github.io/sitemap.xml
+
+
+-----------------------------------------------------
+ SITEMAPS 
+-----------------------------------------------------
+
+   ○ https://kkn1125.github.io/sitemap-0.xml
+
+

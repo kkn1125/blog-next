@@ -8,6 +8,7 @@ import { MergeComponents } from "@mdx-js/react/lib";
 import {
   Box,
   CircularProgress,
+  Container,
   Divider,
   Stack,
   Toolbar,
@@ -32,7 +33,8 @@ const components: MDXComponents | MergeComponents = {
       <SyntaxHighlighter
         showLineNumbers
         language={language}
-        style={tomorrowNight}>
+        style={tomorrowNight}
+        customStyle={{ overflowX: "auto" }}>
         {children}
       </SyntaxHighlighter>
     ) : (
@@ -73,7 +75,7 @@ const components: MDXComponents | MergeComponents = {
       {children}
     </Box>
   ),
-  hr: ({ children }) => <Box component='hr' />,
+  hr: ({ children }) => <Divider sx={{ my: 3, width: "100%" }} flexItem />,
   h1: ({ children }) => (
     <Box
       component='h1'
@@ -171,65 +173,95 @@ function Index({
     }, 500);
   }, [theme.palette.mode]);
   return (
-    <>
-      <SideBar
-        list={content
-          .split(/[\n\r]/g)
-          .filter((str: string) => str && str.match(/^#+/))}
-      />
-      <Stack direction='row' sx={{ flex: 1 }}>
-        {responsivePost && (
-          <>
-            <GenerateHead metadatas={metadatas(responsivePost.frontmatter)} />
-            <PostLayout>
-              <Box
-                component={"img"}
-                src={getReponsiveImageUrl(responsivePost.frontmatter.image)}
-                width={"100%"}
-              />
-              <Typography
-                fontSize={(theme) => theme.typography.pxToRem(32)}
-                fontWeight={700}
-                fontFamily={`"IBM Plex Sans KR", sans-serif`}
-                align='center'
-                gutterBottom>
-                {responsivePost.frontmatter.title || ""}
-              </Typography>
-              <Divider sx={{ my: 3 }} />
-              <MDXRemote
-                {...responsivePost}
-                components={components as MDXComponents | MergeComponents}
-              />
+    <Stack
+      id='post-wrap'
+      direction={{ xs: "column", md: "row" }}
+      sx={{
+        width: { xs: "100%", md: "70%" },
+        height: "fit-content",
+        position: "relative",
+      }}>
+      <Box>
+        <SideBar
+          list={content
+            .split(/[\n\r]/g)
+            .filter((str: string) => str && str.match(/^#+/))}
+        />
+      </Box>
+
+      {responsivePost && (
+        <Stack
+          direction={{ xs: "column", md: "row" }}
+          justifyContent={"center"}
+          alignItems={"center"}
+          sx={{
+            flex: 1,
+            wordBreak: "break-word",
+            whiteSpace: "break-spaces",
+          }}>
+          <GenerateHead metadatas={metadatas(responsivePost.frontmatter)} />
+          <Stack
+            sx={{
+              width: { xs: "100%", md: "80%" },
+              px: 2,
+            }}>
+            <Box>
               <Box
                 sx={{
-                  minHeight: 50,
-                }}>
-                {mode && (
-                  <Stack
-                    direction='row'
-                    justifyContent='center'
-                    sx={{
-                      my: 5,
-                      minHeight: 230,
-                    }}>
-                    <CircularProgress color='success' />
-                  </Stack>
-                )}
-                <Box
+                  backgroundImage: `url(${getReponsiveImageUrl(
+                    responsivePost.frontmatter.image
+                  )})`,
+                  backgroundSize: { xs: "contain", md: "cover" },
+                  backgroundPosition: "center center",
+                  backgroundRepeat: "no-repeat",
+                  width: { xs: "auto", md: "100%" },
+                  height: { xs: 300, md: 700 },
+                }}
+              />
+            </Box>
+            <Typography
+              fontSize={(theme) => theme.typography.pxToRem(32)}
+              fontWeight={700}
+              fontFamily={`"IBM Plex Sans KR", sans-serif`}
+              align='center'
+              gutterBottom>
+              {responsivePost.frontmatter.title || ""}
+            </Typography>
+            <Divider sx={{ my: 3, width: "100%" }} flexItem />
+            <MDXRemote
+              {...responsivePost}
+              components={components as MDXComponents | MergeComponents}
+            />
+            <Box
+              sx={{
+                minHeight: 50,
+              }}>
+              {mode && (
+                <Stack
+                  direction='row'
+                  justifyContent='center'
                   sx={{
-                    display: mode ? "hidden" : "block",
-                    "& .utterances": {
-                      maxWidth: "90%",
-                    },
-                  }}
-                  ref={commentEl}
-                />
-              </Box>
-            </PostLayout>
-          </>
-        )}
-      </Stack>
-    </>
+                    my: 5,
+                    minHeight: 230,
+                  }}>
+                  <CircularProgress color='success' />
+                </Stack>
+              )}
+              <Box
+                sx={{
+                  display: mode ? "hidden" : "block",
+                  "& .utterances": {
+                    maxWidth: "90%",
+                  },
+                }}
+                ref={commentEl}
+              />
+            </Box>
+            <Toolbar />
+          </Stack>
+        </Stack>
+      )}
+    </Stack>
   );
 }
 
@@ -258,6 +290,7 @@ export const getStaticPaths = async () => {
   }
 
   const slugs = await getSlugs();
+  
   return {
     paths: slugs.map((slug: string) => ({
       params: {

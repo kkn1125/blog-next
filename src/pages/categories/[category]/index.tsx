@@ -73,7 +73,7 @@ function Index({ posts, totalCount }: any) {
         align='center'
         gutterBottom
         fontFamily={`"IBM Plex Sans KR", sans-serif`}>
-        🔎 Category [ "{capitalize(router.query.category as string)}" ]
+        🔎 Category ["{capitalize(router.query.category as string)}"]
       </Typography>
       <Toolbar />
       <Stack

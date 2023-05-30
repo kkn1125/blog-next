@@ -20,6 +20,7 @@ function BaseLayout({
       sx={{
         height: "100%",
         maxHeight: "100vh",
+        overflow: { xs: "auto", md: "unset" },
       }}>
       <Header />
       <Toolbar />
@@ -27,11 +28,11 @@ function BaseLayout({
         id='main'
         direction='row'
         sx={{
-          width: "100%",
           flex: 1,
-          overflow: "auto",
+          overflow: { xs: "unset", md: "auto" },
           position: "relative",
-        }}>
+        }}
+        justifyContent='center'>
         {children}
       </Stack>
       <Modal />

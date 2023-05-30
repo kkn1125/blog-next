@@ -1,5 +1,5 @@
 import { BRAND_NAME } from "@/util/global";
-import { Box, Stack } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import React from "react";
 
 function Footer() {
@@ -14,12 +14,10 @@ function Footer() {
         backgroundColor: "#333333",
         fontWeight: 100,
       }}>
-      <Box sx={{
-        fontFamily: `"IBM Plex Sans KR", sans-serif`
-      }}>
+      <Typography fontFamily={`"IBM Plex Sans KR", sans-serif`} align="center">
         Copyright 2021. <strong>{BRAND_NAME.toUpperCase()}</strong> All rights
         reserved.
-      </Box>
+      </Typography>
     </Stack>
   );
 }

@@ -1,0 +1,125 @@
+- info Loaded env from C:\kkn_folder\test\blog3\.env
+- info Linting and checking validity of types...
+- info Creating an optimized production build...
+- info Compiled successfully
+- info Collecting page data...
+- info Generating static pages (0/473)
+- info Generating static pages (118/473)
+- info Generating static pages (236/473)
+- info Generating static pages (354/473)
+- info Generating static pages (473/473)
+- info Loaded env from C:\kkn_folder\test\blog3\.env
+- info Linting and checking validity of types...
+- info Creating an optimized production build...
+- info Compiled successfully
+- info Collecting page data...
+- info Generating static pages (0/466)
+- info Generating static pages (116/466)
+- info Generating static pages (232/466)
+- info Generating static pages (349/466)
+- info Generating static pages (466/466)
+- info Finalizing page optimization...
+
+Route (pages)                               Size     First Load JS
+┌ ● / (2345 ms)                             30.2 kB         521 kB
+├   /_app                                   0 B             491 kB
+├ ○ /404                                    1.2 kB          492 kB
+├ ○ /about                                  4 kB            495 kB
+├ ● /blog (1525 ms)                         1.88 kB         496 kB
+├ ● /blog/[slug] (178298 ms)                30 kB           521 kB
+├   ├ /blog/hmac01 (2256 ms)
+├   ├ /blog/docker02 (2161 ms)
+├   ├ /blog/streaming01 (2102 ms)
+├   ├ /blog/cache01 (2099 ms)
+├   ├ /blog/openvidu02 (1357 ms)
+├   ├ /blog/chatgpt01 (1344 ms)
+├   ├ /blog/openvidu01 (1326 ms)
+├   └ [+145 more paths] (avg 1142 ms)
+├ ● /categories/[category] (35148 ms)       1.92 kB         496 kB
+├   ├ /categories/python (1742 ms)
+├   ├ /categories/javascript (1376 ms)
+├   ├ /categories/three (1344 ms)
+├   ├ /categories/container (1328 ms)
+├   ├ /categories/bun (1321 ms)
+├   ├ /categories/express (1280 ms)
+├   ├ /categories/docker (1264 ms)
+├   └ [+22 more paths] (avg 1159 ms)
+├ ○ /google050e6145d059bcf0                 294 B           491 kB
+├ ○ /naverab361a1a39575334bea9d573640c9e21  306 B           491 kB
+└ ● /tags/[tag] (315153 ms)                 1.9 kB          496 kB
+    ├ /tags/input (1353 ms)
+    ├ /tags/getdirection (1342 ms)
+    ├ /tags/geoplugin (1341 ms)
+    ├ /tags/badge (1324 ms)
+    ├ /tags/file (1319 ms)
+    ├ /tags/vite (1311 ms)
+    ├ /tags/note (1309 ms)
+    └ [+271 more paths] (avg 1129 ms)
++ First Load JS shared by all               491 kB
+  ├ chunks/framework-73b8966a3c579ab0.js    45.2 kB
+  ├ chunks/main-8c0a0b761ecc6a92.js         27.7 kB
+  ├ chunks/pages/_app-fe19fc511c4ae236.js   417 kB
+  ├ chunks/webpack-c4acd79e87956a0e.js      943 B
+  └ css/6a72c1b386849296.css                303 B
+
+○  (Static)  automatically rendered as static HTML (uses no initial props)
+●  (SSG)     automatically generated as static HTML + JSON (uses getStaticProps)
+
+- info Loaded env from C:\kkn_folder\test\blog3\.env
+- info Linting and checking validity of types...
+- info Creating an optimized production build...
+- info Compiled successfully
+- info Collecting page data...
+- info Generating static pages (0/467)
+- info Generating static pages (116/467)
+- info Generating static pages (233/467)
+- info Generating static pages (350/467)
+- info Generating static pages (467/467)
+- info Finalizing page optimization...
+
+Route (pages)                                 Size     First Load JS
+┌ ● / (1863 ms)                               30.2 kB         521 kB
+├   /_app                                     0 B             491 kB
+├ ○ /404                                      1.2 kB          492 kB
+├ ○ /about                                    4 kB            495 kB
+├ ○ /ads.txt                                  309 B           491 kB
+├ ● /blog (1537 ms)                           1.88 kB         496 kB
+├ ● /blog/[slug] (173067 ms)                  30 kB           521 kB
+├   ├ /blog/docker02 (1901 ms)
+├   ├ /blog/hmac01 (1894 ms)
+├   ├ /blog/cache01 (1794 ms)
+├   ├ /blog/streaming01 (1758 ms)
+├   ├ /blog/javascript-reflect01 (1361 ms)
+├   ├ /blog/spring-boot-start01 (1342 ms)
+├   ├ /blog/javascript-dark-mode02 (1339 ms)
+├   └ [+145 more paths] (avg 1115 ms)
+├ ● /categories/[category] (34449 ms)         1.92 kB         496 kB
+├   ├ /categories/python (1800 ms)
+├   ├ /categories/docker (1329 ms)
+├   ├ /categories/javascript (1322 ms)
+├   ├ /categories/container (1269 ms)
+├   ├ /categories/vue (1264 ms)
+├   ├ /categories/bun (1224 ms)
+├   ├ /categories/mysql (1220 ms)
+├   └ [+22 more paths] (avg 1137 ms)
+├ ○ /google050e6145d059bcf0                   294 B           491 kB
+├ ○ /naverab361a1a39575334bea9d573640c9e21    306 B           491 kB
+└ ● /tags/[tag] (325603 ms)                   1.9 kB          496 kB
+    ├ /tags/error (1924 ms)
+    ├ /tags/axios (1872 ms)
+    ├ /tags/handling (1827 ms)
+    ├ /tags/router (1773 ms)
+    ├ /tags/react (1659 ms)
+    ├ /tags/express (1551 ms)
+    ├ /tags/esm (1538 ms)
+    └ [+271 more paths] (avg 1157 ms)
++ First Load JS shared by all                 491 kB
+  ├ chunks/framework-73b8966a3c579ab0.js      45.2 kB
+  ├ chunks/main-8c0a0b761ecc6a92.js           27.7 kB
+  ├ chunks/pages/_app-fe19fc511c4ae236.js     417 kB
+  ├ chunks/webpack-c4acd79e87956a0e.js        943 B
+  └ css/6a72c1b386849296.css                  303 B
+
+○  (Static)  automatically rendered as static HTML (uses no initial props)
+●  (SSG)     automatically generated as static HTML + JSON (uses getStaticProps)
+
