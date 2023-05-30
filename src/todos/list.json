@@ -1,12 +1,28 @@
 {
   "2023": {
+    "4": {
+      "31": [
+        {
+          "todo": "블로그 Next.js export 기반 이전",
+          "tag": "check",
+          "time": "2023-05-31 02:09:51",
+          "repeat": false,
+          "repeatDay": -1,
+          "repeatDayOfYears": false,
+          "repeatDayOfMonth": false
+        }
+      ]
+    },
     "3": {
       "10": [
         {
           "todo": "UI 수정",
           "tag": "check",
           "time": "2023-04-10 20:52:31",
-          "repeat": true
+          "repeat": false,
+          "repeatDay": -1,
+          "repeatDayOfYears": false,
+          "repeatDayOfMonth": false
         },
         {
           "todo": "seo 누락 프로퍼티 추가",

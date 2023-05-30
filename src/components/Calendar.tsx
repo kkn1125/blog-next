@@ -1,12 +1,17 @@
 import todoStorage from "@/todos/list.json";
-import { Box, Button, Stack, Typography } from "@mui/material";
-import { DateCalendar } from "@mui/x-date-pickers";
+import { Badge, Box, Button, Chip, Stack, Typography } from "@mui/material";
+import {
+  DateCalendar,
+  DayCalendarSkeleton,
+  PickersDay,
+  PickersDayProps,
+} from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { memo, useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 
-const tagIcon = {
+const tagIcon: any = {
   undefined: "▷",
   "": "▷",
   rest: "☕",
@@ -26,47 +31,141 @@ const tagIcon = {
 
 const now = new Date();
 
+function ServerDay(
+  props: PickersDayProps<Dayjs> & {
+    highlightedDays?: {
+      [k: string]: {
+        [k: string]: { [k: string]: string | boolean | number }[];
+      };
+    };
+    flatLists?: { [k: string]: string | boolean | number }[];
+  }
+) {
+  const {
+    flatLists = [],
+    highlightedDays = {},
+    day,
+    outsideCurrentMonth,
+    ...other
+  } = props;
+
+  const year = props.day.year();
+  const month = props.day.month();
+  const date = props.day.date();
+
+  const repeatDays = flatLists.filter((item: any) => item.repeat);
+
+  const pickTodo = highlightedDays[year]?.[month]?.[date];
+  const isSelected = !props.outsideCurrentMonth && Boolean(pickTodo);
+  const isRepeat = repeatDays.find((item) => {
+    const baseTime = new Date(item.time as string);
+    if (item.repeat && !props.outsideCurrentMonth) {
+      if (
+        item.repeatDay &&
+        (item.repeatDay as number) > -1 &&
+        item.repeatDay === props.day.day()
+      ) {
+        return item;
+      } else if (
+        item.repeatDayOfYear &&
+        baseTime.getMonth() === month &&
+        baseTime.getDate() === date
+      ) {
+        return item;
+      } else if (item.repeatDayOfMonth && baseTime.getDate() === date) {
+        return item;
+      }
+    }
+    return false;
+  });
+
+  return (
+    <Badge
+      key={props.day.toString()}
+      overlap='circular'
+      badgeContent={isRepeat || isSelected ? "🌟" : undefined}>
+      <PickersDay
+        {...other}
+        outsideCurrentMonth={outsideCurrentMonth}
+        day={day}
+      />
+    </Badge>
+  );
+}
+
+const flatLists = Object.values(todoStorage)
+  .flatMap((mon) =>
+    Object.values(mon)
+      .flatMap((day) => Object.values(day))
+      .flat(1)
+  )
+  .flat(2);
+const repeatDays = flatLists.filter((item: any) => item.repeat);
+
 function Calendar() {
   const [date, setDate] = useState<string | dayjs.Dayjs | null>(null);
   const [todo, setTodo] = useState([]);
+  const [highlightedDays, setHighlightedDays] = useState({});
+  const [calInfo, setCalInfo] = useState({
+    y: "0",
+    m: "0",
+    d: "0",
+  });
+  const [counter, setCounter] = useState({
+    done: 0,
+    cancel: 0,
+    total: 0,
+  });
 
-  let doneCount = 0;
-  let cancelCount = 0;
-  let totalCount = 0;
+  // let doneCount = 0;
+  // let cancelCount = 0;
+  // let totalCount = 0;
 
   const handleDate = (newDate: Date) => {
     const year = newDate.getFullYear();
     const month = newDate.getMonth() + 1;
     const date = newDate.getDate();
-    setTodo((todoStorage as any)?.[year]?.[month]?.[date]);
-    setDate(dayjs(`${year}-${month}-${date}`));
+
+    setDate(() => dayjs(`${year}-${month}-${date}`));
   };
 
   useEffect(() => {
     handleDate(new Date());
-  }, []);
 
-  // Object.values(todoStorage).forEach((year) =>
-  //   Object.values(year).forEach((month) =>
-  //     Object.values(month).forEach((date: any) => {
-  //       date.forEach((date: any) => {
-  //         if (date.tag === "check") {
-  //           doneCount += 1;
-  //         } else {
-  //           if (date.tag === "cancel" || date.tag === "rest") {
-  //             cancelCount += 1;
-  //           }
-  //         }
-  //       });
-  //       totalCount += date.length;
-  //     })
-  //   )
-  // );
+    setHighlightedDays(todoStorage);
+
+    setCounter({
+      done: flatLists.filter((d: any) => d.tag === "check").length,
+      cancel: flatLists.filter((d: any) => d.tag === "cancel").length,
+      total: flatLists.length,
+    });
+
+    setCalInfo(() => ({
+      y: String(new Date().getFullYear()),
+      m: String(new Date().getMonth()),
+      d: String(new Date().getDate()),
+    }));
+
+    return () => {
+      setCounter(() => ({ done: 0, cancel: 0, total: 0 }));
+      setDate(() => null);
+      setCalInfo(() => ({
+        y: "0",
+        m: "0",
+        d: "0",
+      }));
+    };
+  }, []);
 
   const handleToday = () => {
     setDate(
       dayjs(`${now.getFullYear()}=${now.getMonth() + 1}-${now.getDate()}`)
     );
+    setCalInfo(() => ({
+      y: String(new Date().getFullYear()),
+      m: String(new Date().getMonth()),
+      d: String(new Date().getDate()),
+    }));
   };
 
   return (
@@ -74,12 +173,46 @@ function Calendar() {
       <Box>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DateCalendar
-            value={date}
-            onChange={(newValue) => newValue && setDate(newValue)}
+            value={date as dayjs.Dayjs}
+            onChange={(newValue) => {
+              // console.log(newValue);
+              newValue && setDate((date) => newValue);
+              setCalInfo(() => ({
+                y: String(newValue?.year() || new Date().getFullYear()),
+                m: String(newValue?.month() || new Date().getMonth()),
+                d: String(newValue?.date() || new Date().getDate()),
+              }));
+            }}
+            renderLoading={() => <DayCalendarSkeleton />}
+            slots={{
+              day: ServerDay,
+            }}
+            slotProps={{
+              day: {
+                highlightedDays,
+                flatLists,
+              } as any,
+            }}
           />
         </LocalizationProvider>
       </Box>
       <Stack gap={1} sx={{ flex: 1 }}>
+        <Stack
+          direction='row'
+          gap={1}
+          sx={{
+            fontWeight: 700,
+            fontSize: (theme) => theme.typography.pxToRem(24),
+          }}>
+          <Chip color='primary' label={`✅${counter.done}`} size='small' />
+          <Chip color='primary' label={`❌${counter.cancel}`} size='small' />
+          <Chip
+            color='primary'
+            label={`❓${counter.total - counter.done - counter.cancel}`}
+            size='small'
+          />
+          <Chip color='primary' label={`📜${counter.total}`} size='small' />
+        </Stack>
         <Typography
           fontWeight={700}
           fontSize={(theme) => theme.typography.pxToRem(24)}>
@@ -87,9 +220,18 @@ function Calendar() {
         </Typography>
         <Stack sx={{ flex: 1 }}>
           <Typography
+            component='div'
             fontWeight={200}
             fontSize={(theme) => theme.typography.pxToRem(14)}>
-            데이터 이관 중...
+            {(todoStorage as any)[calInfo.y]?.[calInfo.m]?.[calInfo.d]?.map(
+              (item: any, q: number) => (
+                <Typography key={q} component='div'>
+                  [{tagIcon[item.tag]}] {item.todo}
+                </Typography>
+              )
+            ) || (
+              <Typography component='div'>등록된 일정이 없습니다 😉</Typography>
+            )}
           </Typography>
         </Stack>
         <Box>
