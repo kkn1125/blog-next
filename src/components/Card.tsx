@@ -11,9 +11,10 @@ import { useRouter } from "next/router";
 
 interface CardInfo {
   post: any;
+  order?: number;
 }
 
-function Card({ post }: CardInfo) {
+function Card({ post, order = 0 }: CardInfo) {
   const router = useRouter();
 
   useEffect(() => {
@@ -28,8 +29,11 @@ function Card({ post }: CardInfo) {
 
   return (
     <Stack
+      data-aos='fade-up'
+      data-aos-delay={order * 150}
       sx={{
         maxWidth: { sm: "100%", md: 360 },
+        transform: "translateY(270px)",
         width: "100%",
         "&:hover img": {
           transform: "scale(1.1)",

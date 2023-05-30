@@ -10,7 +10,7 @@ import {
 } from "@/util/tool";
 import { CacheProvider, css, EmotionCache } from "@emotion/react";
 import { MDXProvider } from "@mdx-js/react";
-import { GlobalStyles } from "@mui/material";
+import { GlobalStyles, useMediaQuery, useTheme } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import axios from "axios";
 import { MDXComponents } from "mdx/types";
@@ -18,6 +18,9 @@ import { AppProps } from "next/app";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import createEmotionCache from "../libs/createEmotionCache";
+import AOS from "aos";
+// import "aos/dist/aos.css";
+import { useRouter } from "next/router";
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -28,10 +31,28 @@ export interface MyAppProps extends AppProps {
 
 export default function MyApp(props: MyAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+  const router = useRouter();
+  const theme = useTheme();
+  const isMoDesk = useMediaQuery(theme.breakpoints.up("md"));
+
+  // useEffect(() => {
+  //   AOS.init();
+  // }, []);
+
+  // useEffect(() => {
+  //   console.log(isMoDesk);
+  //   AOS.refreshHard();
+  // }, [router.pathname, router.query, isMoDesk]);
 
   return (
     <CacheProvider value={emotionCache}>
       <Head>
+        <link rel='stylesheet' href='https://unpkg.com/aos@next/dist/aos.css' />
+        <script
+          async
+          src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7028508433313066'
+          crossOrigin='anonymous'
+        />
         <link rel='preconnect' href='https://fonts.googleapis.com' />
         <link
           rel='preconnect'

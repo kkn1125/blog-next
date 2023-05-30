@@ -17,7 +17,7 @@ import {
 
 const metadatas = {
   title: BRAND_NAME.toUpperCase(),
-  description: BRAND_DESC,
+  description: BRAND_DESC.trim(),
   author: AUTHOR,
 };
 
@@ -31,7 +31,7 @@ export default function Home({ posts }: any) {
       <Toolbar />
       <Stack sx={{ flex: 1 }}>
         <GenerateHead metadatas={metadatas} />
-        <Box component={"section"}>
+        <Box component={"section"} data-aos='fade-up' data-aos-delay='0'>
           <Typography
             fontSize={(theme) => theme.typography.pxToRem(52)}
             fontWeight={700}
@@ -57,7 +57,7 @@ export default function Home({ posts }: any) {
             {slicedBundle(
               useMediaQuery(theme.breakpoints.up("md")) ? 3 : 1,
               posts.slice(1)
-            ).map((row, i) => (
+            ).map((row, i, o) => (
               <Stack
                 key={i}
                 direction='row'
@@ -67,7 +67,7 @@ export default function Home({ posts }: any) {
                   width: "100%",
                 }}>
                 {row.map((post, q) => (
-                  <Card key={q} post={post} />
+                  <Card key={q} post={post} order={i * o.length + q} />
                 ))}
               </Stack>
             ))}

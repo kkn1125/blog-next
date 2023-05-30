@@ -31,9 +31,9 @@ function Index() {
       <Toolbar />
       <GenerateHead
         metadatas={{
-          title: BRAND_NAME + "::About",
+          title: `${BRAND_NAME.toUpperCase()}::About`,
           author: AUTHOR,
-          description: BRAND_DESC,
+          description: BRAND_DESC.trim(),
         }}
       />
       <Typography

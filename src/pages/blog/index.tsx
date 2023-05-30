@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 
 const metadatas = {
   title: `${BRAND_NAME.toUpperCase()}::Blog`,
-  description: BRAND_DESC,
+  description: BRAND_DESC.trim(),
   author: AUTHOR,
 };
 
@@ -79,7 +79,7 @@ function Index({ posts, totalCount }: any) {
         {slicedBundle(
           useMediaQuery(theme.breakpoints.up("md")) ? 3 : 1,
           postList
-        ).map((row, i) => (
+        ).map((row, i, o) => (
           <Stack
             key={i}
             direction='row'
@@ -88,7 +88,7 @@ function Index({ posts, totalCount }: any) {
               width: "100%",
             }}>
             {row.map((post, q) => (
-              <Card key={q} post={post} />
+              <Card key={q} post={post} order={i * o.length + q} />
             ))}
           </Stack>
         ))}

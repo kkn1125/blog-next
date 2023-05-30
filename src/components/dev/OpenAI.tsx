@@ -33,6 +33,8 @@ md.options.highlight = (code: string | HighlightOptions, lang: string) => {
   return "";
 };
 
+const CHAT_SPEED = 50;
+
 const initialMessages: any[] | (() => any[]) = [
   // { role: "system", content: "안녕 친구?" },
 ];
@@ -225,7 +227,7 @@ function OpenAI({ open, onClose }: any) {
           content: tempContent,
         })
       );
-    }, 150);
+    }, CHAT_SPEED);
   }
 
   async function handleSubmit(e: {

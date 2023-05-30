@@ -26,6 +26,8 @@ function MainCard({ post }: CardInfo) {
 
   return (
     <Stack
+      data-aos='fade-up'
+      data-aos-delay={100}
       direction='row'
       alignItems={"flex-end"}
       sx={{
