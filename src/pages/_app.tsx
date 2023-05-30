@@ -2,13 +2,21 @@ import ThemeModeProvider from "@/context/ThemeModeProvider";
 import { VisitorProvider } from "@/context/VisitorProvider";
 import BaseLayout from "@/layouts/BaseLayout";
 import { getAllArticles } from "@/libs/service";
+import {
+  compareWithOrigin,
+  resConvertData,
+  uuidv4,
+  validTime,
+} from "@/util/tool";
 import { CacheProvider, css, EmotionCache } from "@emotion/react";
 import { MDXProvider } from "@mdx-js/react";
 import { GlobalStyles } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
+import axios from "axios";
 import { MDXComponents } from "mdx/types";
 import { AppProps } from "next/app";
 import Head from "next/head";
+import { useEffect, useState } from "react";
 import createEmotionCache from "../libs/createEmotionCache";
 
 // Client-side cache, shared for the whole session of the user in the browser.
@@ -20,6 +28,7 @@ export interface MyAppProps extends AppProps {
 
 export default function MyApp(props: MyAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+
   return (
     <CacheProvider value={emotionCache}>
       <Head>

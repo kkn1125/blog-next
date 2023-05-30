@@ -183,3 +183,27 @@ export const capitalize = (str: string) =>
     /[A-Za-z]+/gm,
     ($1) => $1.charAt(0).toUpperCase() + $1.slice(1).toLowerCase()
   );
+
+export const compareWithOrigin = (a: any, b: any) => {
+  return Object.entries(a).some(([_, __]) => b[_] !== __);
+};
+
+export const validTime = 1000 * 60 * 60 * 24;
+
+export const resConvertData = (res: { data: { contents: string } }) => {
+  const body = new DOMParser().parseFromString(
+    res.data.contents,
+    "text/html"
+  ).body;
+  const table = body.querySelectorAll(
+    "#main form table.table tbody tr"
+  ) as unknown as any[];
+
+  const filtered = [...table].filter((el) => el.textContent.match(/방문자/g));
+
+  const tableEntries = filtered.map((tr) => {
+    const [key, value] = tr.children;
+    return [key.textContent, value.textContent];
+  });
+  return Object.fromEntries(tableEntries);
+};

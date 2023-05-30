@@ -4,11 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "postbuild": "next-sitemap --config next-sitemap.config.js >> postbuild-log.txt",
-    "build": "next build >> build-log.txt",
+    "build": "next build",
+    "postbuild": "next-sitemap --config next-sitemap.config.js",
+    "build-log": "next build >> build-log.txt",
+    "postbuild-log": "next-sitemap --config next-sitemap.config.js >> postbuild-log.txt",
     "start": "next start",
     "lint": "next lint",
-    "deploy": "git init && git add -A && git commit -m \"add post and fixbugs\" && git push -f https://github.com/kkn1125/kkn1125.github.io.git master:gh-pages"
+    "deploy": "cd out/ && git init && git add -A && git commit -m \"add post and fixbugs\" && git push -f https://github.com/kkn1125/kkn1125.github.io.git master:gh-pages"
   },
   "dependencies": {
     "@emotion/react": "^11.11.0",

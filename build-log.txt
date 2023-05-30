@@ -123,3 +123,61 @@ Route (pages)                                 Size     First Load JS
 ○  (Static)  automatically rendered as static HTML (uses no initial props)
 ●  (SSG)     automatically generated as static HTML + JSON (uses getStaticProps)
 
+- info Loaded env from C:\kkn_folder\test\blog3\.env
+- info Linting and checking validity of types...
+- info Creating an optimized production build...
+- info Compiled successfully
+- info Collecting page data...
+- info Generating static pages (0/467)
+- info Generating static pages (116/467)
+- info Generating static pages (233/467)
+- info Generating static pages (350/467)
+- info Generating static pages (467/467)
+- info Finalizing page optimization...
+
+Route (pages)                               Size     First Load JS
+┌ ● / (2110 ms)                             30.2 kB         522 kB
+├   /_app                                   0 B             492 kB
+├ ○ /[x]ads.txt                             310 B           492 kB
+├ ○ /404                                    1.31 kB         493 kB
+├ ○ /about                                  4.02 kB         496 kB
+├ ● /blog (1849 ms)                         1.9 kB          497 kB
+├ ● /blog/[slug] (215421 ms)                30 kB           522 kB
+├   ├ /blog/docker02 (2408 ms)
+├   ├ /blog/chatgpt01 (2387 ms)
+├   ├ /blog/streaming01 (2191 ms)
+├   ├ /blog/cache01 (2183 ms)
+├   ├ /blog/openvidu02 (1736 ms)
+├   ├ /blog/openvidu01 (1654 ms)
+├   ├ /blog/mecab01 (1644 ms)
+├   └ [+145 more paths] (avg 1388 ms)
+├ ● /categories/[category] (40563 ms)       1.94 kB         497 kB
+├   ├ /categories/docker (1504 ms)
+├   ├ /categories/deploy (1493 ms)
+├   ├ /categories/next (1470 ms)
+├   ├ /categories/django (1467 ms)
+├   ├ /categories/shell (1466 ms)
+├   ├ /categories/software (1463 ms)
+├   ├ /categories/jekyll (1453 ms)
+├   └ [+22 more paths] (avg 1375 ms)
+├ ○ /google050e6145d059bcf0                 294 B           492 kB
+├ ○ /naverab361a1a39575334bea9d573640c9e21  306 B           492 kB
+└ ● /tags/[tag] (406807 ms)                 1.92 kB         497 kB
+    ├ /tags/mediarecoder (2130 ms)
+    ├ /tags/streaming (2063 ms)
+    ├ /tags/rdbms (1764 ms)
+    ├ /tags/replication (1756 ms)
+    ├ /tags/nginx (1693 ms)
+    ├ /tags/analyze (1693 ms)
+    ├ /tags/local (1680 ms)
+    └ [+271 more paths] (avg 1454 ms)
++ First Load JS shared by all               492 kB
+  ├ chunks/framework-73b8966a3c579ab0.js    45.2 kB
+  ├ chunks/main-8c0a0b761ecc6a92.js         27.7 kB
+  ├ chunks/pages/_app-c37945dc9f29c847.js   418 kB
+  ├ chunks/webpack-c4acd79e87956a0e.js      943 B
+  └ css/6a72c1b386849296.css                303 B
+
+○  (Static)  automatically rendered as static HTML (uses no initial props)
+●  (SSG)     automatically generated as static HTML + JSON (uses getStaticProps)
+

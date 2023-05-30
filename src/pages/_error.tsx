@@ -1,3 +1,4 @@
+import { getAllArticles } from "@/libs/service";
 import {
   Container,
   Card,
@@ -8,9 +9,19 @@ import {
   Chip,
 } from "@mui/material";
 import Link from "next/link";
-import React from "react";
+import { useRouter } from "next/router";
+import React, { useEffect } from "react";
 
-function _error() {
+function _error({ posts }: any) {
+  const router = useRouter();
+  useEffect(() => {
+    const post = posts.find(
+      (post: any) => post.frontmatter.slug === location.pathname
+    );
+    if (post) {
+      router.push(`/blog${location.pathname}`);
+    }
+  }, []);
   return (
     <Container>
       <Card
@@ -44,3 +55,13 @@ function _error() {
 }
 
 export default _error;
+
+export const getStaticProps = async () => {
+  const posts = await getAllArticles();
+
+  return {
+    props: {
+      posts: posts,
+    },
+  };
+};

@@ -45,6 +45,9 @@ const nextConfig = {
       },
     ],
   },
+  compress: true,
+  basePath: "",
+  assetPrefix: ".",
 };
 
 module.exports = withMDX(nextConfig);

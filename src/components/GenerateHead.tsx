@@ -23,6 +23,9 @@ function convertToMetadata(metadatas: Metadata) {
         <meta name={`og:${k}`} content={(v as unknown as any[]).join(",")} />
       );
       // });
+    } else if (k === "image") {
+      dataSet.push(<meta name={k} content={`/static${v}`} />);
+      dataSet.push(<meta name={`og:${k}`} content={`/static${v}`} />);
     } else {
       dataSet.push(<meta name={k} content={v} />);
       dataSet.push(<meta name={`og:${k}`} content={v} />);

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -21,6 +21,14 @@ import { ColorModeContext } from "@/context/ThemeModeProvider";
 import { Stack, useTheme } from "@mui/material";
 import NightsStayIcon from "@mui/icons-material/NightsStay";
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
+import {
+  uuidv4,
+  validTime,
+  resConvertData,
+  compareWithOrigin,
+} from "@/util/tool";
+import axios from "axios";
+import Visitants from "./Visitants";
 
 const pages = [
   {
@@ -68,6 +76,146 @@ function ResponsiveAppBar() {
       },
     },
   ];
+
+  const [visitor, setVisitor] = useState({
+    today: 0,
+    stack: 0,
+  });
+
+  useEffect(() => {
+    // visite check
+    const userInfo = getUserIdentity();
+
+    function isVisitedUser() {
+      if (Object.keys(userInfo).length > 0) return true;
+      else return false;
+    }
+
+    const userCheck = isVisitedUser();
+
+    if (!userCheck) {
+      checkVisite(); // update visitor count!
+      setUserIdentity({
+        sid: navigator.userAgent.replace(/[\s]*/gm, "") + uuidv4(),
+        maxTime: new Date().getTime() + validTime,
+      });
+    } else {
+      if (
+        userInfo["sid"].startsWith(navigator.userAgent.replace(/[\s]*/gm, ""))
+      ) {
+        if (new Date().getTime() > new Date(userInfo["maxTime"]).getTime()) {
+          checkVisite(); // update visitor count!
+          userInfo["maxTime"] = new Date().getTime() + validTime;
+          setUserIdentity({
+            sid: userInfo["sid"],
+            maxTime: userInfo["maxTime"],
+          });
+        } else {
+        }
+      }
+    }
+
+    function checkVisite() {
+      axios(
+        `https://api.allorigins.win/get?url=${encodeURIComponent(
+          "https://url.kr/6po2f9"
+        )}`
+      )
+        .then((res) => {
+          console.log("visit!");
+        })
+        .catch((e) => {
+          // dev.log(e);
+        });
+    }
+
+    function getUserIdentity() {
+      if (window.localStorage) {
+        if (!localStorage["userInfo"]) {
+          localStorage["userInfo"] = "{}";
+        } else {
+          const validUserMaxTimeInfo =
+            (JSON.parse(localStorage["userInfo"]) &&
+              JSON.parse(localStorage["userInfo"])["maxTime"]) ||
+            "";
+          if (isNaN(validUserMaxTimeInfo)) {
+            if (validUserMaxTimeInfo.match(/[^0-9]/gm)) {
+              console.info(
+                "버그 수정된 버전으로 데이터 변경이 완료되었습니다."
+              );
+              localStorage["userInfo"] = "{}";
+            }
+          } else {
+            // console.warn("[Matches] data is valid.");
+          }
+        }
+        return JSON.parse(localStorage["userInfo"]);
+      }
+    }
+
+    function setUserIdentity(userData: { sid: any; maxTime: any }) {
+      window.localStorage &&
+        (localStorage["userInfo"] = JSON.stringify(userData));
+    }
+
+    localStorage["userInfo"] = JSON.stringify({
+      sid: navigator.userAgent.replace(/[\s]*/gm, "") + uuidv4(),
+      maxTime: Date.now() + 1000 * 60 * 60 * 24,
+    });
+    setTimeout(() => {
+      axios(
+        `https://api.allorigins.win/get?url=${encodeURIComponent(
+          "https://url.kr/6po2f9*"
+        )}`
+      )
+        .then((res) => {
+          const tableObj = resConvertData(res);
+
+          const getData = {
+            today: tableObj["오늘 방문자수"].split(" ").shift(),
+            stack: tableObj["누적 방문자수"],
+          };
+
+          if (compareWithOrigin(getData, visitor)) {
+            setVisitor({
+              ...visitor,
+              ...getData,
+            });
+          }
+        })
+        .catch((e) => {
+          // dev.log(e);
+        });
+    }, 100);
+
+    let refreshVisitant = setInterval(() => {
+      axios(
+        `https://api.allorigins.win/get?url=${encodeURIComponent(
+          "https://url.kr/6po2f9*"
+        )}`
+      )
+        .then((res) => {
+          const tableObj = resConvertData(res);
+
+          const getData = {
+            today: tableObj["오늘 방문자수"].split(" ").shift(),
+            stack: tableObj["누적 방문자수"],
+          };
+
+          if (compareWithOrigin(getData, visitor)) {
+            setVisitor({
+              ...visitor,
+              ...getData,
+            });
+          }
+        })
+        .catch((e) => {
+          // dev.log(e);
+        });
+    }, 1000 * 30);
+
+    return () => clearInterval(refreshVisitant);
+  }, []);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -170,6 +318,7 @@ function ResponsiveAppBar() {
               }}
               sx={{
                 display: { xs: "block", md: "none" },
+                alignItems: "center",
               }}>
               {pages.map(({ name, path }) => (
                 <MenuItem
@@ -181,6 +330,7 @@ function ResponsiveAppBar() {
                   <Typography textAlign='center'>{name}</Typography>
                 </MenuItem>
               ))}
+              <Visitants visitor={visitor} />
             </Menu>
           </Box>
 
@@ -221,7 +371,12 @@ function ResponsiveAppBar() {
           </Box>
 
           {/* desktop menu */}
-          <Box sx={{ flex: 1, display: { xs: "none", md: "flex" } }}>
+          <Box
+            sx={{
+              flex: 1,
+              display: { xs: "none", md: "flex" },
+              alignItems: "center",
+            }}>
             {pages.map(({ name, path }) => (
               <Button
                 key={name}
@@ -237,6 +392,7 @@ function ResponsiveAppBar() {
                 {name}
               </Button>
             ))}
+            <Visitants visitor={visitor} />
           </Box>
 
           <Box sx={{ flex: 0 }}>
