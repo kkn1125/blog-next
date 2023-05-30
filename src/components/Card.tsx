@@ -33,7 +33,7 @@ function Card({ post, order = 0 }: CardInfo) {
       data-aos-delay={order * 150}
       sx={{
         maxWidth: { sm: "100%", md: 360 },
-        transform: "translateY(270px)",
+        // transform: "translateY(270px)",
         width: "100%",
         "&:hover img": {
           transform: "scale(1.1)",

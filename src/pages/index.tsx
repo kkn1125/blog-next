@@ -31,7 +31,7 @@ export default function Home({ posts }: any) {
       <Toolbar />
       <Stack sx={{ flex: 1 }}>
         <GenerateHead metadatas={metadatas} />
-        <Box component={"section"} data-aos='fade-up' data-aos-delay='0'>
+        <Box component={"section"} /* data-aos='fade-up' data-aos-delay='0' */>
           <Typography
             fontSize={(theme) => theme.typography.pxToRem(52)}
             fontWeight={700}

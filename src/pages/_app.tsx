@@ -19,7 +19,7 @@ import Head from "next/head";
 import { useEffect, useState } from "react";
 import createEmotionCache from "../libs/createEmotionCache";
 import AOS from "aos";
-// import "aos/dist/aos.css";
+import "aos/dist/aos.css";
 import { useRouter } from "next/router";
 
 // Client-side cache, shared for the whole session of the user in the browser.
@@ -35,19 +35,25 @@ export default function MyApp(props: MyAppProps) {
   const theme = useTheme();
   const isMoDesk = useMediaQuery(theme.breakpoints.up("md"));
 
-  // useEffect(() => {
-  //   AOS.init();
-  // }, []);
+  useEffect(() => {
+    AOS.init({
+      disable: isMoDesk ? false : true,
+    });
+    AOS.refreshHard();
+  }, []);
 
-  // useEffect(() => {
-  //   console.log(isMoDesk);
-  //   AOS.refreshHard();
-  // }, [router.pathname, router.query, isMoDesk]);
+  useEffect(() => {
+    setTimeout(() => {
+      AOS.init({
+        disable: isMoDesk ? false : "mobile",
+      });
+      AOS.refreshHard();
+    }, 150);
+  }, [router.pathname, router.query, isMoDesk]);
 
   return (
     <CacheProvider value={emotionCache}>
       <Head>
-        <link rel='stylesheet' href='https://unpkg.com/aos@next/dist/aos.css' />
         <script
           async
           src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7028508433313066'
