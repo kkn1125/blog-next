@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "postbuild": "next-sitemap --config next-sitemap.config.js",
+    "postbuild": "next-sitemap --config next-sitemap.config.js && touch out/.nojekyll",
     "build-log": "next build >> build-log.txt",
     "postbuild-log": "next-sitemap --config next-sitemap.config.js >> postbuild-log.txt",
     "start": "next start",
@@ -46,6 +46,7 @@
   "devDependencies": {
     "@types/animejs": "^3.1.7",
     "@types/markdown-it": "^12.2.3",
-    "@types/react-syntax-highlighter": "^15.5.7"
+    "@types/react-syntax-highlighter": "^15.5.7",
+    "replace-in-files-cli": "^2.2.0"
   }
 }

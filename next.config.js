@@ -46,8 +46,7 @@ const nextConfig = {
     ],
   },
   compress: true,
-  basePath: "",
-  assetPrefix: ".",
+  // assetPrefix: process.env.NODE_ENV === "development" ? "/" : ".",
 };
 
 module.exports = withMDX(nextConfig);

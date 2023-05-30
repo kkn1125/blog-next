@@ -176,7 +176,7 @@ export function uuidv4() {
 }
 
 export const getReponsiveImageUrl = (url: string) =>
-  url.match(/^http(s)?/) ? url : "/static" + url;
+  url.match(/^http(s)?/) ? url : "/assets" + url;
 
 export const capitalize = (str: string) =>
   str.replace(

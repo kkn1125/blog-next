@@ -24,8 +24,8 @@ function convertToMetadata(metadatas: Metadata) {
       );
       // });
     } else if (k === "image") {
-      dataSet.push(<meta name={k} content={`/static${v}`} />);
-      dataSet.push(<meta name={`og:${k}`} content={`/static${v}`} />);
+      dataSet.push(<meta name={k} content={`/assets${v}`} />);
+      dataSet.push(<meta name={`og:${k}`} content={`/assets${v}`} />);
     } else {
       dataSet.push(<meta name={k} content={v} />);
       dataSet.push(<meta name={`og:${k}`} content={v} />);
