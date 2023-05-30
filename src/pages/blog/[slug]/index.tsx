@@ -30,13 +30,91 @@ const components: MDXComponents | MergeComponents = {
   code: ({ children, className }: CodeBlockProps | any) => {
     const language = className?.replace(/language-/, "");
     return className ? (
-      <SyntaxHighlighter
-        showLineNumbers
-        language={language}
-        style={tomorrowNight}
-        customStyle={{ overflowX: "auto" }}>
-        {children}
-      </SyntaxHighlighter>
+      <Stack
+        sx={{
+          my: 3,
+          position: "relative",
+          [`&::before`]: {
+            content: '""',
+            width: "100%",
+            height: "2rem",
+            backgroundColor: "#555",
+            display: "block",
+            borderTopLeftRadius: 15,
+            borderTopRightRadius: 15,
+          },
+          borderBottomLeftRadius: 15,
+          borderBottomRightRadius: 15,
+          overflow: "hidden",
+        }}>
+        <Typography
+          sx={{
+            position: "absolute",
+            top: 16 * 1,
+            left: 20,
+            transform: "translateY(-50%)",
+            textTransform: "uppercase",
+            fontWeight: 700,
+            color: "#ffffff",
+          }}>
+          {language.split("-").pop()}
+        </Typography>
+        <Box
+          sx={{
+            width: 15,
+            height: 15,
+            backgroundColor: "#f56767",
+            borderRadius: "50%",
+            position: "absolute",
+            top: 16 * 1,
+            right: 80,
+            transform: "translateY(-50%)",
+            transition: "150ms ease",
+            [`&:hover`]: {
+              transform: "translateY(-50%) scale(1.1)",
+            },
+          }}
+        />
+        <Box
+          sx={{
+            width: 15,
+            height: 15,
+            backgroundColor: "#e9ce63",
+            borderRadius: "50%",
+            position: "absolute",
+            top: 16 * 1,
+            right: 50,
+            transform: "translateY(-50%)",
+            transition: "150ms ease",
+            [`&:hover`]: {
+              transform: "translateY(-50%) scale(1.1)",
+            },
+          }}
+        />
+        <Box
+          sx={{
+            width: 15,
+            height: 15,
+            backgroundColor: "#68ee85",
+            borderRadius: "50%",
+            position: "absolute",
+            top: 16 * 1,
+            right: 20,
+            transform: "translateY(-50%)",
+            transition: "150ms ease",
+            [`&:hover`]: {
+              transform: "translateY(-50%) scale(1.1)",
+            },
+          }}
+        />
+        <SyntaxHighlighter
+          showLineNumbers
+          language={language}
+          style={tomorrowNight}
+          customStyle={{ overflowX: "auto", margin: 0 }}>
+          {children}
+        </SyntaxHighlighter>
+      </Stack>
     ) : (
       <Box
         component='code'
@@ -290,7 +368,7 @@ export const getStaticPaths = async () => {
   }
 
   const slugs = await getSlugs();
-  
+
   return {
     paths: slugs.map((slug: string) => ({
       params: {

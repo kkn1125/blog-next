@@ -1,5 +1,5 @@
 import SendIcon from "@mui/icons-material/Send";
-import { Toolbar } from "@mui/material";
+import { Toolbar, useMediaQuery, useTheme } from "@mui/material";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -7,8 +7,10 @@ import ListItemText from "@mui/material/ListItemText";
 import { useEffect, useState } from "react";
 
 export default function SideBar({ list }: { list: any[] }) {
+  const theme = useTheme();
   const [open, setOpen] = useState(true);
   const [index, setIndex] = useState<any[]>([]);
+  const isUpMd = useMediaQuery(theme.breakpoints.up("md"));
 
   useEffect(() => {
     setIndex(new Array(list.length).fill(0));
@@ -73,9 +75,10 @@ export default function SideBar({ list }: { list: any[] }) {
             ml: (item.match(/#/gm).length - 1) * 5,
           }}
           onClick={() => {
-            const ii = document.getElementById(`${convertIdString(item)}`);
-            console.log(ii);
-            (document.getElementById("main") as HTMLDivElement).scrollTo({
+            // const ii = document.getElementById(`${convertIdString(item)}`);
+            // console.log(ii);
+            const target = isUpMd ? "#main" : "#__next > div";
+            (document.querySelector(target) as HTMLDivElement).scrollTo({
               behavior: "smooth",
               top:
                 Number(
