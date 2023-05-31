@@ -2,12 +2,13 @@ import ThemeModeProvider from "@/context/ThemeModeProvider";
 import { VisitorProvider } from "@/context/VisitorProvider";
 import BaseLayout from "@/layouts/BaseLayout";
 import { CacheProvider, css, EmotionCache } from "@emotion/react";
-import { GlobalStyles, useTheme } from "@mui/material";
+import { GlobalStyles } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
+import "animate.css";
 import { AppProps } from "next/app";
 import Head from "next/head";
+import Script from "next/script";
 import createEmotionCache from "../libs/createEmotionCache";
-import 'animate.css';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -22,20 +23,11 @@ export default function MyApp(props: MyAppProps) {
   return (
     <CacheProvider value={emotionCache}>
       <Head>
-        <script
-          async
-          src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7028508433313066'
-          crossOrigin='anonymous'
-        />
         <link rel='preconnect' href='https://fonts.googleapis.com' />
         <link
           rel='preconnect'
           href='https://fonts.gstatic.com'
           crossOrigin=''
-        />
-        <link
-          href='https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@100;200;300;400;500;600;700&display=swap'
-          rel='stylesheet'
         />
         <meta name='viewport' content='initial-scale=1, width=device-width' />
         {/* favicon */}
@@ -58,6 +50,10 @@ export default function MyApp(props: MyAppProps) {
         />
         <link rel='manifest' href='/favicon/site.webmanifest' />
       </Head>
+      <Script
+        src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7028508433313066'
+        async
+        crossOrigin='anonymous'></Script>
       <VisitorProvider>
         <ThemeModeProvider>
           <>

@@ -21,6 +21,10 @@ export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
   return (
     <Html lang='ko'>
       <Head>
+        <link
+          href='https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@100;200;300;400;500;600;700&display=swap'
+          rel='stylesheet'
+        />
         {/* PWA primary color */}
         <meta name='theme-color' content={theme.palette.primary.main} />
         <link rel='shortcut icon' href='/favicon/favicon.ico' />

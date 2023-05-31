@@ -1,20 +1,22 @@
+import GenerateHead from "@/components/GenerateHead";
 import { getAllArticles } from "@/libs/service";
+import { AUTHOR, BRAND_DESC, BRAND_NAME } from "@/util/global";
 import {
-  Container,
-  Card,
-  CardContent,
-  Typography,
-  CardActions,
-  Button,
-  Chip,
-  Toolbar,
   Alert,
   AlertTitle,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Chip,
+  Container,
   Stack,
+  Toolbar,
+  Typography,
 } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 function Index({ posts }: any) {
   const router = useRouter();
@@ -26,6 +28,13 @@ function Index({ posts }: any) {
   }, []);
   return (
     <Container>
+      <GenerateHead
+        metadatas={{
+          title: `${BRAND_NAME.toUpperCase()}::Not Found`,
+          author: AUTHOR,
+          description: BRAND_DESC.trim(),
+        }}
+      />
       <Toolbar />
       <Toolbar />
       <Card

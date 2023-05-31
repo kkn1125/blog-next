@@ -8,7 +8,6 @@ import {
   GITHUB,
   PORTFOLIO,
 } from "@/util/global";
-import { setAnimate } from "@/util/tool";
 import {
   Alert,
   AlertTitle,
@@ -21,7 +20,6 @@ import {
   Typography,
 } from "@mui/material";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 
 function Index() {
   return (
@@ -30,6 +28,7 @@ function Index() {
       maxWidth='lg'
       sx={{
         height: "100%",
+        minHeight: "101%",
       }}>
       <Toolbar />
       <GenerateHead

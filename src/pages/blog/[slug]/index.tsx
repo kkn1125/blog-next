@@ -1,4 +1,5 @@
 import GenerateHead from "@/components/GenerateHead";
+import GoTop from "@/components/GoTop";
 import SideBar from "@/components/SideBar";
 import { getArticleFromSlug, getSlugs, serializeMdx } from "@/libs/service";
 import { AUTHOR, BRAND_NAME } from "@/util/global";
@@ -255,7 +256,7 @@ function Index({
       id='post-wrap'
       direction={{ xs: "column", md: "row" }}
       sx={{
-        width: { xs: "100%", md: "70%" },
+        width: { xs: "100%", md: "auto" },
         height: "fit-content",
         position: "relative",
       }}>
@@ -270,6 +271,7 @@ function Index({
           alignItems={"center"}
           sx={{
             flex: 1,
+            width: "100%",
             wordBreak: "break-word",
             whiteSpace: "break-spaces",
           }}>
@@ -335,6 +337,7 @@ function Index({
           </Stack>
         </Stack>
       )}
+      <GoTop />
     </Stack>
   );
 }
