@@ -1,14 +1,12 @@
 import GenerateHead from "@/components/GenerateHead";
 import SideBar from "@/components/SideBar";
-import PostLayout from "@/layouts/PostLayout";
 import { getArticleFromSlug, getSlugs, serializeMdx } from "@/libs/service";
 import { AUTHOR, BRAND_NAME } from "@/util/global";
-import { getReponsiveImageUrl } from "@/util/tool";
+import { getReponsiveImageUrl, parseHeading } from "@/util/tool";
 import { MergeComponents } from "@mdx-js/react/lib";
 import {
   Box,
   CircularProgress,
-  Container,
   Divider,
   Stack,
   Toolbar,
@@ -17,7 +15,7 @@ import {
 } from "@mui/material";
 import { MDXComponents } from "mdx/types";
 import { MDXRemote } from "next-mdx-remote";
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { tomorrowNight } from "react-syntax-highlighter/dist/cjs/styles/hljs";
 
@@ -134,7 +132,9 @@ const components: MDXComponents | MergeComponents = {
   pre: ({ children }: any) => <div>{children}</div>,
   /* pre in p error 해결 */
   p: ({ children }: any) => <div>{children}</div>,
-  img: ({ children, ...rest }: any) => <img {...rest} children={children} />,
+  // img: ({ children, ...rest }: any) => <img {...rest} children={children} />,
+  figure: ({ children }: any) => <>{children}</>,
+  img: () => <img src='' alt='' />,
   blockquote: ({ children }: any) => (
     <Box
       component='blockquote'
@@ -260,11 +260,7 @@ function Index({
         position: "relative",
       }}>
       <Box>
-        <SideBar
-          list={content
-            .split(/[\n\r]/g)
-            .filter((str: string) => str && str.match(/^#+/))}
-        />
+        <SideBar list={parseHeading(content)} />
       </Box>
 
       {responsivePost && (

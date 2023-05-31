@@ -1,3 +1,4 @@
+import markdown from "markdown-it";
 import { SetStateAction } from "react";
 
 export const convertDate = (date: string) => new Date(date.slice(0, -6));
@@ -226,4 +227,16 @@ export const setAnimate = (
       }, 1000);
     }, order * 100);
   });
+};
+
+export const parseHeading = (content: string) => {
+  const md = markdown();
+  return md
+    .render(content, {})
+    .split(/[\n]+/gm)
+    .filter((item) => item.match(/^<h[1-6]([\s\S]+)h[1-6]>$/))
+    .map((item) => {
+      const title = item.match(/^\<h([1-6])\>([\s\S]+)<\/h[1-6]>$/) as string[];
+      return { order: title[1], head: title[2] };
+    });
 };
