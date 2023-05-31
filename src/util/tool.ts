@@ -213,12 +213,17 @@ export const resConvertData = (res: { data: { contents: string } }) => {
 export const setAnimate = (
   setter: (value: SetStateAction<string>) => void,
   classes: string[],
-  order: number
+  order: number,
+  loader?: (value: SetStateAction<boolean>) => void
 ) => {
-  setTimeout(() => {
-    setter(() => classes.join(" "));
+  return new Promise((resolve) => {
     setTimeout(() => {
-      setter(() => "");
-    }, 1000);
-  }, order * 100);
+      setter(() => classes.join(" "));
+      loader?.(true);
+      setTimeout(() => {
+        setter(() => "");
+        resolve(true);
+      }, 1000);
+    }, order * 100);
+  });
 };

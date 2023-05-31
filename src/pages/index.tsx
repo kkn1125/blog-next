@@ -1,3 +1,4 @@
+import Animated from "@/components/Animated";
 import Calendar from "@/components/Calendar";
 import Card from "@/components/Card";
 import GenerateHead from "@/components/GenerateHead";
@@ -34,26 +35,32 @@ export default function Home({ posts }: any) {
       <Stack sx={{ flex: 1 }}>
         <GenerateHead metadatas={metadatas} />
         <Box component={"section"}>
-          <Typography
-            fontSize={(theme) => theme.typography.pxToRem(52)}
-            fontWeight={700}
-            align='center'
-            gutterBottom
-            fontFamily={`"IBM Plex Sans KR", sans-serif`}>
-            Tech. Dev. Write.
-          </Typography>
-          <Typography
-            fontSize={(theme) => theme.typography.pxToRem(16)}
-            fontWeight={200}
-            align='center'
-            fontFamily={`"IBM Plex Sans KR", sans-serif`}>
-            서버 분산 아키텍쳐와 보안에 관심이 많은 노드 백엔드 개발자의 기술
-            블로그입니다.
-          </Typography>
+          <Animated order={0} animate='fadeInUp'>
+            <Typography
+              fontSize={(theme) => theme.typography.pxToRem(52)}
+              fontWeight={700}
+              align='center'
+              gutterBottom
+              fontFamily={`"IBM Plex Sans KR", sans-serif`}>
+              Tech. Dev. Write.
+            </Typography>
+          </Animated>
+          <Animated order={1} animate='fadeInUp'>
+            <Typography
+              fontSize={(theme) => theme.typography.pxToRem(16)}
+              fontWeight={200}
+              align='center'
+              fontFamily={`"IBM Plex Sans KR", sans-serif`}>
+              서버 분산 아키텍쳐와 보안에 관심이 많은 노드 백엔드 개발자의 기술
+              블로그입니다.
+            </Typography>
+          </Animated>
         </Box>
         <Toolbar />
         <Stack component={"section"} alignItems='center'>
-          <MainCard post={posts[0]} />
+          <Animated order={2} animate='fadeInUp'>
+            <MainCard post={posts[0]} />
+          </Animated>
           <Toolbar />
           <Stack gap={5}>
             {slicedBundle(isMdUp ? 3 : 1, posts.slice(1)).map((row, i, o) => (
@@ -66,14 +73,18 @@ export default function Home({ posts }: any) {
                   width: "100%",
                 }}>
                 {row.map((post, q) => (
-                  <Card key={q} post={post} order={i * o.length + q} />
+                  <Animated key={q} order={q + 3} animate='fadeInUp'>
+                    <Card post={post} />
+                  </Animated>
                 ))}
               </Stack>
             ))}
           </Stack>
         </Stack>
         <Toolbar />
-        <Calendar />
+        <Animated order={posts.length + 3} animate='fadeInUp'>
+          <Calendar />
+        </Animated>
         <Toolbar />
       </Stack>
     </Container>

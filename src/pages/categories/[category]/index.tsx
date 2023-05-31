@@ -19,6 +19,7 @@ import {
 import Card from "@/components/Card";
 import { AUTHOR, BRAND_DESC, BRAND_NAME } from "@/util/global";
 import GenerateHead from "@/components/GenerateHead";
+import Animated from "@/components/Animated";
 
 const PAGINATION_AMOUNT = 6;
 
@@ -67,14 +68,16 @@ function Index({ posts, totalCount }: any) {
       }}>
       <GenerateHead metadatas={metadatas} />
       <Toolbar />
-      <Typography
-        fontSize={(theme) => theme.typography.pxToRem(52)}
-        fontWeight={500}
-        align='center'
-        gutterBottom
-        fontFamily={`"IBM Plex Sans KR", sans-serif`}>
-        🔎 Category ["{capitalize(router.query.category as string)}"]
-      </Typography>
+      <Animated order={0} animate='fadeInUp'>
+        <Typography
+          fontSize={(theme) => theme.typography.pxToRem(52)}
+          fontWeight={500}
+          align='center'
+          gutterBottom
+          fontFamily={`"IBM Plex Sans KR", sans-serif`}>
+          🔎 Category ["{capitalize(router.query.category as string)}"]
+        </Typography>
+      </Animated>
       <Toolbar />
       <Stack
         gap={5}
@@ -93,7 +96,9 @@ function Index({ posts, totalCount }: any) {
               width: "100%",
             }}>
             {row.map((post, q) => (
-              <Card key={q} post={post} order={i * o.length + q} />
+              <Animated order={i * o.length + q + 1} animate='fadeInUp'>
+                <Card post={post} />
+              </Animated>
             ))}
           </Stack>
         ))}

@@ -1,5 +1,5 @@
 import { Box, Chip, Paper, Stack, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 import { AUTHOR } from "@/util/global";
 import {
@@ -15,33 +15,13 @@ import { useRouter } from "next/router";
 
 interface CardInfo {
   post: any;
-  order?: number;
 }
 
-function Card({ post, order = 0 }: CardInfo) {
+function Card({ post }: CardInfo) {
   const router = useRouter();
-  const [animateClass, setAnimationClass] = useState("");
-
-  useEffect(() => {
-    // setTimeout(() => {
-    //   anime({
-    //     target: ".card-test",
-    //     translateY: 270,
-    //     delay: anime.stagger(100),
-    //   });
-    // }, 1000);
-    setAnimate(
-      setAnimationClass,
-      ["animate__animated", "animate__fadeInUp"],
-      order
-    );
-  }, [router.query, router.pathname]);
 
   return (
     <Stack
-      className={animateClass}
-      // data-aos='fade-up'
-      // data-aos-delay={order * 150}
       sx={{
         maxWidth: { sm: "100%", md: 360 },
         // transform: "translateY(270px)",

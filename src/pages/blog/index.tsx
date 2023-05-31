@@ -1,3 +1,4 @@
+import Animated from "@/components/Animated";
 import Card from "@/components/Card";
 import GenerateHead from "@/components/GenerateHead";
 import { getAllArticles, getPaginationArticles } from "@/libs/service";
@@ -62,14 +63,16 @@ function Index({ posts, totalCount }: any) {
       }}>
       <Toolbar />
       <Stack sx={{ flex: 1 }}>
-        <GenerateHead metadatas={metadatas} />
-        <Typography
-          fontSize={(theme) => theme.typography.pxToRem(52)}
-          fontWeight={500}
-          gutterBottom
-          fontFamily={`"IBM Plex Sans KR", sans-serif`}>
-          All Blogs
-        </Typography>
+        <Animated order={0} animate='fadeInUp'>
+          <GenerateHead metadatas={metadatas} />
+          <Typography
+            fontSize={(theme) => theme.typography.pxToRem(52)}
+            fontWeight={500}
+            gutterBottom
+            fontFamily={`"IBM Plex Sans KR", sans-serif`}>
+            All Blogs
+          </Typography>
+        </Animated>
       </Stack>
       <Stack
         gap={5}
@@ -88,7 +91,9 @@ function Index({ posts, totalCount }: any) {
               width: "100%",
             }}>
             {row.map((post, q) => (
-              <Card key={q} post={post} order={i * o.length + q} />
+              <Animated key={q} order={q + 1} animate='fadeInUp'>
+                <Card post={post} />
+              </Animated>
             ))}
           </Stack>
         ))}
