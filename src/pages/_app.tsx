@@ -1,26 +1,13 @@
 import ThemeModeProvider from "@/context/ThemeModeProvider";
 import { VisitorProvider } from "@/context/VisitorProvider";
 import BaseLayout from "@/layouts/BaseLayout";
-import { getAllArticles } from "@/libs/service";
-import {
-  compareWithOrigin,
-  resConvertData,
-  uuidv4,
-  validTime,
-} from "@/util/tool";
 import { CacheProvider, css, EmotionCache } from "@emotion/react";
-import { MDXProvider } from "@mdx-js/react";
-import { GlobalStyles, useMediaQuery, useTheme } from "@mui/material";
+import { GlobalStyles, useTheme } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
-import axios from "axios";
-import { MDXComponents } from "mdx/types";
 import { AppProps } from "next/app";
 import Head from "next/head";
-import { useEffect, useState } from "react";
 import createEmotionCache from "../libs/createEmotionCache";
-import AOS from "aos";
-import "aos/dist/aos.css";
-import { useRouter } from "next/router";
+import 'animate.css';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -31,25 +18,6 @@ export interface MyAppProps extends AppProps {
 
 export default function MyApp(props: MyAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
-  const router = useRouter();
-  const theme = useTheme();
-  const isMoDesk = useMediaQuery(theme.breakpoints.up("md"));
-
-  useEffect(() => {
-    AOS.init({
-      disable: isMoDesk ? false : true,
-    });
-    AOS.refreshHard();
-  }, []);
-
-  useEffect(() => {
-    setTimeout(() => {
-      AOS.init({
-        disable: isMoDesk ? false : "mobile",
-      });
-      AOS.refreshHard();
-    }, 150);
-  }, [router.pathname, router.query, isMoDesk]);
 
   return (
     <CacheProvider value={emotionCache}>

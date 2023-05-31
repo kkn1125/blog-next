@@ -1,8 +1,12 @@
 import { Box, Chip, Paper, Stack, Typography } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { AUTHOR } from "@/util/global";
-import { getReponsiveImageUrl, slugToBlogTrailingSlash } from "@/util/tool";
+import {
+  getReponsiveImageUrl,
+  setAnimate,
+  slugToBlogTrailingSlash,
+} from "@/util/tool";
 import anime from "animejs";
 import Link from "next/link";
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";
@@ -16,6 +20,7 @@ interface CardInfo {
 
 function Card({ post, order = 0 }: CardInfo) {
   const router = useRouter();
+  const [animateClass, setAnimationClass] = useState("");
 
   useEffect(() => {
     // setTimeout(() => {
@@ -25,17 +30,23 @@ function Card({ post, order = 0 }: CardInfo) {
     //     delay: anime.stagger(100),
     //   });
     // }, 1000);
-  }, []);
+    setAnimate(
+      setAnimationClass,
+      ["animate__animated", "animate__fadeInUp"],
+      order
+    );
+  }, [router.query, router.pathname]);
 
   return (
     <Stack
-      data-aos='fade-up'
-      data-aos-delay={order * 150}
+      className={animateClass}
+      // data-aos='fade-up'
+      // data-aos-delay={order * 150}
       sx={{
         maxWidth: { sm: "100%", md: 360 },
         // transform: "translateY(270px)",
         width: "100%",
-        "&:hover img": {
+        "&:hover .card-cover": {
           transform: "scale(1.1)",
         },
       }}>
@@ -44,15 +55,13 @@ function Card({ post, order = 0 }: CardInfo) {
           position: "relative",
           width: "auto",
           height: 250,
-
+          overflow: "hidden",
           // maskImage:
           //   "linear-gradient(#000000 70%, #00000036 85%, transparent 90%)",
         }}>
         <Link href={slugToBlogTrailingSlash(post.frontmatter.slug)}>
           <Box
-            // component={"img"}
-            // src={}
-            // alt='test'
+            className='card-cover'
             sx={{
               backgroundImage: `url(${getReponsiveImageUrl(
                 post.frontmatter.image

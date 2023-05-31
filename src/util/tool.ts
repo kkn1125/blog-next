@@ -1,3 +1,5 @@
+import { SetStateAction } from "react";
+
 export const convertDate = (date: string) => new Date(date.slice(0, -6));
 
 export const slicedBundle = (gap: number, array: any[]) => {
@@ -206,4 +208,17 @@ export const resConvertData = (res: { data: { contents: string } }) => {
     return [key.textContent, value.textContent];
   });
   return Object.fromEntries(tableEntries);
+};
+
+export const setAnimate = (
+  setter: (value: SetStateAction<string>) => void,
+  classes: string[],
+  order: number
+) => {
+  setTimeout(() => {
+    setter(() => classes.join(" "));
+    setTimeout(() => {
+      setter(() => "");
+    }, 1000);
+  }, order * 100);
 };

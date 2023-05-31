@@ -8,14 +8,11 @@ export const ColorModeContext = createContext({ toggleColorMode: () => {} });
 function ThemeModeProvider({ children }: { children: React.ReactElement }) {
   const [mode, setMode] = useState<"light" | "dark">("light");
 
-  const colorMode = useMemo(
-    () => ({
-      toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
-      },
-    }),
-    []
-  );
+  const colorMode = {
+    toggleColorMode: () => {
+      setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
+    },
+  };
 
   const getDesignTokens = (mode: "light" | "dark") => ({
     palette: {

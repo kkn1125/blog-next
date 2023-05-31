@@ -170,76 +170,86 @@ function Calendar() {
 
   return (
     <Stack direction={{ sm: "column", md: "row" }}>
-      <Box>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DateCalendar
-            value={date as dayjs.Dayjs}
-            onChange={(newValue) => {
-              // console.log(newValue);
-              newValue && setDate((date) => newValue);
-              setCalInfo(() => ({
-                y: String(newValue?.year() || new Date().getFullYear()),
-                m: String(newValue?.month() || new Date().getMonth()),
-                d: String(newValue?.date() || new Date().getDate()),
-              }));
-            }}
-            renderLoading={() => <DayCalendarSkeleton />}
-            slots={{
-              day: ServerDay,
-            }}
-            slotProps={{
-              day: {
-                highlightedDays,
-                flatLists,
-              } as any,
-            }}
-          />
-        </LocalizationProvider>
-      </Box>
-      <Stack gap={1} sx={{ flex: 1 }}>
-        <Stack
-          direction='row'
-          gap={1}
-          sx={{
-            fontWeight: 700,
-            fontSize: (theme) => theme.typography.pxToRem(24),
-          }}>
-          <Chip color='primary' label={`✅${counter.done}`} size='small' />
-          <Chip color='primary' label={`❌${counter.cancel}`} size='small' />
-          <Chip
-            color='primary'
-            label={`❓${counter.total - counter.done - counter.cancel}`}
-            size='small'
-          />
-          <Chip color='primary' label={`📜${counter.total}`} size='small' />
-        </Stack>
-        <Typography
-          fontWeight={700}
-          fontSize={(theme) => theme.typography.pxToRem(24)}>
-          {(date as Dayjs)?.format("YYYY. MM. DD / ddd")}
-        </Typography>
-        <Stack sx={{ flex: 1 }}>
-          <Typography
-            component='div'
-            fontWeight={200}
-            fontSize={(theme) => theme.typography.pxToRem(14)}>
-            {(todoStorage as any)[calInfo.y]?.[calInfo.m]?.[calInfo.d]?.map(
-              (item: any, q: number) => (
-                <Typography key={q} component='div'>
-                  [{tagIcon[item.tag]}] {item.todo}
-                </Typography>
-              )
-            ) || (
-              <Typography component='div'>등록된 일정이 없습니다 😉</Typography>
-            )}
-          </Typography>
-        </Stack>
-        <Box>
-          <Button variant='outlined' color='success' onClick={handleToday}>
-            Today
-          </Button>
-        </Box>
-      </Stack>
+      {date && (
+        <>
+          <Box>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DateCalendar
+                value={date as dayjs.Dayjs}
+                onChange={(newValue) => {
+                  // console.log(newValue);
+                  newValue && setDate((date) => newValue);
+                  setCalInfo(() => ({
+                    y: String(newValue?.year() || new Date().getFullYear()),
+                    m: String(newValue?.month() || new Date().getMonth()),
+                    d: String(newValue?.date() || new Date().getDate()),
+                  }));
+                }}
+                renderLoading={() => <DayCalendarSkeleton />}
+                slots={{
+                  day: ServerDay,
+                }}
+                slotProps={{
+                  day: {
+                    highlightedDays,
+                    flatLists,
+                  } as any,
+                }}
+              />
+            </LocalizationProvider>
+          </Box>
+          <Stack gap={1} sx={{ flex: 1 }}>
+            <Stack
+              direction='row'
+              gap={1}
+              sx={{
+                fontWeight: 700,
+                fontSize: (theme) => theme.typography.pxToRem(24),
+              }}>
+              <Chip color='primary' label={`✅${counter.done}`} size='small' />
+              <Chip
+                color='primary'
+                label={`❌${counter.cancel}`}
+                size='small'
+              />
+              <Chip
+                color='primary'
+                label={`❓${counter.total - counter.done - counter.cancel}`}
+                size='small'
+              />
+              <Chip color='primary' label={`📜${counter.total}`} size='small' />
+            </Stack>
+            <Typography
+              fontWeight={700}
+              fontSize={(theme) => theme.typography.pxToRem(24)}>
+              {(date as Dayjs)?.format("YYYY. MM. DD / ddd")}
+            </Typography>
+            <Stack sx={{ flex: 1 }}>
+              <Typography
+                component='div'
+                fontWeight={200}
+                fontSize={(theme) => theme.typography.pxToRem(14)}>
+                {(todoStorage as any)[calInfo.y]?.[calInfo.m]?.[calInfo.d]?.map(
+                  (item: any, q: number) => (
+                    <Typography key={q} component='div'>
+                      [{tagIcon[item.tag]}] {item.todo}
+                    </Typography>
+                  )
+                ) || (
+                  <Typography component='div'>
+                    등록된 일정이 없습니다 😉
+                  </Typography>
+                )}
+              </Typography>
+            </Stack>
+            <Box>
+              <Button variant='outlined' color='success' onClick={handleToday}>
+                Today
+              </Button>
+            </Box>
+          </Stack>
+        </>
+      )}
     </Stack>
   );
 }

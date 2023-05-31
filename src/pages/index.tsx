@@ -14,6 +14,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+import { useEffect, useState } from "react";
 
 const metadatas = {
   title: BRAND_NAME.toUpperCase(),
@@ -25,13 +26,14 @@ const MAIN_POST_LIMIT = 4;
 
 export default function Home({ posts }: any) {
   const theme = useTheme();
+  const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
 
   return (
     <Container maxWidth='lg'>
       <Toolbar />
       <Stack sx={{ flex: 1 }}>
         <GenerateHead metadatas={metadatas} />
-        <Box component={"section"} /* data-aos='fade-up' data-aos-delay='0' */>
+        <Box component={"section"}>
           <Typography
             fontSize={(theme) => theme.typography.pxToRem(52)}
             fontWeight={700}
@@ -54,10 +56,7 @@ export default function Home({ posts }: any) {
           <MainCard post={posts[0]} />
           <Toolbar />
           <Stack gap={5}>
-            {slicedBundle(
-              useMediaQuery(theme.breakpoints.up("md")) ? 3 : 1,
-              posts.slice(1)
-            ).map((row, i, o) => (
+            {slicedBundle(isMdUp ? 3 : 1, posts.slice(1)).map((row, i, o) => (
               <Stack
                 key={i}
                 direction='row'
