@@ -116,6 +116,7 @@ function Index() {
           </ListItem>
         </List>
       </Animated>
+      <Toolbar />
     </Stack>
   );
 }

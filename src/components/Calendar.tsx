@@ -59,10 +59,7 @@ function ServerDay(
   const repeatDays = flatLists.filter((item: any) => item.repeat);
 
   const pickTodo = highlightedDays[year]?.[month]?.[date];
-  const isSelected =
-    !props.outsideCurrentMonth &&
-    Boolean(pickTodo) &&
-    (pickTodo as unknown as any[])?.every((item: any) => !item.repeat);
+  const isSelected = !props.outsideCurrentMonth && Boolean(pickTodo);
   const isRepeat = repeatDays.find((item) => {
     const baseTime = new Date(item.time as string);
 
@@ -123,7 +120,7 @@ const repeatDays = flatLists.filter((item: any) => item.repeat);
 
 function Calendar() {
   const [date, setDate] = useState<string | dayjs.Dayjs | null>(null);
-  const [todo, setTodo] = useState([]);
+  const [todos, setTodos] = useState([]);
   const [highlightedDays, setHighlightedDays] = useState({});
   const [calInfo, setCalInfo] = useState({
     y: "0",
@@ -143,6 +140,61 @@ function Calendar() {
 
     setDate(() => dayjs(`${year}-${month}-${date}`));
   };
+
+  const getFilteredTodos = () => {
+    const commonTodos = (todoStorage as any)[calInfo.y]?.[calInfo.m]?.[
+      calInfo.d
+    ]?.filter((item: any) => !item.repeat);
+
+    const repeatTodos = repeatDays.filter((item: any) => {
+      const baseTime = new Date(item.time as string);
+      const clickTime = new Date(
+        Number(calInfo.y),
+        Number(calInfo.m),
+        Number(calInfo.d)
+      );
+      if (item.repeat) {
+        if (
+          item.repeatDay === clickTime.getDay() &&
+          (item.repeatDayOfWeek as unknown as number[]).includes(
+            getWeek(Number(calInfo.y), Number(calInfo.m) + 1, Number(calInfo.d))
+          )
+        ) {
+          return true;
+        } else if (
+          item.repeatDay === clickTime.getDay() &&
+          !Boolean((item.repeatDayOfWeek as unknown as number[]).length)
+        ) {
+          return true;
+        } else if (
+          item.repeatDayOfMonth &&
+          String(baseTime.getDate()) === calInfo.d
+        ) {
+          return true;
+        } else if (
+          item.repeatDayOfYear &&
+          String(baseTime.getMonth()) === calInfo.m &&
+          String(baseTime.getDate()) === calInfo.d
+        ) {
+          return true;
+        }
+      }
+      return false;
+    });
+
+    const isEmptyCommon = (commonTodos?.length || 0) === 0;
+    const isEmptyRepeat = (repeatTodos?.length || 0) === 0;
+
+    if (isEmptyCommon) {
+      return repeatTodos;
+    } else {
+      return commonTodos;
+    }
+  };
+
+  useEffect(() => {
+    setTodos(getFilteredTodos());
+  }, [calInfo]);
 
   useEffect(() => {
     handleDate(new Date());
@@ -184,7 +236,12 @@ function Calendar() {
   };
 
   return (
-    <Stack direction={{ sm: "column", md: "row" }}>
+    <Stack
+      direction={{ sm: "column", md: "row" }}
+      gap={3}
+      justifyContent='center'
+      alignItems='center'
+      >
       {date && (
         <>
           <Box>
@@ -219,7 +276,7 @@ function Calendar() {
               />
             </LocalizationProvider>
           </Box>
-          <Stack gap={1} sx={{ flex: 1 }}>
+          <Stack gap={1}>
             <Stack
               direction='row'
               gap={1}
@@ -245,68 +302,28 @@ function Calendar() {
               fontSize={(theme) => theme.typography.pxToRem(24)}>
               {(date as Dayjs)?.format("YYYY. MM. DD / ddd")}
             </Typography>
-            <Stack sx={{ flex: 1 }}>
+            <Stack sx={{ flex: 1, minHeight: 150 }}>
               <Typography
                 component='div'
                 fontWeight={200}
                 fontSize={(theme) => theme.typography.pxToRem(14)}>
-                {(
-                  ((todoStorage as any)[calInfo.y]?.[calInfo.m]?.[
+                {
+                  /* ((todoStorage as any)[calInfo.y]?.[calInfo.m]?.[
                     calInfo.d
-                  ]?.every((item: any) => !item.repeat) &&
-                    (todoStorage as any)[calInfo.y]?.[calInfo.m]?.[
-                      calInfo.d
-                    ]) ||
-                  repeatDays.filter((item: any) => {
-                    const baseTime = new Date(item.time as string);
-                    const clickTime = new Date(
-                      Number(calInfo.y),
-                      Number(calInfo.m),
-                      Number(calInfo.d)
-                    );
-                    if (item.repeat) {
-                      if (
-                        item.repeatDay === clickTime.getDay() &&
-                        (item.repeatDayOfWeek as unknown as number[]).includes(
-                          getWeek(
-                            Number(calInfo.y),
-                            Number(calInfo.m) + 1,
-                            Number(calInfo.d)
-                          )
-                        )
-                      ) {
-                        return true;
-                      } else if (
-                        item.repeatDay === clickTime.getDay() &&
-                        !Boolean(
-                          (item.repeatDayOfWeek as unknown as number[]).length
-                        )
-                      ) {
-                        return true;
-                      } else if (
-                        item.repeatDayOfMonth &&
-                        String(baseTime.getDate()) === calInfo.d
-                      ) {
-                        return true;
-                      } else if (
-                        item.repeatDayOfYear &&
-                        String(baseTime.getMonth()) === calInfo.m &&
-                        String(baseTime.getDate()) === calInfo.d
-                      ) {
-                        return true;
-                      }
-                    }
-                    return false;
-                  })
-                ).map((item: any, q: number) => (
-                  <Typography key={q} component='div'>
-                    [{tagIcon[item.tag]}] {item.todo}
-                  </Typography>
-                )) || (
-                  <Typography component='div'>
-                    등록된 일정이 없습니다 😉
-                  </Typography>
-                )}
+                  ]?.every((item: any) => !item.repeat) && */
+                  todos.length > 0 ? (
+                    todos.map((item: any, q: number) => (
+                      <Typography key={q} component='div'>
+                        {item.todo} {tagIcon[item.tag]}{" "}
+                        {item.repeat ? `(♻️ 반복일정) ` : ""}
+                      </Typography>
+                    ))
+                  ) : (
+                    <Typography component='div'>
+                      등록된 일정이 없습니다 😉
+                    </Typography>
+                  )
+                }
               </Typography>
             </Stack>
             <Box>

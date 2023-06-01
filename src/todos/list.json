@@ -11,6 +11,16 @@
           "repeatDayOfYear": false,
           "repeatDayOfMonth": false,
           "repeatDayOfWeek": [1, 3, 5]
+        },
+        {
+          "todo": "블로그 UI 변경",
+          "tag": "check",
+          "time": "2023-06-01 18:54:03",
+          "repeat": false,
+          "repeatDay": -1,
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": []
         }
       ]
     },

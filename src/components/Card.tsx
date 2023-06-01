@@ -1,4 +1,12 @@
-import { Box, Chip, Paper, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Chip,
+  Paper,
+  Stack,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import { Suspense, useEffect, useState } from "react";
 
 import { AUTHOR } from "@/util/global";
@@ -20,6 +28,7 @@ interface CardInfo {
 
 function Card({ post }: CardInfo) {
   const router = useRouter();
+  const theme = useTheme();
 
   return (
     <Stack
@@ -34,20 +43,32 @@ function Card({ post }: CardInfo) {
       <Box
         sx={{
           position: "relative",
-          width: "auto",
-          height: 250,
+          width: "100%",
+          height: 240,
           overflow: "hidden",
+          // backgroundColor: "#00000016",
+          // display: "flex",
+          // justifyContent: "center",
+          // alignItems: "center",
           // maskImage:
           //   "linear-gradient(#000000 70%, #00000036 85%, transparent 90%)",
         }}>
         <Link href={slugToBlogTrailingSlash(post.frontmatter.slug)}>
-          <LazyImage
+          <Box
             className='card-cover'
-            src={getReponsiveImageUrl(post.frontmatter.image)}
-            width='auto'
-            height='100%'
+            // src={getReponsiveImageUrl(post.frontmatter.image)}
+            // width={'100%'}
             sx={{
+              // display: "inline-block",
               transition: "ease-in-out 150ms",
+              width: "100%",
+              height: "100%",
+              backgroundImage: `url(${getReponsiveImageUrl(
+                post.frontmatter.image
+              )})`,
+              backgroundPosition: "center center",
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "cover",
             }}
           />
         </Link>

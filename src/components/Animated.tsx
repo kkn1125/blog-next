@@ -45,7 +45,7 @@ function Animated({
         ...(card
           ? {
               width: "100%",
-              maxWidth: "fit-content",
+              // maxWidth: "fit-content",
             }
           : { width: "inherit" }),
         height: "auto",

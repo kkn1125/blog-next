@@ -63,7 +63,7 @@ export default function Home({ posts }: any) {
           </Animated>
           <Toolbar />
           <Stack gap={5}>
-            {slicedBundle(isMdUp ? 3 : 1, posts.slice(1)).map((row, i, o) => (
+            {slicedBundle(isMdUp ? 3 : 1, posts.slice(1)).map((row, i) => (
               <Stack
                 key={i}
                 direction='row'

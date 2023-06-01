@@ -43,6 +43,8 @@ function GoTop() {
   function handleGoTop() {
     const main = document.querySelector("#main") as HTMLDivElement;
     const body = document.querySelector("#__next > div") as HTMLDivElement;
+    const gotop = document.querySelector(".gotop") as HTMLDivElement;
+
     active.current = true;
     (tooltipRef.current as HTMLDivElement).classList.remove(
       "animate__animated",
@@ -51,7 +53,7 @@ function GoTop() {
     );
     anime({
       targets: ".gotop",
-      translateY: -document.body.scrollHeight * 0.7,
+      translateY: (-document.body.clientHeight - gotop.offsetTop) * 0.3,
       rotate: "2turn",
     });
     main.scrollTo({
