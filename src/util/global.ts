@@ -14,3 +14,6 @@ export const BASEPATH = "127.0.0.1";
 
 /* resource urls */
 export const BRAND_COLOR_LOGO = "/brand_logo/logo_color.png";
+export const BRAND_B_LOGO = "/brand_logo/logo_black.png";
+export const BRAND_BW_LOGO = "/brand_logo/logo_black_white.png";
+export const BRAND_W_LOGO = "/brand_logo/logo_white.png";

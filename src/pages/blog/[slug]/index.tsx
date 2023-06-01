@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { MDXComponents } from "mdx/types";
 import { MDXRemote } from "next-mdx-remote";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { tomorrowNight } from "react-syntax-highlighter/dist/cjs/styles/hljs";
 
@@ -209,17 +209,7 @@ const metadatas = (frontmatter: any) => ({
   image: frontmatter.image,
 });
 
-function Index({
-  slugs,
-  origin,
-  post,
-  content,
-}: {
-  slugs: string[];
-  origin: any;
-  post: any;
-  content: any;
-}) {
+function Index({ post, content }: { post: any; content: any }) {
   const [responsivePost, setResponsivePost] = useState<any>(null);
   const [mode, setMode] = useState(false);
   const theme = useTheme();
@@ -251,6 +241,7 @@ function Index({
       commentEl.current?.appendChild(scriptEl);
     }, 500);
   }, [theme.palette.mode]);
+
   return (
     <Stack
       id='post-wrap'
@@ -260,9 +251,11 @@ function Index({
         height: "fit-content",
         position: "relative",
       }}>
-      <Box>
-        <SideBar list={parseHeading(content)} />
-      </Box>
+      {responsivePost && (
+        <Box>
+          <SideBar list={parseHeading(content)} />
+        </Box>
+      )}
 
       {responsivePost && (
         <Stack

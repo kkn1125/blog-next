@@ -10,6 +10,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { memo, useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
+import { getWeek } from "@/util/tool";
 
 const tagIcon: any = {
   undefined: "▷",
@@ -30,6 +31,8 @@ const tagIcon: any = {
 };
 
 const now = new Date();
+
+let weeks = 0;
 
 function ServerDay(
   props: PickersDayProps<Dayjs> & {
@@ -56,13 +59,28 @@ function ServerDay(
   const repeatDays = flatLists.filter((item: any) => item.repeat);
 
   const pickTodo = highlightedDays[year]?.[month]?.[date];
-  const isSelected = !props.outsideCurrentMonth && Boolean(pickTodo);
+  const isSelected =
+    !props.outsideCurrentMonth &&
+    Boolean(pickTodo) &&
+    (pickTodo as unknown as any[])?.every((item: any) => !item.repeat);
   const isRepeat = repeatDays.find((item) => {
     const baseTime = new Date(item.time as string);
+
     if (item.repeat && !props.outsideCurrentMonth) {
+      if (!props.outsideCurrentMonth && props.day.day() === 0) {
+        weeks += 1;
+      }
       if (
+        (item.repeatDayOfWeek as unknown as number[]).includes(
+          getWeek(year, month + 1, date)
+        ) &&
+        item.repeatDay === props.day.day()
+      ) {
+        return item;
+      } else if (
         item.repeatDay &&
         (item.repeatDay as number) > -1 &&
+        !Boolean((item.repeatDayOfWeek as unknown as number[])?.length) &&
         item.repeatDay === props.day.day()
       ) {
         return item;
@@ -76,6 +94,7 @@ function ServerDay(
         return item;
       }
     }
+
     return false;
   });
 
@@ -116,10 +135,6 @@ function Calendar() {
     cancel: 0,
     total: 0,
   });
-
-  // let doneCount = 0;
-  // let cancelCount = 0;
-  // let totalCount = 0;
 
   const handleDate = (newDate: Date) => {
     const year = newDate.getFullYear();
@@ -176,8 +191,14 @@ function Calendar() {
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DateCalendar
                 value={date as dayjs.Dayjs}
+                onYearChange={() => {
+                  weeks = 0;
+                }}
+                onMonthChange={() => {
+                  weeks = 0;
+                }}
                 onChange={(newValue) => {
-                  // console.log(newValue);
+                  weeks = 0;
                   newValue && setDate((date) => newValue);
                   setCalInfo(() => ({
                     y: String(newValue?.year() || new Date().getFullYear()),
@@ -229,13 +250,59 @@ function Calendar() {
                 component='div'
                 fontWeight={200}
                 fontSize={(theme) => theme.typography.pxToRem(14)}>
-                {(todoStorage as any)[calInfo.y]?.[calInfo.m]?.[calInfo.d]?.map(
-                  (item: any, q: number) => (
-                    <Typography key={q} component='div'>
-                      [{tagIcon[item.tag]}] {item.todo}
-                    </Typography>
-                  )
-                ) || (
+                {(
+                  ((todoStorage as any)[calInfo.y]?.[calInfo.m]?.[
+                    calInfo.d
+                  ]?.every((item: any) => !item.repeat) &&
+                    (todoStorage as any)[calInfo.y]?.[calInfo.m]?.[
+                      calInfo.d
+                    ]) ||
+                  repeatDays.filter((item: any) => {
+                    const baseTime = new Date(item.time as string);
+                    const clickTime = new Date(
+                      Number(calInfo.y),
+                      Number(calInfo.m),
+                      Number(calInfo.d)
+                    );
+                    if (item.repeat) {
+                      if (
+                        item.repeatDay === clickTime.getDay() &&
+                        (item.repeatDayOfWeek as unknown as number[]).includes(
+                          getWeek(
+                            Number(calInfo.y),
+                            Number(calInfo.m) + 1,
+                            Number(calInfo.d)
+                          )
+                        )
+                      ) {
+                        return true;
+                      } else if (
+                        item.repeatDay === clickTime.getDay() &&
+                        !Boolean(
+                          (item.repeatDayOfWeek as unknown as number[]).length
+                        )
+                      ) {
+                        return true;
+                      } else if (
+                        item.repeatDayOfMonth &&
+                        String(baseTime.getDate()) === calInfo.d
+                      ) {
+                        return true;
+                      } else if (
+                        item.repeatDayOfYear &&
+                        String(baseTime.getMonth()) === calInfo.m &&
+                        String(baseTime.getDate()) === calInfo.d
+                      ) {
+                        return true;
+                      }
+                    }
+                    return false;
+                  })
+                ).map((item: any, q: number) => (
+                  <Typography key={q} component='div'>
+                    [{tagIcon[item.tag]}] {item.todo}
+                  </Typography>
+                )) || (
                   <Typography component='div'>
                     등록된 일정이 없습니다 😉
                   </Typography>

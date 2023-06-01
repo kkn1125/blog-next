@@ -91,7 +91,11 @@ function Index({ posts, totalCount }: any) {
               width: "100%",
             }}>
             {row.map((post, q) => (
-              <Animated key={q} order={q + 1} animate='fadeInUp'>
+              <Animated
+                card
+                key={q}
+                order={i * o.length + q + 1}
+                animate='fadeInUp'>
                 <Card post={post} />
               </Animated>
             ))}

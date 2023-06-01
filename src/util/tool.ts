@@ -240,3 +240,14 @@ export const parseHeading = (content: string) => {
       return { order: title[1], head: title[2] };
     });
 };
+
+export function getWeek(year: number, month: number, day: number) {
+  const baseDate = 1;
+  const base1 = new Date(year, month - 1, baseDate);
+  const lastDateOfFirstWeek = new Date(
+    year,
+    month - 1,
+    6 - base1.getDay() + baseDate
+  );
+  return Math.ceil((day - lastDateOfFirstWeek.getDate()) / 7) + 1;
+}

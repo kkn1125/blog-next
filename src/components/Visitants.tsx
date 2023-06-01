@@ -8,6 +8,7 @@ function Visitants({ visitor }: any) {
     <Stack direction={{ xs: "column", md: "row" }} gap={1} sx={{ px: 1.5 }}>
       <Tooltip title='Today visitant'>
         <Chip
+          size='small'
           color='primary'
           label={
             <Stack
@@ -40,6 +41,7 @@ function Visitants({ visitor }: any) {
       </Typography> */}
       <Tooltip title='Total visitant'>
         <Chip
+          size='small'
           color='primary'
           label={
             <Stack

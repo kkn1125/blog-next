@@ -6,10 +6,12 @@ import React, { Fragment, useEffect, useState } from "react";
 function Animated({
   animate = "fadeInUp",
   order,
+  card = false,
   children,
 }: {
   animate: string;
   order: number;
+  card?: boolean;
   children:
     | React.ReactElement
     | React.ReactElement[]
@@ -39,7 +41,13 @@ function Animated({
       data-type='animated'
       {...(anime && { className: anime })}
       sx={{
-        width: "inherit",
+        // width: "inherit",
+        ...(card
+          ? {
+              width: "100%",
+              maxWidth: "fit-content",
+            }
+          : { width: "inherit" }),
         height: "auto",
       }}>
       {children}

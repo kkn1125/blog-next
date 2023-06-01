@@ -73,7 +73,7 @@ export default function Home({ posts }: any) {
                   width: "100%",
                 }}>
                 {row.map((post, q) => (
-                  <Animated key={q} order={q + 3} animate='fadeInUp'>
+                  <Animated card key={q} order={q + 3} animate='fadeInUp'>
                     <Card post={post} />
                   </Animated>
                 ))}

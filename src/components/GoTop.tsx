@@ -1,13 +1,14 @@
 import { IconButton, Tooltip, useMediaQuery, useTheme } from "@mui/material";
 import anime from "animejs";
-import React, { useEffect, useState } from "react";
-
-let active = false;
+import React, { useEffect, useRef, useState } from "react";
 
 function GoTop() {
   const theme = useTheme();
+  const [act, setAct] = useState();
   // const isUpMd = useMediaQuery(theme.breakpoints.up("md"));
+  const active = useRef(false);
   const [disable, setDisable] = useState(true);
+  const tooltipRef = useRef<HTMLDivElement>(null);
   // const target = isUpMd ? "#main" : "#__next > div";
 
   useEffect(() => {
@@ -25,14 +26,14 @@ function GoTop() {
     if (this.scrollTop === 0) {
       setTimeout(() => {
         setDisable(true);
-        active = false;
+        active.current = false;
       }, 1000);
     } else {
-      if (!active && this.scrollTop > this.scrollHeight * 0.2) {
+      if (!active.current && this.scrollTop > this.scrollHeight * 0.2) {
         setDisable(false);
         // });
       } else {
-        if (!active) {
+        if (!active.current) {
           setDisable(true);
         }
       }
@@ -42,10 +43,15 @@ function GoTop() {
   function handleGoTop() {
     const main = document.querySelector("#main") as HTMLDivElement;
     const body = document.querySelector("#__next > div") as HTMLDivElement;
-    active = true;
+    active.current = true;
+    (tooltipRef.current as HTMLDivElement).classList.remove(
+      "animate__animated",
+      "animate__rubberBand",
+      "animate__infinite"
+    );
     anime({
       targets: ".gotop",
-      translateY: -document.body.scrollHeight * 0.5,
+      translateY: -document.body.scrollHeight * 0.7,
       rotate: "2turn",
     });
     main.scrollTo({
@@ -63,13 +69,21 @@ function GoTop() {
   return disable ? (
     <></>
   ) : (
-    <Tooltip title="Go Top" placement="bottom">
+    <Tooltip
+      ref={tooltipRef}
+      title='Go Top'
+      placement='bottom'
+      className={
+        active.current
+          ? ""
+          : "animate__animated animate__rubberBand animate__infinite"
+      }>
       <IconButton
         className='gotop'
         sx={{
           position: "fixed",
-          right: "5%",
-          bottom: "25%",
+          right: (theme) => theme.typography.pxToRem(25),
+          bottom: (theme) => theme.typography.pxToRem(150),
           // backgroundColor: (theme) => theme.palette.info.main,
           width: 45,
           height: 45,

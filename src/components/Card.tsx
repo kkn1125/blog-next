@@ -12,6 +12,7 @@ import Link from "next/link";
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import TagIcon from "@mui/icons-material/Tag";
 import { useRouter } from "next/router";
+import LazyImage from "./LazyImage";
 
 interface CardInfo {
   post: any;
@@ -40,17 +41,12 @@ function Card({ post }: CardInfo) {
           //   "linear-gradient(#000000 70%, #00000036 85%, transparent 90%)",
         }}>
         <Link href={slugToBlogTrailingSlash(post.frontmatter.slug)}>
-          <Box
+          <LazyImage
             className='card-cover'
+            src={getReponsiveImageUrl(post.frontmatter.image)}
+            width='auto'
+            height='100%'
             sx={{
-              backgroundImage: `url(${getReponsiveImageUrl(
-                post.frontmatter.image
-              )})`,
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "center 0px",
-              backgroundSize: "cover",
-              width: "100%",
-              height: "100%",
               transition: "ease-in-out 150ms",
             }}
           />

@@ -1,33 +1,37 @@
-import React, { useContext, useEffect, useState } from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
-import { AUTHOR, BRAND_COLOR_LOGO, BRAND_NAME, PROFILE } from "@/util/global";
-import { useRouter } from "next/navigation";
-import { useRouter as useNavigate } from "next/router";
-import Link from "next/link";
-import Image from "next/image";
 import { ColorModeContext } from "@/context/ThemeModeProvider";
-import { Stack, useTheme } from "@mui/material";
-import NightsStayIcon from "@mui/icons-material/NightsStay";
-import WbSunnyIcon from "@mui/icons-material/WbSunny";
 import {
+  BRAND_BW_LOGO,
+  BRAND_COLOR_LOGO,
+  BRAND_NAME,
+  PROFILE,
+} from "@/util/global";
+import {
+  compareWithOrigin,
+  resConvertData,
   uuidv4,
   validTime,
-  resConvertData,
-  compareWithOrigin,
 } from "@/util/tool";
+import MenuIcon from "@mui/icons-material/Menu";
+import NightsStayIcon from "@mui/icons-material/NightsStay";
+import WbSunnyIcon from "@mui/icons-material/WbSunny";
+import { Stack, useTheme } from "@mui/material";
+import AppBar from "@mui/material/AppBar";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import IconButton from "@mui/material/IconButton";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Toolbar from "@mui/material/Toolbar";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
 import axios from "axios";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useRouter as useNavigate } from "next/router";
+import React, { useContext, useEffect, useState } from "react";
+import LazyImage from "./LazyImage";
 import Visitants from "./Visitants";
 
 const pages = [
@@ -243,8 +247,9 @@ function ResponsiveAppBar() {
       position='fixed'
       sx={{
         color: "inherit",
-        backgroundColor: "#ffffff56",
-        backdropFilter: "blur(1rem)",
+        backgroundColor: (theme) =>
+          "#" + theme.palette.background.paper.slice(1).repeat(2) + "26",
+        backdropFilter: "blur(0.5rem)",
       }}>
       <Container maxWidth='xl'>
         <Toolbar disableGutters>
@@ -258,14 +263,19 @@ function ResponsiveAppBar() {
               color: "inherit",
               textDecoration: "none",
             }}>
-            <Box
-              component='img'
-              width={40}
-              height={40}
-              alt='logo'
-              src={BRAND_COLOR_LOGO}
-              sx={{ display: { xs: "none", md: "flex" } }}
-            />
+            <Box component='picture'>
+              {theme.palette.mode === "dark" && (
+                <source srcSet={BRAND_BW_LOGO} />
+              )}
+              <LazyImage
+                src={BRAND_COLOR_LOGO}
+                width={40}
+                height={40}
+                alt='logo'
+                sx={{ display: { xs: "none", md: "flex" } }}
+                loading={"lazy"}
+              />
+            </Box>
             <Typography
               variant='h6'
               noWrap
@@ -288,7 +298,6 @@ function ResponsiveAppBar() {
             }}>
             {/* mobile hamberg */}
             <IconButton
-              className='exclude'
               size='large'
               aria-label='account of current user'
               aria-controls='menu-appbar'
@@ -300,7 +309,6 @@ function ResponsiveAppBar() {
             {/* mobile menu */}
             <Menu
               id='menu-appbar'
-              className='exclude'
               anchorEl={anchorElNav}
               anchorOrigin={{
                 vertical: "bottom",
@@ -347,27 +355,12 @@ function ResponsiveAppBar() {
               alignItems: "center",
               gap: 1,
             }}>
-            <Box
-              component='img'
+            <LazyImage
+              src={BRAND_COLOR_LOGO}
               width={40}
               height={40}
               alt='logo'
-              src={BRAND_COLOR_LOGO}
             />
-            {/* <Typography
-              variant='h5'
-              noWrap
-              component={Link}
-              href='/'
-              fontWeight={700}
-              letterSpacing={"0.3rem"}
-              fontFamily={`"IBM Plex Sans KR", sans-serif`}
-              sx={{
-                color: "inherit",
-                textDecoration: "none",
-              }}>
-              {BRAND_NAME.toUpperCase()}
-            </Typography> */}
           </Box>
 
           {/* desktop menu */}
@@ -385,7 +378,6 @@ function ResponsiveAppBar() {
                   router.push(path);
                 }}
                 sx={{
-                  my: 2,
                   color: (theme) => theme.palette.text.primary,
                   display: "block",
                 }}>
