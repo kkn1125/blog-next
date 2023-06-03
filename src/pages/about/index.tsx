@@ -4,6 +4,7 @@ import {
   AUTHOR,
   BLOG,
   BRAND_DESC,
+  BRAND_LARGE_COLOR_LOGO3,
   BRAND_NAME,
   GITHUB,
   PORTFOLIO,
@@ -21,6 +22,21 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 
+const ABOUT_LINKS = [
+  {
+    name: "GITHUB",
+    value: GITHUB,
+  },
+  {
+    name: "PORTFOLIO",
+    value: PORTFOLIO,
+  },
+  {
+    name: "BLOG",
+    value: BLOG,
+  },
+];
+
 function Index() {
   return (
     <Stack
@@ -34,8 +50,9 @@ function Index() {
       <GenerateHead
         metadatas={{
           title: `${BRAND_NAME.toUpperCase()}::About`,
-          author: AUTHOR,
           description: BRAND_DESC.trim(),
+          author: AUTHOR,
+          image: BRAND_LARGE_COLOR_LOGO3,
         }}
       />
       <Animated order={1} animate='fadeInUp'>
@@ -69,51 +86,23 @@ function Index() {
               color: "inherit",
             },
           }}>
-          <ListItem>
-            <ListItemText
-              primary={"BLOG"}
-              secondary={
-                <Typography
-                  component={Link}
-                  href={BLOG}
-                  sx={{
-                    color: (theme) => theme.palette.text.disabled,
-                  }}>
-                  {BLOG}
-                </Typography>
-              }
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemText
-              primary='PORTFOLIO'
-              secondary={
-                <Typography
-                  component={Link}
-                  href={PORTFOLIO}
-                  sx={{
-                    color: (theme) => theme.palette.text.disabled,
-                  }}>
-                  {PORTFOLIO}
-                </Typography>
-              }
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemText
-              primary='GITHUB'
-              secondary={
-                <Typography
-                  component={Link}
-                  href={GITHUB}
-                  sx={{
-                    color: (theme) => theme.palette.text.disabled,
-                  }}>
-                  {GITHUB}
-                </Typography>
-              }
-            />
-          </ListItem>
+          {ABOUT_LINKS.map(({ name, value }: any) => (
+            <ListItem>
+              <ListItemText
+                primary={name}
+                secondary={
+                  <Typography
+                    component={Link}
+                    href={value}
+                    sx={{
+                      color: (theme) => theme.palette.text.disabled,
+                    }}>
+                    {value}
+                  </Typography>
+                }
+              />
+            </ListItem>
+          ))}
         </List>
       </Animated>
       <Toolbar />

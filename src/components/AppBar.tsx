@@ -2,6 +2,10 @@ import { ColorModeContext } from "@/context/ThemeModeProvider";
 import {
   BRAND_BW_LOGO,
   BRAND_COLOR_LOGO,
+  BRAND_LARGE_COLOR_LOGO,
+  BRAND_LARGE_COLOR_LOGO1,
+  BRAND_LARGE_COLOR_LOGO2,
+  BRAND_LARGE_COLOR_LOGO3,
   BRAND_NAME,
   PROFILE,
 } from "@/util/global";
@@ -268,15 +272,15 @@ function ResponsiveAppBar() {
                 <source srcSet={BRAND_BW_LOGO} />
               )}
               <LazyImage
-                src={BRAND_COLOR_LOGO}
-                width={40}
+                src={BRAND_LARGE_COLOR_LOGO3}
+                width={120}
                 height={40}
                 alt='logo'
                 sx={{ display: { xs: "none", md: "flex" } }}
                 loading={"lazy"}
               />
             </Box>
-            <Typography
+            {/* <Typography
               variant='h6'
               noWrap
               fontWeight={700}
@@ -288,7 +292,7 @@ function ResponsiveAppBar() {
                 color: "inherit",
               }}>
               {BRAND_NAME.toUpperCase()}
-            </Typography>
+            </Typography> */}
           </Stack>
 
           <Box

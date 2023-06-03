@@ -10,24 +10,35 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { memo, useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
-import { getWeek } from "@/util/tool";
+import { format, getWeek, orderByRepeat, removeDuplicates } from "@/util/tool";
+import StackBadge from "./StackBadge";
 
 const tagIcon: any = {
   undefined: "▷",
   "": "▷",
   rest: "☕",
   study: "📖",
+  book: "📕",
+  post: "📑",
   alert: "📢",
   1: "🥇",
   2: "🥈",
   3: "🥉",
+  fix: "🔧",
   edit: "🔧",
   idea: "💡",
+  "!": "❗",
+  important: "❗",
   know: "❗",
   how: "❓",
+  "?": "❓",
+  what: "❓",
   check: "✅",
   cancel: "❎",
   prj: "🔮",
+  project: "🔮",
+  home: "🏠",
+  money: "💸",
 };
 
 const now = new Date();
@@ -38,7 +49,9 @@ function ServerDay(
   props: PickersDayProps<Dayjs> & {
     highlightedDays?: {
       [k: string]: {
-        [k: string]: { [k: string]: string | boolean | number }[];
+        [k: string]: {
+          [k: string]: { [k: string]: string | boolean | number }[];
+        };
       };
     };
     flatLists?: { [k: string]: string | boolean | number }[];
@@ -95,15 +108,44 @@ function ServerDay(
     return false;
   });
 
+  const relevantTodos = [];
+
+  !props.outsideCurrentMonth &&
+    Boolean(pickTodo) &&
+    pickTodo &&
+    relevantTodos.push(...pickTodo);
+  isRepeat && relevantTodos.push(isRepeat);
+
+  const tags = removeDuplicates(
+    orderByRepeat(relevantTodos).map(
+      (todo: { tag: string }) => tagIcon[todo.tag as string]
+    ) as string[]
+  );
+
   return (
     <Badge
       key={props.day.toString()}
       overlap='circular'
-      badgeContent={isRepeat || isSelected ? "🌟" : undefined}>
+      badgeContent={
+        isRepeat || isSelected ? <StackBadge list={tags} /> : undefined
+      }
+      sx={{
+        ".MuiBadge-badge": {
+          pointerEvents: "none",
+        },
+      }}>
       <PickersDay
         {...other}
         outsideCurrentMonth={outsideCurrentMonth}
         day={day}
+        sx={{
+          "&.Mui-selected": {
+            backgroundColor: (theme) => theme.palette.primary.main + "56",
+            "&:hover, &:focus, &:active": {
+              backgroundColor: (theme) => theme.palette.primary.main + "a6",
+            },
+          },
+        }}
       />
     </Badge>
   );
@@ -188,7 +230,7 @@ function Calendar() {
     if (isEmptyCommon) {
       return repeatTodos;
     } else {
-      return commonTodos;
+      return commonTodos.concat(...repeatTodos);
     }
   };
 
@@ -240,8 +282,7 @@ function Calendar() {
       direction={{ sm: "column", md: "row" }}
       gap={3}
       justifyContent='center'
-      alignItems='center'
-      >
+      alignItems='center'>
       {date && (
         <>
           <Box>
@@ -276,7 +317,11 @@ function Calendar() {
               />
             </LocalizationProvider>
           </Box>
-          <Stack gap={1}>
+          <Stack
+            gap={1}
+            sx={{
+              width: 300,
+            }}>
             <Stack
               direction='row'
               gap={1}
@@ -284,47 +329,87 @@ function Calendar() {
                 fontWeight: 700,
                 fontSize: (theme) => theme.typography.pxToRem(24),
               }}>
-              <Chip color='primary' label={`✅${counter.done}`} size='small' />
               <Chip
-                color='primary'
+                color={"primary"}
+                label={`✅${counter.done}`}
+                size='small'
+              />
+              <Chip
+                color={"primary"}
                 label={`❌${counter.cancel}`}
                 size='small'
               />
               <Chip
-                color='primary'
+                color={"primary"}
                 label={`❓${counter.total - counter.done - counter.cancel}`}
                 size='small'
               />
-              <Chip color='primary' label={`📜${counter.total}`} size='small' />
+              <Chip
+                color={"primary"}
+                label={`📜${counter.total}`}
+                size='small'
+              />
             </Stack>
             <Typography
               fontWeight={700}
-              fontSize={(theme) => theme.typography.pxToRem(24)}>
-              {(date as Dayjs)?.format("YYYY. MM. DD / ddd")}
+              fontSize={(theme) => theme.typography.pxToRem(18)}>
+              {(date as Dayjs)?.format("YYYY. MM. DD dddd")}
             </Typography>
-            <Stack sx={{ flex: 1, minHeight: 150 }}>
-              <Typography
-                component='div'
-                fontWeight={200}
-                fontSize={(theme) => theme.typography.pxToRem(14)}>
-                {
-                  /* ((todoStorage as any)[calInfo.y]?.[calInfo.m]?.[
+            <Stack
+              gap={1}
+              fontWeight={200}
+              fontSize={(theme) => theme.typography.pxToRem(14)}
+              sx={{
+                flex: 1,
+                minHeight: 140,
+                height: 140,
+                maxHeight: 140,
+                my: 1,
+                py: 2,
+                borderTop: "1px solid #565656",
+                borderBottom: "1px solid #565656",
+                overflowY: "auto",
+              }}>
+              {
+                /* ((todoStorage as any)[calInfo.y]?.[calInfo.m]?.[
                     calInfo.d
                   ]?.every((item: any) => !item.repeat) && */
-                  todos.length > 0 ? (
-                    todos.map((item: any, q: number) => (
-                      <Typography key={q} component='div'>
-                        {item.todo} {tagIcon[item.tag]}{" "}
-                        {item.repeat ? `(♻️ 반복일정) ` : ""}
-                      </Typography>
-                    ))
-                  ) : (
-                    <Typography component='div'>
-                      등록된 일정이 없습니다 😉
+                todos.length > 0 ? (
+                  orderByRepeat(todos).map((item: any, q: number) => (
+                    <Typography
+                      key={q}
+                      component='div'
+                      fontSize={(theme) => theme.typography.pxToRem(14)}
+                      sx={{
+                        wordBreak: "break-word",
+                        whiteSpace: "pre-wrap",
+                      }}>
+                      {tagIcon[item.tag]} {item.todo}
+                      {item.repeat ? `(♻️ 반복일정) ` : ""}
+                      <br />
+                      <Box
+                        component='span'
+                        sx={{
+                          fontSize: (theme) => theme.typography.pxToRem(6),
+                          backgroundColor: (theme) =>
+                            theme.palette.text.primary,
+                          color: (theme) => theme.palette.background.paper,
+                          px: 0.8,
+                          py: 0.3,
+                          borderRadius: 10,
+                        }}>
+                        {format(new Date(item.time), "YY-MM-dd AP HH:mm", true)}
+                      </Box>
                     </Typography>
-                  )
-                }
-              </Typography>
+                  ))
+                ) : (
+                  <Typography
+                    component='div'
+                    fontSize={(theme) => theme.typography.pxToRem(14)}>
+                    등록된 일정이 없습니다 😉
+                  </Typography>
+                )
+              }
             </Stack>
             <Box>
               <Button variant='outlined' color='success' onClick={handleToday}>

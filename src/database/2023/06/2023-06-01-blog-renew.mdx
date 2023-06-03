@@ -115,9 +115,9 @@ import Layout from "./Layout";
 
 // mdx내에서 사용할 변수
 export const meta = {
-  slug: '/test01/',
-  title: 'test01',
-  description: '안녕 나는 포스트 내용이야.'
+slug: '/test01/',
+title: 'test01',
+description: '안녕 나는 포스트 내용이야.'
 }
 
 # 안녕
@@ -125,11 +125,10 @@ export const meta = {
 나는 포스트 내용이야.
 
 <figure>
-  <img src="https://abc.def/test.png" /> 
+  <img src='https://abc.def/test.png' />
 </figure>
 
 export default ({ children }) => <Layout>{children}</Layout>;
-
 ```
 
 하지만 외부의 mdx파일을 로드해서 뿌려야할 때는 `MDXRemote`라는 컴포넌트를 사용합니다. 이때 MDXRemote가 파싱하는 mdx파일의 결과물은 import, export를 인식못하고 모두 제거해버립니다. 물론 메타데이터도 사라집니다.
@@ -143,11 +142,12 @@ export default ({ children }) => <Layout>{children}</Layout>;
 현재 제가 사용하는 MDXRemote는 리액트 컴포넌트로 파싱하기 때문에 모든 `class`를 `className`으로 변경해야하는 일이 발생했습니다. 이전에 `Gatsby`에서 문제가 되지 않았던 이유는 동일하게 리액트를 사용하는데 md파일을 html로 파싱하기 때문에 굳이 `class`를 `className`으로 작성하지 않아도 되는 이유였지요.
 
 ```mdx
-// test_post.mdx
----
+## // test_post.mdx
+
 slug: /test01/
 title: test01
 description: '안녕 나는 포스트 내용이야.'
+
 ---
 
 # 안녕
@@ -155,7 +155,6 @@ description: '안녕 나는 포스트 내용이야.'
 나는 포스트 내용이야.
 
 ![test](https://abc.def/test.png)
-
 ```
 
 이렇게 해야 정상적으로 메타데이터를 읽고, 렌더링해줍니다. 간혹 `{:.title}` 와 같은 형태로 md파일에서 해당 라인에 클래스를 넣는 등의 표현식을 사용하는 라이브러리도 있습니다. 이렇게 작성한 포스트가 있다면 이 부분도 하나 씩 찾아서 변경해야하는 부분 중 하나가 되겠네요.

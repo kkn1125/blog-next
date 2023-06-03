@@ -251,3 +251,58 @@ export function getWeek(year: number, month: number, day: number) {
   );
   return Math.ceil((day - lastDateOfFirstWeek.getDate()) / 7) + 1;
 }
+
+export const removeDuplicates = ($: string[]) =>
+  $.reduce((_: string[], __) => (!_.includes(__) ? _.concat(__) : _), []);
+
+export const orderByRepeat = (array: any[]) =>
+  array.reduce((acc, cur) => {
+    if (cur.repeat) {
+      if (cur.tag > acc.slice(-1)[0]?.tag) {
+        return [cur, ...acc];
+      }
+    }
+    return [...acc, cur];
+  }, []);
+
+export const format = (
+  time: Date | number | string,
+  form: string,
+  use24h: boolean = true
+) =>
+  form.replace(/YYYY|YY|MM|dd|HH|mm|ss|SSS|AP/g, ($1) => {
+    const timestamp = new Date(time);
+    const year = timestamp.getFullYear();
+    const month = timestamp.getMonth();
+    const date = timestamp.getDate();
+    const hour = timestamp.getHours();
+    const minute = timestamp.getMinutes();
+    const second = timestamp.getSeconds();
+    const milliseconds = timestamp.getMilliseconds();
+    const isOver12 = hour > 12;
+    const isLastTime = hour === 24;
+    const minusHour = use24h && isOver12 && !isLastTime ? 12 : 0;
+
+    switch ($1) {
+      case "YYYY":
+        return year.toString().padStart(4, "0");
+      case "YY":
+        return year.toString().slice(2);
+      case "MM":
+        return month.toString().padStart(2, "0");
+      case "dd":
+        return date.toString().padStart(2, "0");
+      case "HH":
+        return ((hour % 24) - minusHour).toString().padStart(2, "0");
+      case "mm":
+        return minute.toString().padStart(2, "0");
+      case "ss":
+        return second.toString().padStart(2, "0");
+      case "SSS":
+        return milliseconds.toString().padStart(3, "0");
+      case "AP":
+        return isOver12 ? "PM" : "AM";
+      default:
+        return $1;
+    }
+  });

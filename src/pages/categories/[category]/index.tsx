@@ -17,7 +17,7 @@ import {
   useTheme,
 } from "@mui/material";
 import Card from "@/components/Card";
-import { AUTHOR, BRAND_DESC, BRAND_NAME } from "@/util/global";
+import { AUTHOR, BRAND_DESC, BRAND_LARGE_COLOR_LOGO3, BRAND_NAME } from "@/util/global";
 import GenerateHead from "@/components/GenerateHead";
 import Animated from "@/components/Animated";
 
@@ -34,6 +34,7 @@ function Index({ posts, totalCount }: any) {
       BRAND_NAME.toUpperCase() + "::Category" + "-" + router.query.category,
     description: BRAND_DESC,
     author: AUTHOR,
+    image: BRAND_LARGE_COLOR_LOGO3,
   };
 
   useEffect(() => {

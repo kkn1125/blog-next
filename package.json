@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "set404": "mv out/404/index.html out/404.html && rm -rf out/404/",
+    "build": "next build && npm run set404",
     "postbuild": "next-sitemap --config next-sitemap.config.js && touch out/.nojekyll",
     "build-log": "next build >> build-log.txt",
     "postbuild-log": "next-sitemap --config next-sitemap.config.js >> postbuild-log.txt",

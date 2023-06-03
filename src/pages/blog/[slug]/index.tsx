@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import { MDXComponents } from "mdx/types";
 import { MDXRemote } from "next-mdx-remote";
+import Link from "next/link";
 import { Suspense, useEffect, useRef, useState } from "react";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { tomorrowNight } from "react-syntax-highlighter/dist/cjs/styles/hljs";
@@ -197,8 +198,33 @@ const components: MDXComponents | MergeComponents = {
       {children}
     </Box>
   ),
+  a: ({ children, ...rest }: any) => (
+    <Box
+      component={Link}
+      {...rest}
+      sx={{
+        textDecoration: "none",
+        color: (theme) => theme.palette.primary.main,
+        fontWeight: 400,
+        position: "relative",
+        "&::after": {
+          content: '"ref"',
+          position: "absolute",
+          top: -5,
+          left: "100%",
+          textAlign: "right",
+          whiteSpace: "nowrap",
+          fontSize: (theme) => theme.typography.pxToRem(8),
+          fontWeight: 700,
+          color: (theme) => theme.palette.error.main,
+        },
+      }}>
+      {children}
+    </Box>
+  ),
 };
 
+/* frontmatter를 기반으로 metadata set을 만듦 */
 const metadatas = (frontmatter: any) => ({
   title: `${BRAND_NAME.toUpperCase()}::${frontmatter.title}`,
   description: frontmatter.description.trim(),
@@ -337,6 +363,29 @@ function Index({ post, content }: { post: any; content: any }) {
 
 export const getStaticProps = async ({ params }: any) => {
   const post = await getArticleFromSlug(params.slug);
+  Object.assign(post, {
+    content: post.content.replace(
+      /@<=>|@=>|@<=|@<->|@->|@<-/g,
+      ($1: string) => {
+        switch ($1) {
+          case "@<=>":
+            return "⇔";
+          case "@=>":
+            return "⇒";
+          case "@<=":
+            return "⇐";
+          case "@<->":
+            return "↔";
+          case "@->":
+            return "→";
+          case "@<-":
+            return "←";
+          default:
+            return $1;
+        }
+      }
+    ),
+  });
 
   const mdxSource = (await serializeMdx(post.content || "")) || {};
 

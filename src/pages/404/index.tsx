@@ -1,6 +1,11 @@
 import GenerateHead from "@/components/GenerateHead";
 import { getAllArticles } from "@/libs/service";
-import { AUTHOR, BRAND_DESC, BRAND_NAME } from "@/util/global";
+import {
+  AUTHOR,
+  BRAND_DESC,
+  BRAND_LARGE_COLOR_LOGO3,
+  BRAND_NAME,
+} from "@/util/global";
 import {
   Alert,
   AlertTitle,
@@ -31,8 +36,9 @@ function Index({ posts }: any) {
       <GenerateHead
         metadatas={{
           title: `${BRAND_NAME.toUpperCase()}::Not Found`,
-          author: AUTHOR,
           description: BRAND_DESC.trim(),
+          author: AUTHOR,
+          image: BRAND_LARGE_COLOR_LOGO3,
         }}
       />
       <Toolbar />

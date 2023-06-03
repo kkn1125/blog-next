@@ -2,7 +2,12 @@ import Animated from "@/components/Animated";
 import Card from "@/components/Card";
 import GenerateHead from "@/components/GenerateHead";
 import { getAllArticles, getArticlesByTag } from "@/libs/service";
-import { AUTHOR, BRAND_DESC, BRAND_NAME } from "@/util/global";
+import {
+  AUTHOR,
+  BRAND_DESC,
+  BRAND_LARGE_COLOR_LOGO3,
+  BRAND_NAME,
+} from "@/util/global";
 import {
   capitalize,
   duplicateRemoveArrayFromTag,
@@ -32,6 +37,7 @@ function Index({ posts, totalCount }: any) {
     title: BRAND_NAME.toUpperCase() + "::Tag" + "-" + router.query.tag,
     description: BRAND_DESC,
     author: AUTHOR,
+    image: BRAND_LARGE_COLOR_LOGO3,
   };
 
   useEffect(() => {
