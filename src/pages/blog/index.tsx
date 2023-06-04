@@ -1,13 +1,8 @@
 import Animated from "@/components/Animated";
 import Card from "@/components/Card";
 import GenerateHead from "@/components/GenerateHead";
-import { getAllArticles, getPaginationArticles } from "@/libs/service";
-import {
-  AUTHOR,
-  BRAND_DESC,
-  BRAND_LARGE_COLOR_LOGO3,
-  BRAND_NAME,
-} from "@/util/global";
+import { getAllArticles } from "@/libs/service";
+import { AUTHOR, BRAND_DESC, BRAND_LOGO, BRAND_NAME } from "@/util/global";
 import { slicedBundle } from "@/util/tool";
 import {
   Container,
@@ -25,7 +20,7 @@ const metadatas = {
   title: `${BRAND_NAME.toUpperCase()}::Blog`,
   description: BRAND_DESC.trim(),
   author: AUTHOR,
-  image: BRAND_LARGE_COLOR_LOGO3,
+  image: BRAND_LOGO,
 };
 
 const PAGINATION_AMOUNT = 6;

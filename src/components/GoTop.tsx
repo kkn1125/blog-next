@@ -53,7 +53,7 @@ function GoTop() {
     );
     anime({
       targets: ".gotop",
-      translateY: (-document.body.clientHeight - gotop.offsetTop) * 0.3,
+      translateY: (-gotop.getBoundingClientRect().top + 65) * 0.9,
       rotate: "2turn",
     });
     main.scrollTo({

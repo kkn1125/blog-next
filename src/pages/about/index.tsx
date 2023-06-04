@@ -4,7 +4,7 @@ import {
   AUTHOR,
   BLOG,
   BRAND_DESC,
-  BRAND_LARGE_COLOR_LOGO3,
+  BRAND_LOGO,
   BRAND_NAME,
   GITHUB,
   PORTFOLIO,
@@ -37,6 +37,13 @@ const ABOUT_LINKS = [
   },
 ];
 
+const metadatas = {
+  title: `${BRAND_NAME.toUpperCase()}::About`,
+  description: BRAND_DESC.trim(),
+  author: AUTHOR,
+  image: BRAND_LOGO,
+};
+
 function Index() {
   return (
     <Stack
@@ -47,14 +54,7 @@ function Index() {
         minHeight: "101%",
       }}>
       <Toolbar />
-      <GenerateHead
-        metadatas={{
-          title: `${BRAND_NAME.toUpperCase()}::About`,
-          description: BRAND_DESC.trim(),
-          author: AUTHOR,
-          image: BRAND_LARGE_COLOR_LOGO3,
-        }}
-      />
+      <GenerateHead metadatas={metadatas} />
       <Animated order={1} animate='fadeInUp'>
         <Typography
           fontSize={(theme) => theme.typography.pxToRem(52)}

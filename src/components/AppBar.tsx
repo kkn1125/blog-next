@@ -6,6 +6,7 @@ import {
   BRAND_LARGE_COLOR_LOGO1,
   BRAND_LARGE_COLOR_LOGO2,
   BRAND_LARGE_COLOR_LOGO3,
+  BRAND_LOGO,
   BRAND_NAME,
   PROFILE,
 } from "@/util/global";
@@ -49,8 +50,6 @@ const pages = [
   },
 ];
 
-// const settings = ["Profile", "Account", "Dashboard", "Logout"];
-
 function ResponsiveAppBar() {
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext) as any;
@@ -75,6 +74,12 @@ function ResponsiveAppBar() {
       name: "portfolio",
       feature: () => {
         router.push("https://kkn1125.github.io/portfolio/#home");
+      },
+    },
+    {
+      name: "resume",
+      feature: () => {
+        router.push("https://kkn1125.github.io/portfolio/#resume");
       },
     },
     {
@@ -272,15 +277,15 @@ function ResponsiveAppBar() {
                 <source srcSet={BRAND_BW_LOGO} />
               )}
               <LazyImage
-                src={BRAND_LARGE_COLOR_LOGO3}
-                width={120}
+                src={BRAND_LOGO}
+                width={40}
                 height={40}
                 alt='logo'
                 sx={{ display: { xs: "none", md: "flex" } }}
                 loading={"lazy"}
               />
             </Box>
-            {/* <Typography
+            <Typography
               variant='h6'
               noWrap
               fontWeight={700}
@@ -292,7 +297,7 @@ function ResponsiveAppBar() {
                 color: "inherit",
               }}>
               {BRAND_NAME.toUpperCase()}
-            </Typography> */}
+            </Typography>
           </Stack>
 
           <Box
@@ -359,12 +364,7 @@ function ResponsiveAppBar() {
               alignItems: "center",
               gap: 1,
             }}>
-            <LazyImage
-              src={BRAND_COLOR_LOGO}
-              width={40}
-              height={40}
-              alt='logo'
-            />
+            <LazyImage src={BRAND_LOGO} width={40} height={40} alt='logo' />
           </Box>
 
           {/* desktop menu */}

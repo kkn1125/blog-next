@@ -4,7 +4,7 @@ import Card from "@/components/Card";
 import GenerateHead from "@/components/GenerateHead";
 import MainCard from "@/components/MainCard";
 import { getAllArticles } from "@/libs/service";
-import { AUTHOR, BRAND_DESC, BRAND_LARGE_COLOR_LOGO3, BRAND_NAME } from "@/util/global";
+import { AUTHOR, BRAND_DESC, BRAND_LOGO, BRAND_NAME } from "@/util/global";
 import { slicedBundle } from "@/util/tool";
 import {
   Box,
@@ -15,13 +15,12 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { useEffect, useState } from "react";
 
 const metadatas = {
   title: BRAND_NAME.toUpperCase(),
   description: BRAND_DESC.trim(),
   author: AUTHOR,
-  image: BRAND_LARGE_COLOR_LOGO3
+  image: BRAND_LOGO,
 };
 
 const MAIN_POST_LIMIT = 4;

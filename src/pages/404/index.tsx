@@ -1,11 +1,6 @@
 import GenerateHead from "@/components/GenerateHead";
 import { getAllArticles } from "@/libs/service";
-import {
-  AUTHOR,
-  BRAND_DESC,
-  BRAND_LARGE_COLOR_LOGO3,
-  BRAND_NAME,
-} from "@/util/global";
+import { AUTHOR, BRAND_DESC, BRAND_LOGO, BRAND_NAME } from "@/util/global";
 import {
   Alert,
   AlertTitle,
@@ -23,24 +18,26 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
+const metadatas = {
+  title: `${BRAND_NAME.toUpperCase()}::Not Found`,
+  description: BRAND_DESC.trim(),
+  author: AUTHOR,
+  image: BRAND_LOGO,
+};
+
 function Index({ posts }: any) {
   const router = useRouter();
   const [post, setPost] = useState(null);
   useEffect(() => {
     setPost(
-      posts.find((post: any) => post.frontmatter.slug === location.pathname)
+      posts.find((post: any) =>
+        post.frontmatter.slug.match(location.pathname.replace(/\/+/g, ""))
+      )
     );
   }, []);
   return (
     <Container>
-      <GenerateHead
-        metadatas={{
-          title: `${BRAND_NAME.toUpperCase()}::Not Found`,
-          description: BRAND_DESC.trim(),
-          author: AUTHOR,
-          image: BRAND_LARGE_COLOR_LOGO3,
-        }}
-      />
+      <GenerateHead metadatas={metadatas} />
       <Toolbar />
       <Toolbar />
       <Card

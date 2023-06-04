@@ -38,3 +38,6 @@ export const BRAND_COLOR_LOGO = `${BRAND_LOGO_PATH}/logo_color.png`;
 export const BRAND_B_LOGO = `${BRAND_LOGO_PATH}/logo_black.png`;
 export const BRAND_BW_LOGO = `${BRAND_LOGO_PATH}/logo_black_white.png`;
 export const BRAND_W_LOGO = `${BRAND_LOGO_PATH}/logo_white.png`;
+
+/* blog brand logo */
+export const BRAND_LOGO = BRAND_COLOR_LOGO;

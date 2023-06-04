@@ -4,6 +4,10 @@ import matter from "gray-matter";
 import { serialize } from "next-mdx-remote/serialize";
 import path from "path";
 import readingTime from "reading-time";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import rehypePrism from "rehype-prism-plus";
+import rehypeSlug from "rehype-slug";
+import remarkGfm from "remark-gfm";
 
 const basePath = "src/database/**/*.mdx";
 
@@ -13,8 +17,19 @@ export const serializeMdx = (source: string) => {
   return serialize(source, {
     parseFrontmatter: true,
     mdxOptions: {
-      remarkPlugins: [],
-      rehypePlugins: [],
+      remarkPlugins: [remarkGfm],
+      rehypePlugins: [
+        rehypeSlug,
+        // rehypePrism,
+        [
+          rehypeAutolinkHeadings,
+          {
+            properties: {
+              className: ["anchor"],
+            },
+          },
+        ],
+      ],
       format: "mdx",
       development: process.env.NODE_ENV !== "production",
     },
@@ -64,6 +79,65 @@ export async function getSlugs() {
     .map((a: any) => a.frontmatter.slug.replace(/(\/|\\)+/g, "").trim());
 
   return slugs;
+}
+
+export async function getNextArticleFromSlug(slug: string) {
+  const articles = await getAllArticles();
+  const articleIndex = articles.findIndex((article: any) =>
+    article.frontmatter.slug.match(slug)
+  );
+  const article = articles[articleIndex - 1];
+
+  if (article) {
+    const source = fs.readFileSync(
+      article.originPath as string
+    ) as unknown as string;
+    const { content, data } = matter(source);
+    return {
+      content,
+      frontmatter: {
+        slug: slug || "",
+        excerpt: data.excerpt || "",
+        title: data.title || "",
+        publishedAt: data.date || new Date().toLocaleString("ko"),
+        readingTime: readingTime(source).text,
+        ...Object.fromEntries(
+          Object.entries(data).map(([k, v]) => [k, v || ""])
+        ),
+      },
+    };
+  } else {
+    return null;
+  }
+}
+export async function getBeforeArticleFromSlug(slug: string) {
+  const articles = await getAllArticles();
+  const articleIndex = articles.findIndex((article: any) =>
+    article.frontmatter.slug.match(slug)
+  );
+  const article = articles[articleIndex + 1];
+
+  if (article) {
+    const source = fs.readFileSync(
+      article.originPath as string
+    ) as unknown as string;
+    const { content, data } = matter(source);
+    return {
+      content,
+      frontmatter: {
+        slug: slug || "",
+        excerpt: data.excerpt || "",
+        title: data.title || "",
+        publishedAt: data.date || new Date().toLocaleString("ko"),
+        readingTime: readingTime(source).text,
+        ...Object.fromEntries(
+          Object.entries(data).map(([k, v]) => [k, v || ""])
+        ),
+      },
+    };
+  } else {
+    return null;
+  }
 }
 
 export async function getArticleFromSlug(slug: string) {

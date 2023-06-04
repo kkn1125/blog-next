@@ -2,12 +2,7 @@ import Animated from "@/components/Animated";
 import Card from "@/components/Card";
 import GenerateHead from "@/components/GenerateHead";
 import { getAllArticles, getArticlesByTag } from "@/libs/service";
-import {
-  AUTHOR,
-  BRAND_DESC,
-  BRAND_LARGE_COLOR_LOGO3,
-  BRAND_NAME,
-} from "@/util/global";
+import { AUTHOR, BRAND_DESC, BRAND_LOGO, BRAND_NAME } from "@/util/global";
 import {
   capitalize,
   duplicateRemoveArrayFromTag,
@@ -23,9 +18,16 @@ import {
   useTheme,
 } from "@mui/material";
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const PAGINATION_AMOUNT = 6;
+
+const metadatas = (param: string) => ({
+  title: BRAND_NAME.toUpperCase() + "::Tag" + "-" + param,
+  description: BRAND_DESC,
+  author: AUTHOR,
+  image: BRAND_LOGO,
+});
 
 function Index({ posts, totalCount }: any) {
   const theme = useTheme();
@@ -33,12 +35,6 @@ function Index({ posts, totalCount }: any) {
   const [postList, setPostList] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPageCount, setTotalPageCount] = useState(0);
-  const metadatas = {
-    title: BRAND_NAME.toUpperCase() + "::Tag" + "-" + router.query.tag,
-    description: BRAND_DESC,
-    author: AUTHOR,
-    image: BRAND_LARGE_COLOR_LOGO3,
-  };
 
   useEffect(() => {
     setTotalPageCount(Math.ceil(totalCount / PAGINATION_AMOUNT));
@@ -66,7 +62,7 @@ function Index({ posts, totalCount }: any) {
       sx={{
         height: "100%",
       }}>
-      <GenerateHead metadatas={metadatas} />
+      <GenerateHead metadatas={metadatas(router.query.tag as string)} />
       <Toolbar />
       <Animated order={0} animate='fadeInUp'>
         <Typography

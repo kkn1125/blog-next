@@ -9,7 +9,7 @@ export default function SideBar({ list }: { list: any[] }) {
   const isUpMd = useMediaQuery(theme.breakpoints.up("md"));
   const [currentHead, setCurrentHead] = useState("");
   const convertIdString = (str: string) =>
-    str.replace(/#+/gm, "").trim().replace(/[\s]+/gm, "_");
+    str.replace(/#+/gm, "").trim().replace(/[\s]+/gm, "-");
 
   useEffect(() => {
     setCurrentHead(list[0].head);

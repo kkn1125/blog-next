@@ -1,7 +1,14 @@
 import GenerateHead from "@/components/GenerateHead";
 import GoTop from "@/components/GoTop";
+import PostNavigator from "@/components/PostNavigator";
 import SideBar from "@/components/SideBar";
-import { getArticleFromSlug, getSlugs, serializeMdx } from "@/libs/service";
+import {
+  getArticleFromSlug,
+  getBeforeArticleFromSlug,
+  getNextArticleFromSlug,
+  getSlugs,
+  serializeMdx,
+} from "@/libs/service";
 import { AUTHOR, BRAND_NAME } from "@/util/global";
 import { getReponsiveImageUrl, parseHeading } from "@/util/tool";
 import { MergeComponents } from "@mdx-js/react/lib";
@@ -17,7 +24,7 @@ import {
 import { MDXComponents } from "mdx/types";
 import { MDXRemote } from "next-mdx-remote";
 import Link from "next/link";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { tomorrowNight } from "react-syntax-highlighter/dist/cjs/styles/hljs";
 
@@ -159,42 +166,108 @@ const components: MDXComponents | MergeComponents = {
   h1: ({ children }) => (
     <Box
       component='h1'
-      id={(children as string).trim().replace(/[\s]+/gm, "_")}>
+      id={(children as string)[1].toLowerCase().trim().replace(/[\s]+/gm, "-")}
+      sx={{
+        position: "relative",
+        scrollMarginTop: 65,
+        "& a": {
+          position: "absolute",
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+        },
+      }}>
       {children}
     </Box>
   ),
   h2: ({ children }) => (
     <Box
       component='h2'
-      id={(children as string).trim().replace(/[\s]+/gm, "_")}>
+      id={(children as string)[1].toLowerCase().trim().replace(/[\s]+/gm, "-")}
+      sx={{
+        position: "relative",
+        scrollMarginTop: 65,
+        "& a": {
+          position: "absolute",
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+        },
+      }}>
       {children}
     </Box>
   ),
   h3: ({ children }) => (
     <Box
       component='h3'
-      id={(children as string).trim().replace(/[\s]+/gm, "_")}>
+      id={(children as string)[1].toLowerCase().trim().replace(/[\s]+/gm, "-")}
+      sx={{
+        position: "relative",
+        scrollMarginTop: 65,
+        "& a": {
+          position: "absolute",
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+        },
+      }}>
       {children}
     </Box>
   ),
   h4: ({ children }) => (
     <Box
       component='h4'
-      id={(children as string).trim().replace(/[\s]+/gm, "_")}>
+      id={(children as string)[1].toLowerCase().trim().replace(/[\s]+/gm, "-")}
+      sx={{
+        position: "relative",
+        scrollMarginTop: 65,
+        "& a": {
+          position: "absolute",
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+        },
+      }}>
       {children}
     </Box>
   ),
   h5: ({ children }) => (
     <Box
       component='h5'
-      id={(children as string).trim().replace(/[\s]+/gm, "_")}>
+      id={(children as string)[1].toLowerCase().trim().replace(/[\s]+/gm, "-")}
+      sx={{
+        position: "relative",
+        scrollMarginTop: 65,
+        "& a": {
+          position: "absolute",
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+        },
+      }}>
       {children}
     </Box>
   ),
   h6: ({ children }) => (
     <Box
       component='h6'
-      id={(children as string).trim().replace(/[\s]+/gm, "_")}>
+      id={(children as string)[1].toLowerCase().trim().replace(/[\s]+/gm, "-")}
+      sx={{
+        position: "relative",
+        scrollMarginTop: 65,
+        "& a": {
+          position: "absolute",
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+        },
+      }}>
       {children}
     </Box>
   ),
@@ -206,18 +279,7 @@ const components: MDXComponents | MergeComponents = {
         textDecoration: "none",
         color: (theme) => theme.palette.primary.main,
         fontWeight: 400,
-        position: "relative",
-        "&::after": {
-          content: '"ref"',
-          position: "absolute",
-          top: -5,
-          left: "100%",
-          textAlign: "right",
-          whiteSpace: "nowrap",
-          fontSize: (theme) => theme.typography.pxToRem(8),
-          fontWeight: 700,
-          color: (theme) => theme.palette.error.main,
-        },
+        display: "inline-block",
       }}>
       {children}
     </Box>
@@ -235,7 +297,17 @@ const metadatas = (frontmatter: any) => ({
   image: frontmatter.image,
 });
 
-function Index({ post, content }: { post: any; content: any }) {
+function Index({
+  post,
+  content,
+  before,
+  next,
+}: {
+  post: any;
+  content: any;
+  before: any;
+  next: any;
+}) {
   const [responsivePost, setResponsivePost] = useState<any>(null);
   const [mode, setMode] = useState(false);
   const theme = useTheme();
@@ -243,7 +315,7 @@ function Index({ post, content }: { post: any; content: any }) {
 
   useEffect(() => {
     setResponsivePost(post);
-  }, []);
+  }, [post]);
 
   useEffect(() => {
     const scriptEl = document.createElement("script");
@@ -295,11 +367,14 @@ function Index({ post, content }: { post: any; content: any }) {
             whiteSpace: "break-spaces",
           }}>
           <GenerateHead metadatas={metadatas(responsivePost.frontmatter)} />
+
           <Stack
             sx={{
               width: { xs: "100%", md: "80%" },
               px: 2,
             }}>
+            <PostNavigator before={before} next={next} />
+
             <Box>
               <Box
                 sx={{
@@ -327,6 +402,9 @@ function Index({ post, content }: { post: any; content: any }) {
               {...responsivePost}
               components={components as MDXComponents | MergeComponents}
             />
+            
+            <PostNavigator before={before} next={next} />
+
             <Box
               sx={{
                 minHeight: 50,
@@ -362,7 +440,59 @@ function Index({ post, content }: { post: any; content: any }) {
 }
 
 export const getStaticProps = async ({ params }: any) => {
+  const before = await getBeforeArticleFromSlug(params.slug);
   const post = await getArticleFromSlug(params.slug);
+  const next = await getNextArticleFromSlug(params.slug);
+  if (before) {
+    Object.assign(before, {
+      content: before.content.replace(
+        /@<=>|@=>|@<=|@<->|@->|@<-/g,
+        ($1: string) => {
+          switch ($1) {
+            case "@<=>":
+              return "⇔";
+            case "@=>":
+              return "⇒";
+            case "@<=":
+              return "⇐";
+            case "@<->":
+              return "↔";
+            case "@->":
+              return "→";
+            case "@<-":
+              return "←";
+            default:
+              return $1;
+          }
+        }
+      ),
+    });
+  }
+  if (next) {
+    Object.assign(next, {
+      content: next.content.replace(
+        /@<=>|@=>|@<=|@<->|@->|@<-/g,
+        ($1: string) => {
+          switch ($1) {
+            case "@<=>":
+              return "⇔";
+            case "@=>":
+              return "⇒";
+            case "@<=":
+              return "⇐";
+            case "@<->":
+              return "↔";
+            case "@->":
+              return "→";
+            case "@<-":
+              return "←";
+            default:
+              return $1;
+          }
+        }
+      ),
+    });
+  }
   Object.assign(post, {
     content: post.content.replace(
       /@<=>|@=>|@<=|@<->|@->|@<-/g,
@@ -396,6 +526,8 @@ export const getStaticProps = async ({ params }: any) => {
       origin: post,
       post: mdxSource,
       content: post.content,
+      before: before,
+      next: next,
     },
   };
 };
