@@ -284,6 +284,53 @@ const components: MDXComponents | MergeComponents = {
       {children}
     </Box>
   ),
+  table: ({ children }) => (
+    <Box
+      component='table'
+      sx={{
+        my: 2,
+        borderCollapse: "collapse",
+        "& :is(thead,tbody)": {
+          "tr :is(th,td)": {
+            borderWidth: 1,
+            borderColor: "#cccccc",
+            borderStyle: "solid",
+            textAlign: "center",
+          },
+        },
+        "& thead": {
+          "tr th": {
+            borderTop: "none",
+            py: 1,
+          },
+          "th:nth-of-type(1)": {
+            borderLeft: "none !important",
+          },
+          "th,th:last-child": {
+            borderRight: "none !important",
+          },
+          tr: {
+            borderBottom: "3px solid #cccccc",
+            textTransform: "uppercase",
+          },
+        },
+        "& tbody": {
+          "tr:last-child td": {
+            borderBottom: "none !important",
+          },
+          tr: {
+            "td:nth-of-type(1)": {
+              borderLeft: "none !important",
+            },
+            "td,td:last-child": {
+              borderRight: "none !important",
+            },
+          },
+        },
+      }}>
+      {children}
+    </Box>
+  ),
 };
 
 /* frontmatter를 기반으로 metadata set을 만듦 */
@@ -402,7 +449,7 @@ function Index({
               {...responsivePost}
               components={components as MDXComponents | MergeComponents}
             />
-            
+
             <PostNavigator before={before} next={next} />
 
             <Box
