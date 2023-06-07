@@ -392,7 +392,7 @@ function Index({
       id='post-wrap'
       direction={{ xs: "column", md: "row" }}
       sx={{
-        width: { xs: "100%", md: "auto" },
+        width: { lg: "100%", xl: "70%" },
         height: "fit-content",
         position: "relative",
       }}>
@@ -417,7 +417,7 @@ function Index({
 
           <Stack
             sx={{
-              width: { xs: "100%", md: "80%" },
+              width: { xs: "100%", md: "70%", lg: '60%' },
               px: 2,
             }}>
             <PostNavigator before={before} next={next} />

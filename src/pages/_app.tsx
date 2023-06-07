@@ -8,6 +8,7 @@ import "animate.css";
 import { AppProps } from "next/app";
 import Head from "next/head";
 import Script from "next/script";
+import { useEffect } from "react";
 import createEmotionCache from "../libs/createEmotionCache";
 
 // Client-side cache, shared for the whole session of the user in the browser.
@@ -19,6 +20,30 @@ export interface MyAppProps extends AppProps {
 
 export default function MyApp(props: MyAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+
+  // useEffect(() => {
+  //   (async () => {
+  //     if ("serviceWorker" in navigator) {
+  //       try {
+  //         const registration = await navigator.serviceWorker.register(
+  //           "/worker.js"
+  //         );
+  //         console.log(registration);
+  //         if (registration.installing) {
+  //           console.log("Service worker installing");
+  //         } else if (registration.waiting) {
+  //           console.log("Service worker waiting");
+  //         } else if (registration.active) {
+  //           console.log("Service worker active");
+  //         }
+  //       } catch (error) {
+  //         console.log(error);
+  //       }
+  //     } else {
+  //       console.log("no service worker");
+  //     }
+  //   })();
+  // }, []);
 
   return (
     <CacheProvider value={emotionCache}>
