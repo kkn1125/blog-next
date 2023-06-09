@@ -1,15 +1,16 @@
+import { convertIdString } from "@/util/tool";
 import { Toolbar, useMediaQuery, useTheme } from "@mui/material";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 export default function SideBar({ list }: { list: any[] }) {
+  const router = useRouter();
   const theme = useTheme();
   const isUpMd = useMediaQuery(theme.breakpoints.up("md"));
   const [currentHead, setCurrentHead] = useState("");
-  const convertIdString = (str: string) =>
-    str.replace(/#+/gm, "").trim().replace(/[\s]+/gm, "-");
 
   useEffect(() => {
     setCurrentHead(list[0].head);
@@ -44,17 +45,18 @@ export default function SideBar({ list }: { list: any[] }) {
           onClick={() => {
             // const ii = document.getElementById(`${convertIdString(item)}`);
             // console.log(ii);
+            router.push(`#${convertIdString(item.head)}`);
             setCurrentHead((currentHead) => item.head);
             const target = isUpMd ? "#main" : "#__next > div";
-            (document.querySelector(target) as HTMLDivElement).scrollTo({
-              behavior: "smooth",
-              top:
-                Number(
-                  document.getElementById(`${convertIdString(item.head)}`)
-                    ?.offsetTop || 0
-                ) - 0,
-              left: 0,
-            });
+            // (document.querySelector(target) as HTMLDivElement).scrollTo({
+            //   behavior: "smooth",
+            //   top:
+            //     Number(
+            //       document.getElementById(`${convertIdString(item.head)}`)
+            //         ?.offsetTop || 0
+            //     ) - 0,
+            //   left: 0,
+            // });
           }}>
           {/* <ListItemIcon>
             <SendIcon />

@@ -10,7 +10,11 @@ import {
   serializeMdx,
 } from "@/libs/service";
 import { AUTHOR, BRAND_NAME } from "@/util/global";
-import { getReponsiveImageUrl, parseHeading } from "@/util/tool";
+import {
+  convertIdString,
+  getReponsiveImageUrl,
+  parseHeading,
+} from "@/util/tool";
 import { MergeComponents } from "@mdx-js/react/lib";
 import {
   Box,
@@ -151,7 +155,7 @@ const components: MDXComponents | MergeComponents = {
         borderLeft: (theme) => `5px solid ${theme.palette.text.primary}`,
         mx: 0,
         my: 5,
-        py: 2,
+        py: 0,
         pl: 3,
         backgroundColor: (theme) => theme.palette.background.paper,
         color: (theme) => theme.palette.text.primary,
@@ -166,7 +170,7 @@ const components: MDXComponents | MergeComponents = {
   h1: ({ children }) => (
     <Box
       component='h1'
-      id={(children as string)[1].toLowerCase().trim().replace(/[\s]+/gm, "-")}
+      id={convertIdString((children as string)[1])}
       sx={{
         position: "relative",
         scrollMarginTop: 65,
@@ -184,7 +188,7 @@ const components: MDXComponents | MergeComponents = {
   h2: ({ children }) => (
     <Box
       component='h2'
-      id={(children as string)[1].toLowerCase().trim().replace(/[\s]+/gm, "-")}
+      id={convertIdString((children as string)[1])}
       sx={{
         position: "relative",
         scrollMarginTop: 65,
@@ -202,7 +206,7 @@ const components: MDXComponents | MergeComponents = {
   h3: ({ children }) => (
     <Box
       component='h3'
-      id={(children as string)[1].toLowerCase().trim().replace(/[\s]+/gm, "-")}
+      id={convertIdString((children as string)[1])}
       sx={{
         position: "relative",
         scrollMarginTop: 65,
@@ -220,7 +224,7 @@ const components: MDXComponents | MergeComponents = {
   h4: ({ children }) => (
     <Box
       component='h4'
-      id={(children as string)[1].toLowerCase().trim().replace(/[\s]+/gm, "-")}
+      id={convertIdString((children as string)[1])}
       sx={{
         position: "relative",
         scrollMarginTop: 65,
@@ -238,7 +242,7 @@ const components: MDXComponents | MergeComponents = {
   h5: ({ children }) => (
     <Box
       component='h5'
-      id={(children as string)[1].toLowerCase().trim().replace(/[\s]+/gm, "-")}
+      id={convertIdString((children as string)[1])}
       sx={{
         position: "relative",
         scrollMarginTop: 65,
@@ -256,7 +260,7 @@ const components: MDXComponents | MergeComponents = {
   h6: ({ children }) => (
     <Box
       component='h6'
-      id={(children as string)[1].toLowerCase().trim().replace(/[\s]+/gm, "-")}
+      id={convertIdString((children as string)[1])}
       sx={{
         position: "relative",
         scrollMarginTop: 65,
@@ -417,7 +421,7 @@ function Index({
 
           <Stack
             sx={{
-              width: { xs: "100%", md: "70%", lg: '60%' },
+              width: { xs: "100%", md: "70%", lg: "60%" },
               px: 2,
             }}>
             <PostNavigator before={before} next={next} />

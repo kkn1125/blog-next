@@ -306,3 +306,11 @@ export const format = (
         return $1;
     }
   });
+
+export const convertIdString = (str: string) =>
+  str
+    .replace(/#+/gm, "")
+    .trim()
+    .replace(/[\s]+/gm, "-")
+    .replace(/[.]+/g, "")
+    .toLowerCase();

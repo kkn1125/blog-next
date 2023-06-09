@@ -14,6 +14,7 @@ function PostNavigatorButton({ data, currentPath, order = false }: any) {
         textDecoration: "none",
         flex: 1,
         width: "100%",
+        minWidth: "50%",
       }}>
       <Stack
         direction={order ? "row" : "row-reverse"}
