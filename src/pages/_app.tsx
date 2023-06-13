@@ -10,7 +10,7 @@ import Head from "next/head";
 import Script from "next/script";
 import { useEffect } from "react";
 import createEmotionCache from "../libs/createEmotionCache";
-
+import "./theme/prism-dracular.css";
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
 
@@ -133,6 +133,60 @@ export default function MyApp(props: MyAppProps) {
 
                 .MuiChip-root {
                   font-family: "IBM Plex Sans KR", sans-serif !important;
+                }
+
+                code[class*="language-"] {
+                  position: relative;
+                }
+
+                .code-line {
+                  position: relative;
+                }
+
+                .code-line.inserted::before {
+                  content: "";
+                  position: absolute;
+                  top: -2px;
+                  bottom: -2px;
+                  left: -9999px;
+                  right: -9999px;
+                  background-color: rgba(
+                    16,
+                    185,
+                    129,
+                    0.2
+                  ); /* Set inserted line (+) color */
+                }
+
+                .code-line.deleted::before {
+                  content: "";
+                  position: absolute;
+                  top: -2px;
+                  bottom: -2px;
+                  left: -9999px;
+                  right: -9999px;
+                  background-color: rgba(
+                    239,
+                    68,
+                    68,
+                    0.2
+                  ); /* Set deleted line (-) color */
+                }
+
+                .highlight-line::before {
+                  content: "";
+                  position: absolute;
+                  top: -2px;
+                  bottom: -2px;
+                  left: -16px;
+                  right: -9999px;
+                  background-color: rgba(
+                    55,
+                    65,
+                    81,
+                    0.5
+                  ); /* Set highlight bg color */
+                  border-left: 4px solid rgb(59, 130, 246); /* Set highlight accent border color */
                 }
               `}
             />

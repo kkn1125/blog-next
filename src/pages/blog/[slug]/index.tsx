@@ -29,8 +29,6 @@ import { MDXComponents } from "mdx/types";
 import { MDXRemote } from "next-mdx-remote";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import SyntaxHighlighter from "react-syntax-highlighter";
-import { tomorrowNight } from "react-syntax-highlighter/dist/cjs/styles/hljs";
 
 interface CodeBlockProps {
   children: string;
@@ -39,7 +37,11 @@ interface CodeBlockProps {
 
 const components: MDXComponents | MergeComponents = {
   code: ({ children, className }: CodeBlockProps | any) => {
-    const language = className?.replace(/language-/, "");
+    const language = className?.split(" ").shift();
+    // className = !className.match(/diff/)
+    //   ? className.replace(/language-/, "language-diff-")
+    //   : className;
+
     return className ? (
       <Stack
         sx={{
@@ -118,13 +120,14 @@ const components: MDXComponents | MergeComponents = {
             },
           }}
         />
-        <SyntaxHighlighter
-          showLineNumbers
-          language={language}
-          style={tomorrowNight}
-          customStyle={{ overflowX: "auto", margin: 0 }}>
-          {children}
-        </SyntaxHighlighter>
+        <Box
+          component='pre'
+          className={className}
+          sx={{ my: "0 !important", overflow: "auto" }}>
+          <Box component='code' className={className}>
+            {children}
+          </Box>
+        </Box>
       </Stack>
     ) : (
       <Box

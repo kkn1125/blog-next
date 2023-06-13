@@ -108,7 +108,7 @@ md에서 mdx로 변경하면서 "와, 리액트 컴포넌트를 사용할 수 �
 
 또 다른 이유는 렌더링 방법에서 오는 한계입니다. Next.js에서 mdx를 import하는 기능을 지원하는데, 아래 처럼 생긴 내용을 아주 잘 렌더링 해줍니다.
 
-```mdx
+```markdown
 // test_post.mdx
 
 import Layout from "./Layout";
@@ -141,7 +141,7 @@ export default ({ children }) => <Layout>{children}</Layout>;
 
 현재 제가 사용하는 MDXRemote는 리액트 컴포넌트로 파싱하기 때문에 모든 `class`를 `className`으로 변경해야하는 일이 발생했습니다. 이전에 `Gatsby`에서 문제가 되지 않았던 이유는 동일하게 리액트를 사용하는데 md파일을 html로 파싱하기 때문에 굳이 `class`를 `className`으로 작성하지 않아도 되는 이유였지요.
 
-```mdx
+```markdown
 ## // test_post.mdx
 
 slug: /test01/

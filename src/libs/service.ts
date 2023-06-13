@@ -8,19 +8,37 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypePrism from "rehype-prism-plus";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
 
 const basePath = "src/database/**/*.mdx";
 
 const blogMdxDirs = ["src/database/**/*.md", "src/database/**/*.mdx"];
 
 export const serializeMdx = (source: string) => {
+  // const fixMetaPlugin = (options: any = {}) => {
+  //   return (tree: any) => {
+  //     visit(tree, "element", visit);
+  //   };
+
+  //   function visit(
+  //     node: { tagName: string; data: any; properties: { metastring: any } },
+  //     index: string,
+  //     parent: { (node: any, index: any, parent: any): void; tagName?: any }
+  //   ) {
+  //     if (!parent || parent.tagName !== "pre" || node.tagName !== "code") {
+  //       return;
+  //     }
+
+  //     node.data = { ...node.data, meta: node.properties.metastring };
+  //   }
+  // };
   return serialize(source, {
     parseFrontmatter: true,
     mdxOptions: {
-      remarkPlugins: [remarkGfm],
+      remarkPlugins: [remarkGfm, remarkBreaks],
       rehypePlugins: [
         rehypeSlug,
-        // rehypePrism,
+        rehypePrism,
         [
           rehypeAutolinkHeadings,
           {

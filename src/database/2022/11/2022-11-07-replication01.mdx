@@ -61,7 +61,7 @@ server-id의 값은 마스터를 1로 설정하는 것이 좋습니다. 다른 �
 
 mysql을 root권한으로 접속합니다.
 
-```mysql
+```sql
 CREATE DATABASE slave DEFAULT CHARACTER SET utf8;
 CREATE USER 'slave'@'%' IDENTIFIED BY '123';
 GRANT ALL PRIVILEGES ON 'slave'.* TO 'slave'@'%' IDENTIFIED BY '123';
@@ -119,7 +119,7 @@ $ sudo apt install mysql-server mysql-client
 
 먼저 서버 설정을 하겠습니다. /etc/mysql/mysql.conf.d/50-server.conf를 열어 내용을 수정합니다.
 
-```conf
+```properties
 [mysqld]
 # bind-address=127.0.0.1
 bind-address=0.0.0.0
@@ -136,7 +136,7 @@ $ mysql -u root -p < ~/dump.sql
 
 정상적으로 import됐다면 mysql에 접속했을 때 slave 데이터베이스가 있어야합니다.
 
-```mysql
+```sql
 SHOW DATABASES;
 -- 있으면 다음으로
 STOP SLAVE;
@@ -154,7 +154,7 @@ START SLAVE;
 
 위의 설정 중 LOG_FILE과 LOG_POS는 Master Server 설정에서 메모했던 파일과 포지션 값입니다. 이제 연결이 되었으니 상태를 확인해서 정상 연결이 되었는지 확인해야합니다.
 
-```mysql
+```sql
 SHOW SLAVE STATUS\G;
 # 또는
 SHOW SLAVE STATUS;
@@ -340,7 +340,7 @@ $ netsh interface ip add address "vEthernet (WSL)" 192.168.254.100 255.255.255.0
 
 배치파일이 완료되면 아래와 같습니다. 저장된 경로는 루트입니다.
 
-```bat
+```batch
 wsl.exe -d Ubuntu-22.04 -u root ip addr add 192.168.254.17/24 broadcast 192.168.50.255 dev eth0 label eth0:1
 netsh interface ip add address "vEthernet (WSL)" 192.168.254.100 255.255.255.0
 ```

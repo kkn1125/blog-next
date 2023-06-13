@@ -78,8 +78,8 @@ uWebSockets.js가 생소하신 분들이라면 socket.io를 사용해도 괜찮�
 ```typescript
 // socket/src/index.ts
 
-import uWS from 'uWebSockets.js';
-import { v4 } from 'uuid';
+import uWS from "uWebSockets.js";
+import { v4 } from "uuid";
 
 const app = uWS
   .App()
@@ -115,7 +115,7 @@ const app = uWS
           return;
         }
 
-				/* upgrade에서 첫 번째 인자로 데이터를 넘기면 open,message,drain,close의 ws에 고유한 데이터로 사용할 수 있습니다. */
+        /* upgrade에서 첫 번째 인자로 데이터를 넘기면 open,message,drain,close의 ws에 고유한 데이터로 사용할 수 있습니다. */
         res.upgrade(
           {
             id: userId,
@@ -142,11 +142,11 @@ const app = uWS
     },
     message: (ws, message, isBinary) => {
       // 여기서 데이터를 처리할 예정입니다.
-			if(isBinary) {
-				// 바이너리 데이터
-			} else {
-				// 텍스트 데이터
-			}
+      if (isBinary) {
+        // 바이너리 데이터
+      } else {
+        // 텍스트 데이터
+      }
     },
     drain: (ws) => {
       console.log("WebSocket backpressure: " + ws.getBufferedAmount());
@@ -507,7 +507,7 @@ vite로 react-ts 템플릿을 사용해 프로젝트를 생성했습니다. 한 
 const CODEC = "video/webm;codecs=vp9,opus";
 
 function Home() {
-const navigate = useNavigate();
+  const navigate = useNavigate();
   const videoRef = useRef<HTMLVideoElement>();
 
   const handlePath = (e: React.MouseEvent) => {
