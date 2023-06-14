@@ -10,9 +10,6 @@ interface CodeBlockProps {
 
 const CodeBlock = ({ children, className }: CodeBlockProps | any) => {
   const language = className?.split(" ").shift();
-  // className = !className.match(/diff/)
-  //   ? className.replace(/language-/, "language-diff-")
-  //   : className;
 
   return className ? (
     <Stack
@@ -93,11 +90,27 @@ const CodeBlock = ({ children, className }: CodeBlockProps | any) => {
         }}
       />
       <Box
-        component='pre'
-        className={className}
-        sx={{ my: "0 !important", overflow: "auto" }}>
-        <Box component='code' className={className}>
-          {children}
+        sx={{
+          display: "inline-block",
+          background: "#2b2b2b",
+        }}>
+        <Box
+          component='pre'
+          className={className}
+          sx={{
+            overflow: "auto",
+            p: "0 !important",
+          }}>
+          <Box
+            component='code'
+            className={className}
+            sx={{
+              ".code-line": {
+                px: 2,
+              },
+            }}>
+            {children}
+          </Box>
         </Box>
       </Box>
     </Stack>
@@ -163,6 +176,9 @@ const HeaderText =
             right: 0,
             top: 0,
             bottom: 0,
+          },
+          "&::before": {
+            content: '"📑 "',
           },
         }}>
         {children}

@@ -11,30 +11,25 @@ import {
   serializeMdx,
 } from "@/libs/service";
 import { AUTHOR, BRAND_NAME } from "@/util/global";
-import {
-  convertIdString,
-  getReponsiveImageUrl,
-  parseHeading,
-} from "@/util/tool";
+import { getReponsiveImageUrl, parseHeading } from "@/util/tool";
 import { MergeComponents } from "@mdx-js/react/lib";
+import LinkIcon from "@mui/icons-material/Link";
 import {
   Box,
   CircularProgress,
   Divider,
+  IconButton,
   Stack,
   Toolbar,
+  Tooltip,
   Typography,
   useTheme,
 } from "@mui/material";
 import { MDXComponents } from "mdx/types";
 import { MDXRemote } from "next-mdx-remote";
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-
-interface CodeBlockProps {
-  children: string;
-  className: string;
-}
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 
 const components: MDXComponents | MergeComponents = {
   code: PostMDXComponent.CodeBlock,
@@ -67,6 +62,8 @@ const metadatas = (frontmatter: any) => ({
   image: frontmatter.image,
 });
 
+let copyActive = false;
+
 function Index({
   post,
   content,
@@ -82,6 +79,7 @@ function Index({
   const [mode, setMode] = useState(false);
   const theme = useTheme();
   const commentEl = useRef<HTMLElement>();
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     setResponsivePost(post);
@@ -109,6 +107,17 @@ function Index({
       commentEl.current?.appendChild(scriptEl);
     }, 500);
   }, [theme.palette.mode]);
+
+  const handleCopyLink = () => {
+    if (copyActive) return;
+    copyActive = true;
+    navigator.clipboard.writeText(location.href);
+    setCopied(true);
+    setTimeout(() => {
+      copyActive = false;
+      setCopied(false);
+    }, 3000);
+  };
 
   return (
     <Stack
@@ -167,6 +176,38 @@ function Index({
               gutterBottom>
               {responsivePost.frontmatter.title || ""}
             </Typography>
+            <Typography
+              fontSize={(theme) => theme.typography.pxToRem(16)}
+              fontWeight={500}
+              fontFamily={`"IBM Plex Sans KR", sans-serif`}
+              align='center'
+              gutterBottom>
+              {responsivePost.frontmatter.author || ""}
+            </Typography>
+            <Typography
+              fontSize={(theme) => theme.typography.pxToRem(14)}
+              fontWeight={200}
+              fontFamily={`"IBM Plex Sans KR", sans-serif`}
+              align='center'
+              gutterBottom>
+              {responsivePost.frontmatter.readingTime || ""}
+            </Typography>
+            <Stack direction='row' justifyContent='center' gap={1}>
+              <Tooltip
+                title={`링크 복사${copied ? " 완료" : ""}`}
+                placement='bottom'>
+                <IconButton
+                  onClick={handleCopyLink}
+                  color={copied ? "success" : "inherit"}>
+                  {copied ? <CheckCircleOutlineIcon /> : <LinkIcon />}
+                </IconButton>
+              </Tooltip>
+              <Tooltip title={`준비 중입니다.`} placement='bottom'>
+                <IconButton color={"inherit"}>
+                  <QuestionMarkIcon />
+                </IconButton>
+              </Tooltip>
+            </Stack>
             <Divider sx={{ my: 3, width: "100%" }} flexItem />
             <MDXRemote
               {...responsivePost}

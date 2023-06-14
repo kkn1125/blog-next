@@ -1,0 +1,244 @@
+---
+slug: "/git-edit-commit/"
+date: 2023-06-05 15:45:44 +0000
+modified: 2023-06-01 02:36:27 +0000
+title: "[GIT] git push commit 수정하기"
+author: Kimson
+categories: [git]
+image: /images/post/covers/TIL-git.png
+tags: [git, push, commit, til]
+description: "Commit 수정
+
+매번 사용하는 커멘드가 아니면 한 번 써봤더라도 잊기마련입니다. 이번에는 커밋 메세지를 수정하는 것에 대해 짧게 기록하려합니다.
+
+커밋을 수정하고자 할 때는 크게 세 가지가 있다고 생각합니다.
+
+1. 아직 푸시 하지 않은 커밋 메세지 수정
+2. 방금 푸시 한 커밋 메세지 수정
+3. 예전에 푸시했던 커밋 메세지 수정
+
+위 순번에 따라 커멘드를 입력하고 수정하는 절차가 좀 늘어나거나 명령을 바꿔서 써줘야하는 번거로움이 있다고 생각이 듭니다."
+featured: true
+rating: 4.5
+profile: false
+published: true
+---
+
+# Commit 수정
+
+매번 사용하는 커멘드가 아니면 한 번 써봤더라도 잊기마련입니다. 이번에는 커밋 메세지를 수정하는 것에 대해 짧게 기록하려합니다.
+
+커밋을 수정하고자 할 때는 크게 세 가지가 있다고 생각합니다.
+
+1. 아직 푸시 하지 않은 커밋 메세지 수정
+2. 방금 푸시 한 커밋 메세지 수정
+3. 예전에 푸시했던 커밋 메세지 수정
+
+위 순번에 따라 커멘드를 입력하고 수정하는 절차가 좀 늘어나거나 명령을 바꿔서 써줘야하는 번거로움이 있다고 생각이 듭니다.
+
+## 푸시 전 커밋 메세지 수정
+
+먼저, 푸시 하기 전의 커밋메세지는 쉽게 변경할 수 있습니다.
+
+```bash
+git add -A # 또는 개별로 지정해서
+git commit -m "omission: 누락분 추가"
+```
+
+만일 위 커멘드처럼 커밋 한 후 뭔가 잘못 적은 것 같거나 자세한 설명을 빠뜨렸을 때는 아래와 같이 수정을 진행합니다.
+
+```bash
+git commit --amend
+```
+
+이전 커밋에 대한 메세지를 수정 할 수 있게 vim이 실행되면서 에디터가 켜지게 됩니다.
+
+<figure className='text-center'>
+  <span className='w-inline-block'>
+    <img
+      src='https://github.com/kkn1125/new-solitaire/assets/113876485/6c4e387b-7689-4297-8cfb-20793810a6ce'
+      alt='sample'
+      title='sample'
+    />
+    <figcaption>변경 전 텍스트 에디터 모습</figcaption>
+  </span>
+</figure>
+
+<figure className='text-center'>
+  <span className='w-inline-block'>
+    <img
+      src='https://github.com/kkn1125/new-solitaire/assets/113876485/012f037e-aacb-4ab1-a1f1-85427b366e20'
+      alt='sample'
+      title='sample'
+    />
+    <figcaption>변경 후 텍스트 에디터 모습</figcaption>
+  </span>
+</figure>
+
+**"i"**키를 눌러 편집모드로 들어가서 고치고 싶은 부분으로 방향키를 이용해 이동 시키고 원하는 메세지로 변경합니다.
+
+그리고 저장할 때는 `esc` 키 -> `:wq` 라고 입력하면 에디터 제일 하단에 적혀있는 모습을 볼 수 있습니다. 그 다음 엔터 키를 누르면 저장되어 빠져나오게 됩니다.
+
+갑자기 수정 중에 저장하지 않고 다시 나오고 싶다 하시면 `esc` 키 -> `:q!` 라고 입력하면 저장하지 않은 채 빠져나올 수 있습니다.
+
+수정이 끝났다면 푸시를 진행해주면 됩니다.
+
+## 푸시 후 커밋 메세지 수정
+
+하지만 원하는데로 메세지를 수정하고 푸시를 해도 일하는 사람은 본인 혼자만이 아니기 때문에 누군가 커밋 메세지를 수정하라고 한다면 푸시 후에 수정을 해야겠지요.
+
+푸시 후 커밋 메세지 수정은 푸시 전과 작업이 동일하지만 커멘드가 조금 다릅니다.
+
+```bash
+git rebase HEAD~1 -i
+```
+
+<figure className='text-center'>
+  <span className='w-inline-block'>
+    <img
+      src='https://github.com/kkn1125/new-solitaire/assets/113876485/76285da0-f933-45c0-9284-f05280e29b8c'
+      alt='sample'
+      title='sample'
+    />
+    <figcaption>변경 전 텍스트 에디터 모습</figcaption>
+  </span>
+</figure>
+
+에디터가 켜지면 커밋 메세지 앞의 **"pick"**을 **"reword"**로 변경해서 `:wq`을 입력해줍니다. 그러면 다시 에디터가 편집모드로 들어가면서 메세지를 수정할 수 있게 변경됩니다. reword만 적으시고 나머지는 수정해도 반영되지 않습니다. 다음 모드로 넘어가야지 수정 가능한 점 주의바랍니다.
+
+<figure className='text-center'>
+  <span className='w-inline-block'>
+    <img
+      src='https://github.com/kkn1125/new-solitaire/assets/113876485/535d9fb1-ab24-43d1-8750-24a0b052ff09'
+      alt='sample'
+      title='sample'
+    />
+    <figcaption>reword 입력 모습</figcaption>
+  </span>
+</figure>
+
+reword를 입력하고 나면 아래와 같이 수정 가능한 에디터로 모드 변경됩니다.
+
+<figure className='text-center'>
+  <span className='w-inline-block'>
+    <img
+      src='https://github.com/kkn1125/new-solitaire/assets/113876485/012f037e-aacb-4ab1-a1f1-85427b366e20'
+      alt='sample'
+      title='sample'
+    />
+    <figcaption>변경 후 텍스트 에디터 모습</figcaption>
+  </span>
+</figure>
+
+수정이 완료되고 `:wq`로 저장하고 나오면 아래와 같은 문구가 출력될 겁니다.
+
+<figure className='text-center'>
+  <span className='w-inline-block'>
+    <img
+      src='https://github.com/kkn1125/new-solitaire/assets/113876485/eeafb733-e62d-446a-8732-88ca94cf59b1'
+      alt='sample'
+      title='sample'
+    />
+    <figcaption>수정 완료 후 출력 문구</figcaption>
+  </span>
+</figure>
+
+여기서 푸시를 진행해주어야 완료입니다. 하지만 그냥 푸시하게 되면 rejected 에러가 발생합니다.
+
+<figure className='text-center'>
+  <span className='w-inline-block'>
+    <img
+      src='https://github.com/kkn1125/new-solitaire/assets/113876485/b88f1b2a-2818-4cb8-bdfd-e0a96e1f7c77'
+      alt='sample'
+      title='sample'
+    />
+    <figcaption>충돌 메세지</figcaption>
+  </span>
+</figure>
+
+이유는 HEAD를 rebase했기 때문에 깃 저장소와 이력이 달라서 발생하는 충돌이라 생각합니다. 정확한 사유는 아니고 추측하는 것입니다. 아시는 분이 있다면 피드백 부탁드리겠습니다 😊
+
+그렇다면 깃 저장소 이력을 fetch하고 merge합니다. 혹은 강제로 push 할 수 있으니 아래 커멘드를 참고해주세요.
+
+```bash {1} showLineNumbers
+git push --force
+```
+
+## 과거 푸시했던 커밋 메세지 수정
+
+이런 일은 잘 없겠지만 이전 커밋 메세지를 변경해야할 일이 생긴다면 위 방식에서 숫자 부분만 수정해서 변경할 수도 있습니다.
+
+```diff-bash showLineNumbers
+- git rebase HEAD~1 -i # HEAD의 바로 이전 커밋
+                       # (즉, 방금 푸시했던 따끈따끈한 커밋)
++ git rebase HEAD~8 -i # HEAD의 8번째 커밋
+```
+
+숫자로 가져오기에 너무 과거의 커밋이라면 커밋 id로 가져올 수도 있습니다. 로그를 확인해서 커밋id의 앞의 7자리 또는 전체 id를 가져와 rebase합니다.
+
+```bash {3} showLineNumbers
+git log
+
+git rebase -i 53d9c4e
+```
+
+<figure className='text-center'>
+  <span className='w-inline-block'>
+    <img
+      src='https://github.com/kkn1125/new-solitaire/assets/113876485/2fa67a18-0000-44a3-8d2a-05ec3bfef2bf'
+      alt='sample'
+      title='sample'
+    />
+    <figcaption>rebase 진입 시 해당 커밋부터 현재 커밋까지</figcaption>
+  </span>
+</figure>
+
+그러면 아래와 같이 해당 커밋 id부터 현재까지 내역이 쭉 나오는데요. 여기서 수정을 원하는 부분의 **"pick"**을 **"reword"**로 고쳐 편집모드로 들어갑니다.
+
+<figure className='text-center'>
+  <span className='w-inline-block'>
+    <img
+      src='https://github.com/kkn1125/new-solitaire/assets/113876485/dcf13573-e58f-44be-9026-b54ae884f18d'
+      alt='sample'
+      title='sample'
+    />
+    <figcaption>reword하고자 하는 커밋 태그 수정</figcaption>
+  </span>
+</figure>
+
+만약 파일 자체를 수정하고 싶다하시면 **"edit"**으로 수정해서 해당 커밋 파일 트리가 현재 작업 디렉토리에서 변환되어 불러온다면 그때 수정하고 작업 후에 마무리 푸시 해주시면 됩니다.
+
+과정은 위에서 했던 `rebase`로 커밋 메세지 수정하던 것과 동일합니다.
+
+## 참고 사항
+
+rebase로 과거 커밋을 불러와 수정하고자 할 때 나타났던 출력 리스트는 위에서 아래로 과거-현재 순입니다.
+
+rebase 하다가 간혹 수정하지 않고 그냥 넘어가고 싶을 때 발생하는 이슈인데요, reabase로 접근 하지 않았을 때는 문제가 없지만 rebase로 한 번 들어갔다가 아무것도 수정하지않고 나왔다면 아래와 같이 안내 문구가 출력됩니다.
+
+<figure className='text-center'>
+  <span className='w-inline-block'>
+    <img
+      src='https://github.com/kkn1125/new-solitaire/assets/113876485/e5ca4cdc-0507-436f-a4a2-d006047ee2c1'
+      alt='sample'
+      title='sample'
+    />
+    <figcaption>rebase 취소 시</figcaption>
+  </span>
+</figure>
+
+이때는 아래와 같이 입력해서 완전히 rebase를 건너뛰어주셔야 합니다. 잊은 채로 작업하다가는 굉장히 번거로운 일이 발생할 수도 있습니다...
+
+```bash {1}
+git rebase --skip
+```
+
+## 마무리
+
+git을 처음 접할때는 도대체 뭐하는 녀석인지 감도 잡히지 않았지만 1년 사이에 생각나는데로 사용할 수 있게 된 지금에서는 굉장히 편리함을 느끼고 있습니다. 아직 모르는게 많아 찾아보고 테스트해보고 익히고 있지만 계속해서 습관처럼 사용하다보니 조금씩 이해도가 깊어지는 것을 몸소 느낍니다.
+
+특히나 git 같은 버전관리 툴의 경우에는 협업에서 거의 필수로 사용하기 때문에 본인이 어떠한 포지션인지를 떠나서 중요하다고 생각됩니다.
+
+나의 포지션이 백엔드라고 해서 본인의 분야만 파고드는 마인드가 좋을 수 있지만, 다른 포지션은 어떻게 진행하는지, 무슨 툴을 사용하는지, 내가 하면 어떻게 할 수 있는지를 생각하면서 필요한 지식을 습득하는 것도 중요한 것 같습니다.
+
+특히나 협업 툴에 관련해서는 꼭 알아두어야겠죠 😊

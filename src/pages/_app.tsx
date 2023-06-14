@@ -90,10 +90,12 @@ export default function MyApp(props: MyAppProps) {
 
                 ::-webkit-scrollbar {
                   width: 8px;
+                  height: 8px;
                   background-color: #373c0056;
                 }
                 ::-webkit-scrollbar-thumb {
                   width: 8px;
+                  height: 8px;
                   background-color: #373c00;
                 }
                 ::selection {
@@ -133,62 +135,6 @@ export default function MyApp(props: MyAppProps) {
 
                 .MuiChip-root {
                   font-family: "IBM Plex Sans KR", sans-serif !important;
-                }
-
-                code[class*="language-"] {
-                  position: relative;
-                }
-
-                .code-line {
-                  position: relative;
-                }
-
-                .code-line.inserted::before {
-                  content: "";
-                  position: absolute;
-                  top: -3px;
-                  bottom: -3px;
-                  left: -5px;
-                  right: -5px;
-                  
-                  background-color: rgba(
-                    16,
-                    185,
-                    129,
-                    0.2
-                  ); /* Set inserted line (+) color */
-                }
-
-                .code-line.deleted::before {
-                  content: "";
-                  position: absolute;
-                  top: -3px;
-                  bottom: -3px;
-                  left: -5px;
-                  right: -5px;
-                  
-                  background-color: rgba(
-                    239,
-                    68,
-                    68,
-                    0.2
-                  ); /* Set deleted line (-) color */
-                }
-
-                .highlight-line::before {
-                  content: "";
-                  position: absolute;
-                  top: -3px;
-                  bottom: -3px;
-                  left: -5px;
-                  right: -5px;
-                  background-color: rgba(
-                    55,
-                    65,
-                    81,
-                    0.5
-                  ); /* Set highlight bg color */
-                  border-left: 4px solid rgb(59, 130, 246); /* Set highlight accent border color */
                 }
               `}
             />
