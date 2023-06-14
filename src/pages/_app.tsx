@@ -146,10 +146,11 @@ export default function MyApp(props: MyAppProps) {
                 .code-line.inserted::before {
                   content: "";
                   position: absolute;
-                  top: -2px;
-                  bottom: -2px;
-                  left: -9999px;
-                  right: -9999px;
+                  top: -3px;
+                  bottom: -3px;
+                  left: -5px;
+                  right: -5px;
+                  
                   background-color: rgba(
                     16,
                     185,
@@ -161,10 +162,11 @@ export default function MyApp(props: MyAppProps) {
                 .code-line.deleted::before {
                   content: "";
                   position: absolute;
-                  top: -2px;
-                  bottom: -2px;
-                  left: -9999px;
-                  right: -9999px;
+                  top: -3px;
+                  bottom: -3px;
+                  left: -5px;
+                  right: -5px;
+                  
                   background-color: rgba(
                     239,
                     68,
@@ -176,10 +178,10 @@ export default function MyApp(props: MyAppProps) {
                 .highlight-line::before {
                   content: "";
                   position: absolute;
-                  top: -2px;
-                  bottom: -2px;
-                  left: -16px;
-                  right: -9999px;
+                  top: -3px;
+                  bottom: -3px;
+                  left: -5px;
+                  right: -5px;
                   background-color: rgba(
                     55,
                     65,

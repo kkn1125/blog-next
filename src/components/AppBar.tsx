@@ -343,8 +343,11 @@ function ResponsiveAppBar() {
                   onClick={() => {
                     handleCloseNavMenu();
                     router.push(path);
-                  }}>
-                  <Typography textAlign='center'>{name}</Typography>
+                  }}
+                 >
+                  <Typography textAlign='center' sx={{
+                    width: '100%'
+                  }}>{name}</Typography>
                 </MenuItem>
               ))}
               <Visitants visitor={visitor} />
@@ -384,6 +387,7 @@ function ResponsiveAppBar() {
                 sx={{
                   color: (theme) => theme.palette.text.primary,
                   display: "block",
+                  textAlign: "center",
                 }}>
                 {name}
               </Button>

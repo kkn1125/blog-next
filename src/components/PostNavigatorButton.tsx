@@ -63,7 +63,10 @@ function PostNavigatorButton({ data, currentPath, order = false }: any) {
                 {data.frontmatter.title}
               </Typography>
               <Typography fontSize={(theme) => theme.typography.pxToRem(14)}>
-                {data.frontmatter.description.slice(0, 12)}...
+                {data.frontmatter.description
+                  .replace(/[\n]+/, " ")
+                  .slice(0, 12)}
+                ...
               </Typography>
               <Typography
                 fontSize={(theme) => theme.typography.pxToRem(13)}
