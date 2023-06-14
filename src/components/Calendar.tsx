@@ -73,7 +73,7 @@ function ServerDay(
 
   const pickTodo = highlightedDays[year]?.[month]?.[date];
   const isSelected = !props.outsideCurrentMonth && Boolean(pickTodo);
-  const isRepeat = repeatDays.find((item) => {
+  const isRepeat = repeatDays.find((item: any) => {
     const baseTime = new Date(item.time as string);
 
     if (item.repeat && !props.outsideCurrentMonth) {
@@ -84,14 +84,18 @@ function ServerDay(
         (item.repeatDayOfWeek as unknown as number[]).includes(
           getWeek(year, month + 1, date)
         ) &&
-        item.repeatDay === props.day.day()
+        item.repeatDay?.some(
+          (day: any) => day === props.day.day()
+        ) /* === props.day.day() */
       ) {
         return item;
       } else if (
         item.repeatDay &&
         (item.repeatDay as number) > -1 &&
         !Boolean((item.repeatDayOfWeek as unknown as number[])?.length) &&
-        item.repeatDay === props.day.day()
+        item.repeatDay?.some(
+          (day: any) => day === props.day.day()
+        ) /* === props.day.day() */
       ) {
         return item;
       } else if (
@@ -197,14 +201,18 @@ function Calendar() {
       );
       if (item.repeat) {
         if (
-          item.repeatDay === clickTime.getDay() &&
+          item.repeatDay?.some(
+            (day: any) => day === clickTime.getDay()
+          ) /*  === clickTime.getDay() */ &&
           (item.repeatDayOfWeek as unknown as number[]).includes(
             getWeek(Number(calInfo.y), Number(calInfo.m) + 1, Number(calInfo.d))
           )
         ) {
           return true;
         } else if (
-          item.repeatDay === clickTime.getDay() &&
+          item.repeatDay?.some(
+            (day: any) => day === clickTime.getDay()
+          ) /*  === clickTime.getDay() */ &&
           !Boolean((item.repeatDayOfWeek as unknown as number[]).length)
         ) {
           return true;
@@ -285,7 +293,21 @@ function Calendar() {
       alignItems='center'>
       {date && (
         <>
-          <Box>
+          <Box
+            sx={{
+              "& .MuiDayCalendar-header": {
+                "& > .MuiTypography-root": {
+                  color: "black",
+                  fontWeight: 700,
+                },
+                "& > .MuiTypography-root:last-child": {
+                  color: "red",
+                },
+                "& > .MuiTypography-root:first-of-type": {
+                  color: "blue",
+                },
+              },
+            }}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DateCalendar
                 value={date as dayjs.Dayjs}
