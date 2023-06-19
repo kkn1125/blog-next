@@ -1,11 +1,12 @@
-import { Box, Divider, Paper, Stack, Typography } from "@mui/material";
-import Image from "next/image";
-import { useEffect } from "react";
+import { Box, Stack, Typography } from "@mui/material";
+import { useContext, useEffect } from "react";
 
+import { AUTHOR } from "@/util/global";
 import { getReponsiveImageUrl, slugToBlogTrailingSlash } from "@/util/tool";
 import anime from "animejs";
 import Link from "next/link";
-import { AUTHOR } from "@/util/global";
+import { ThemeContext } from "@emotion/react";
+import { ColorModeContext } from "@/context/ThemeModeProvider";
 
 const DESC_LIMIT = 70;
 
@@ -24,10 +25,12 @@ function MainCard({ post }: CardInfo) {
     }, 1000);
   }, []);
 
+  const theme = useContext(ColorModeContext);
+
+  const colors = () => (theme.mode() !== "light" ? "#000000" : "#ffffff");
+
   return (
     <Stack
-      data-aos='fade-up'
-      data-aos-delay={100}
       direction='row'
       alignItems={"flex-end"}
       sx={{
@@ -37,15 +40,21 @@ function MainCard({ post }: CardInfo) {
         "& a": {
           transition: "150ms ease-in-out",
         },
-        "&:hover :is(a, .time)": {
-          color: "#000000",
+        "& *": {
+          textShadow: `-0.5px -0.5px 0 ${colors()}, 0.5px -0.5px 0 ${colors()}, -0.5px 0.5px 0 ${colors()}, 0.5px 0.5px 0 ${colors()}`,
         },
-        "&:hover .dot": {
-          backgroundColor: "#000000",
-        },
-        "&:hover > a": {
-          filter: "brightness(0.9)",
-        },
+        // "& > .MuiTypography-root": {
+        //   color: `${colors()} !important`,
+        // },
+        // "&:hover :is(a, .time)": {
+        //   color: "#000000",
+        // },
+        // "& .dot": {
+        //   backgroundColor: "#ffffff",
+        // },
+        // "&:hover > a": {
+        //   filter: "brightness(0.9)",
+        // },
       }}>
       <Box
         component={Link}
@@ -79,7 +88,7 @@ function MainCard({ post }: CardInfo) {
           pb: 5,
           pl: 5,
           zIndex: 1,
-          color: "#ffffff",
+          // color: "#ffffff",
         }}>
         <Stack direction='row' gap={1} alignItems='center' className='time'>
           <Typography
@@ -91,11 +100,13 @@ function MainCard({ post }: CardInfo) {
           <Box
             className='dot'
             sx={{
-              width: 5,
-              height: 5,
+              // width: 5,
+              // height: 5,
               borderRadius: "50%",
-              backgroundColor: "#ffffff",
+              // backgroundColor: "#ffffff",
+              fontSize: 8,
             }}
+            children={"●"}
           />
           <Typography
             fontFamily={`"IBM Plex Sans KR", sans-serif`}

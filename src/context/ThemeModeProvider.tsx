@@ -3,7 +3,10 @@ import lightTheme from "@/libs/lightTheme";
 import { createTheme, responsiveFontSizes, ThemeProvider } from "@mui/material";
 import React, { createContext, useMemo, useState } from "react";
 
-export const ColorModeContext = createContext({ toggleColorMode: () => {} });
+export const ColorModeContext = createContext({
+  toggleColorMode: () => {},
+  mode: new Function(),
+});
 
 function ThemeModeProvider({ children }: { children: React.ReactElement }) {
   const [mode, setMode] = useState<"light" | "dark">("light");
@@ -12,6 +15,7 @@ function ThemeModeProvider({ children }: { children: React.ReactElement }) {
     toggleColorMode: () => {
       setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
     },
+    mode: () => mode,
   };
 
   const getDesignTokens = (mode: "light" | "dark") => ({
