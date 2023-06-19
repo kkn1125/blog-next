@@ -41,3 +41,4 @@ export const BRAND_W_LOGO = `${BRAND_LOGO_PATH}/logo_white.png`;
 
 /* blog brand logo */
 export const BRAND_LOGO = BRAND_COLOR_LOGO;
+export const MAIN_POST_LIMIT = 4;

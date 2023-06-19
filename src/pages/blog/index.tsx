@@ -1,6 +1,7 @@
 import Animated from "@/components/Animated";
 import Card from "@/components/Card";
 import GenerateHead from "@/components/GenerateHead";
+import { PostDispatchContext, POST_INIT } from "@/context/PostProvider";
 import { getAllArticles } from "@/libs/service";
 import { AUTHOR, BRAND_DESC, BRAND_LOGO, BRAND_NAME } from "@/util/global";
 import { slicedBundle } from "@/util/tool";
@@ -14,7 +15,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 const metadatas = {
   title: `${BRAND_NAME.toUpperCase()}::Blog`,
@@ -31,6 +32,7 @@ function Index({ posts, totalCount }: any) {
   const [postList, setPostList] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPageCount, setTotalPageCount] = useState(0);
+  const postDispatch = useContext(PostDispatchContext);
 
   useEffect(() => {
     setTotalPageCount(Math.ceil(totalCount / PAGINATION_AMOUNT));
@@ -49,6 +51,13 @@ function Index({ posts, totalCount }: any) {
       Math.ceil(totalCount / PAGINATION_AMOUNT)
     );
   }, [router.query, posts]);
+
+  useEffect(() => {
+    postDispatch({
+      type: POST_INIT.INIT,
+      posts: posts || [],
+    });
+  }, []);
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     router.push(`/blog/?page=${value}/`);

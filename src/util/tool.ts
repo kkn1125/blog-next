@@ -35,6 +35,12 @@ export const duplicateRemoveArrayFromTag = (array: any[]) =>
     return acc;
   }, []);
 
+export const changeWhiteSpaceToHipen = (str: string = "") =>
+  str.toLowerCase().replace(/[\s]+/g, "-");
+
+export const changeHipenToWhiteSpace = (str: string = "") =>
+  str.toLowerCase().replace(/[-]+/g, " ");
+
 /**
  *
  *  Base64 encode / decode
@@ -179,7 +185,7 @@ export function uuidv4() {
 }
 
 export const getReponsiveImageUrl = (url: string) =>
-  url.match(/^http(s)?/) ? url : "/assets" + url;
+  url.match(/^http(s)?/) ? url : url.match(/^\/assets/) ? url : "/assets" + url;
 
 export const capitalize = (str: string) =>
   str.replace(

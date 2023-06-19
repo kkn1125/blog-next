@@ -1,3 +1,4 @@
+import { PostProvider } from "@/context/PostProvider";
 import ThemeModeProvider from "@/context/ThemeModeProvider";
 import { VisitorProvider } from "@/context/VisitorProvider";
 import BaseLayout from "@/layouts/BaseLayout";
@@ -8,7 +9,6 @@ import "animate.css";
 import { AppProps } from "next/app";
 import Head from "next/head";
 import Script from "next/script";
-import { useEffect } from "react";
 import createEmotionCache from "../libs/createEmotionCache";
 import "./theme/prism-dracular.css";
 // Client-side cache, shared for the whole session of the user in the browser.
@@ -81,69 +81,71 @@ export default function MyApp(props: MyAppProps) {
         crossOrigin='anonymous'></Script>
       <VisitorProvider>
         <ThemeModeProvider>
-          <>
-            <GlobalStyles
-              styles={(theme) => css`
-                :root {
-                  font-family: "IBM Plex Sans KR", sans-serif;
-                }
-
-                ::-webkit-scrollbar {
-                  width: 8px;
-                  height: 8px;
-                  background-color: #373c0056;
-                }
-                ::-webkit-scrollbar-thumb {
-                  width: 8px;
-                  height: 8px;
-                  background-color: #373c00;
-                }
-                ::selection {
-                  color: inherit;
-                  background: ${theme.palette.secondary.dark}56;
-                }
-
-                html,
-                body {
-                  overflow: hidden;
-                  height: 100%;
-                  margin: 0;
-
-                  #__next {
-                    height: 100%;
+          <PostProvider>
+            <>
+              <GlobalStyles
+                styles={(theme) => css`
+                  :root {
                     font-family: "IBM Plex Sans KR", sans-serif;
                   }
 
-                  .w-inline-block {
-                    position: relative;
-                    display: flex;
-                    flex-direction: column;
-                    img {
-                      width: 100%;
-                    }
-                    figcaption {
+                  ::-webkit-scrollbar {
+                    width: 8px;
+                    height: 8px;
+                    background-color: #373c0056;
+                  }
+                  ::-webkit-scrollbar-thumb {
+                    width: 8px;
+                    height: 8px;
+                    background-color: #373c00;
+                  }
+                  ::selection {
+                    color: inherit;
+                    background: ${theme.palette.secondary.dark}56;
+                  }
+
+                  html,
+                  body {
+                    overflow: hidden;
+                    height: 100%;
+                    margin: 0;
+
+                    #__next {
+                      height: 100%;
                       font-family: "IBM Plex Sans KR", sans-serif;
-                      font-size: 14px;
-                      padding-top: 0.3rem;
-                      padding-bottom: 0.3rem;
-                      text-align: center;
-                      background-color: #000000a6;
-                      color: #ffffff;
+                    }
+
+                    .w-inline-block {
+                      position: relative;
+                      display: flex;
+                      flex-direction: column;
+                      img {
+                        width: 100%;
+                      }
+                      figcaption {
+                        font-family: "IBM Plex Sans KR", sans-serif;
+                        font-size: 14px;
+                        padding-top: 0.3rem;
+                        padding-bottom: 0.3rem;
+                        text-align: center;
+                        background-color: #000000a6;
+                        color: #ffffff;
+                      }
                     }
                   }
-                }
 
-                .MuiChip-root {
-                  font-family: "IBM Plex Sans KR", sans-serif !important;
-                }
-              `}
-            />
-            {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-            <CssBaseline />
-            <BaseLayout>
-              <Component {...pageProps} />
-            </BaseLayout>
-          </>
+                  .MuiChip-root {
+                    font-family: "IBM Plex Sans KR", sans-serif !important;
+                  }
+                `}
+              />
+              {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+              <CssBaseline />
+              <BaseLayout>
+                <Component {...pageProps} />
+              </BaseLayout>
+            </>
+          </PostProvider>
         </ThemeModeProvider>
       </VisitorProvider>
     </CacheProvider>

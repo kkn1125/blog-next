@@ -1,10 +1,13 @@
 import Animated from "@/components/Animated";
 import Card from "@/components/Card";
 import GenerateHead from "@/components/GenerateHead";
+import { PostDispatchContext, POST_INIT } from "@/context/PostProvider";
 import { getAllArticles, getArticlesByCategory } from "@/libs/service";
 import { AUTHOR, BRAND_DESC, BRAND_LOGO, BRAND_NAME } from "@/util/global";
 import {
   capitalize,
+  changeHipenToWhiteSpace,
+  changeWhiteSpaceToHipen,
   duplicateRemoveArrayFromCategory,
   slicedBundle,
 } from "@/util/tool";
@@ -18,7 +21,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 const PAGINATION_AMOUNT = 6;
 
@@ -29,18 +32,26 @@ const metadatas = (param: string) => ({
   image: BRAND_LOGO,
 });
 
-function Index({ posts, totalCount }: any) {
+function Index({ posts, totalCount, allPosts }: any) {
   const theme = useTheme();
   const router = useRouter();
   const [postList, setPostList] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPageCount, setTotalPageCount] = useState(0);
+  const postDispatch = useContext(PostDispatchContext);
 
   useEffect(() => {
     setTotalPageCount(Math.ceil(totalCount / PAGINATION_AMOUNT));
     return () => {
       setPostList((postList) => []);
     };
+  }, []);
+
+  useEffect(() => {
+    postDispatch({
+      type: POST_INIT.INIT,
+      posts: allPosts || [],
+    });
   }, []);
 
   useEffect(() => {
@@ -127,12 +138,16 @@ export default Index;
 
 export async function getStaticProps({ params }: any) {
   try {
-    const posts = await getArticlesByCategory(params.category);
+    const allPosts = await getAllArticles();
+    const posts = await getArticlesByCategory(
+      changeHipenToWhiteSpace(params.category)
+    );
 
     return {
       props: {
         posts: posts,
         totalCount: posts.length,
+        allPosts: allPosts,
       },
     };
   } catch (error) {
@@ -150,12 +165,21 @@ export const getStaticPaths = async () => {
 
   const articles = await getAllArticles();
   const categories = duplicateRemoveArrayFromCategory(articles);
+  const hipens = categories
+    .filter((category: string) => category.toLowerCase().match(/[\s]+/g))
+    .map((category: string) => changeWhiteSpaceToHipen(category));
   return {
-    paths: categories.map((category: any) => ({
-      params: {
-        category: category.toLowerCase(),
-      },
-    })),
+    paths: categories
+      .map((category: any) => ({
+        params: {
+          category: category.toLowerCase(),
+        },
+      }))
+      .concat(
+        hipens.map((category: string) => ({
+          params: { category: category },
+        }))
+      ),
     fallback: false,
   };
 };

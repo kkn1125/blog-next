@@ -1,10 +1,13 @@
 import Animated from "@/components/Animated";
 import Card from "@/components/Card";
 import GenerateHead from "@/components/GenerateHead";
+import { PostDispatchContext, POST_INIT } from "@/context/PostProvider";
 import { getAllArticles, getArticlesByTag } from "@/libs/service";
 import { AUTHOR, BRAND_DESC, BRAND_LOGO, BRAND_NAME } from "@/util/global";
 import {
   capitalize,
+  changeHipenToWhiteSpace,
+  changeWhiteSpaceToHipen,
   duplicateRemoveArrayFromTag,
   slicedBundle,
 } from "@/util/tool";
@@ -18,7 +21,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 const PAGINATION_AMOUNT = 6;
 
@@ -29,15 +32,23 @@ const metadatas = (param: string) => ({
   image: BRAND_LOGO,
 });
 
-function Index({ posts, totalCount }: any) {
+function Index({ posts, totalCount, allPosts }: any) {
   const theme = useTheme();
   const router = useRouter();
   const [postList, setPostList] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPageCount, setTotalPageCount] = useState(0);
+  const postDispatch = useContext(PostDispatchContext);
 
   useEffect(() => {
     setTotalPageCount(Math.ceil(totalCount / PAGINATION_AMOUNT));
+  }, []);
+
+  useEffect(() => {
+    postDispatch({
+      type: POST_INIT.INIT,
+      posts: allPosts || [],
+    });
   }, []);
 
   useEffect(() => {
@@ -123,11 +134,13 @@ export default Index;
 
 export async function getStaticProps({ params }: any) {
   try {
-    const posts = await getArticlesByTag(params.tag);
+    const allPosts = await getAllArticles();
+    const posts = await getArticlesByTag(changeHipenToWhiteSpace(params.tag));
     return {
       props: {
         posts: posts,
         totalCount: posts.length,
+        allPosts: allPosts,
       },
     };
   } catch (error) {
@@ -145,12 +158,21 @@ export const getStaticPaths = async () => {
 
   const articles = await getAllArticles();
   const tags = duplicateRemoveArrayFromTag(articles);
+  const hipens = tags
+    .filter((tag: string) => tag.toLowerCase().match(/[\s]+/g))
+    .map((tag: string) => changeWhiteSpaceToHipen(tag));
   return {
-    paths: tags.map((tag: any) => ({
-      params: {
-        tag: tag.toLowerCase(),
-      },
-    })),
+    paths: tags
+      .map((tag: any) => ({
+        params: {
+          tag: tag.toLowerCase(),
+        },
+      }))
+      .concat(
+        hipens.map((tag: string) => ({
+          params: { tag: tag.toLowerCase() },
+        }))
+      ),
     fallback: false,
   };
 };

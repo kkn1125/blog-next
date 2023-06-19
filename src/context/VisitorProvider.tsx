@@ -18,12 +18,12 @@ const initialValues: VisitorValue = {
   },
 };
 
-enum VISITOR_INIT {
+export enum VISITOR_INIT {
   INIT = "visitor/initial",
 }
 
-const visitorContext = createContext({});
-const visitorDispatchContext = createContext(new Function());
+export const visitorContext = createContext({});
+export const visitorDispatchContext = createContext(new Function());
 
 const reducer = (state: VisitorValue, action: VisitorAction) => {
   switch (action.type) {

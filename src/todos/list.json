@@ -1,6 +1,18 @@
 {
   "2023": {
     "5": {
+      "19": [
+        {
+          "todo": "검색 기능 추가",
+          "tag": "check",
+          "time": "2023-06-19 14:56:01",
+          "repeat": false,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": []
+        }
+      ],
       "17": [
         {
           "todo": "휴일",

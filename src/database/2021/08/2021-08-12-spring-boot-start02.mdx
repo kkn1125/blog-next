@@ -7,7 +7,7 @@ title:  "[SPRINGBOOT] SPRING BOOT 시작하기 02"
 author: Kimson
 categories: [ spring boot ]
 tags: [spring, lombok, thymeleaf, til]
-image: /images/post/covers/TIL-spring.png
+image: /assets/images/post/covers/TIL-spring.png
 description: "lombok 설정
 
 spring boot 시작하기 01에서 설치, 구동이 주제였다면 setter와 getter등의 <del>자질구레한</del> 것들을 간소화해주는 lombok을 설정하는 방법을 소개합니다.
@@ -34,7 +34,7 @@ spring boot 시작하기 01에서 설치, 구동이 주제였다면 setter와 ge
 
 lombok은 의존성 추가로 끝나는게 아니고 lombok.jar를 설치해야 사용가능합니다. 처음에 의존성만 추가하고 자꾸 안된다고 헤메이다가 고마운 분들의 정보로 2시간 만에 해결할 수 있었습니다.
 
-![롬복 설치](/images/post/springboot/lombok/lombok01.png)
+![롬복 설치](/assets/images/post/springboot/lombok/lombok01.png)
 
 1. [lombok 다운로드](https://projectlombok.org/download)를 해줍니다.
 2. jar파일이 받아지면 해당 디렉토리에 가서 bash 또는 cmd를 켭니다.
@@ -61,7 +61,7 @@ tiles는 의존성 추가 먼저 해줍니다. 이때 tiles는 mdnrepository에�
 </dependency>
 ```
 
-![tiles 폴더구조](/images/post/springboot/tiles/tiles01.png)
+![tiles 폴더구조](/assets/images/post/springboot/tiles/tiles01.png)
 
 tiles.xml을 위 이미지와 같이 경로에 생성합니다.
 xml의 내부코드는 아래와 같습니다. tiles.xml의 기본 설정은 [tiles 홈페이지](https://tiles.apache.org/)에도 나와있습니다.
@@ -85,7 +85,7 @@ xml의 내부코드는 아래와 같습니다. tiles.xml의 기본 설정은 [ti
 
 ServletConfig라는 java파일을 만들어 tiles.xml의 위치를 알려주면서 tiles에서 definition이 가리키는 경로로 매핑되게 하는 작업입니다.
 
-![tiles 폴더구조](/images/post/springboot/tiles/tiles02.png)
+![tiles 폴더구조](/assets/images/post/springboot/tiles/tiles02.png)
 
 ```java
 @Configuration

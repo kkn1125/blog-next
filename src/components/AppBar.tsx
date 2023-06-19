@@ -1,15 +1,5 @@
 import { ColorModeContext } from "@/context/ThemeModeProvider";
-import {
-  BRAND_BW_LOGO,
-  BRAND_COLOR_LOGO,
-  BRAND_LARGE_COLOR_LOGO,
-  BRAND_LARGE_COLOR_LOGO1,
-  BRAND_LARGE_COLOR_LOGO2,
-  BRAND_LARGE_COLOR_LOGO3,
-  BRAND_LOGO,
-  BRAND_NAME,
-  PROFILE,
-} from "@/util/global";
+import { BRAND_BW_LOGO, BRAND_LOGO, BRAND_NAME, PROFILE } from "@/util/global";
 import {
   compareWithOrigin,
   resConvertData,
@@ -37,6 +27,7 @@ import { useRouter } from "next/navigation";
 import { useRouter as useNavigate } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
 import LazyImage from "./LazyImage";
+import SearchBar from "./SearchBar";
 import Visitants from "./Visitants";
 
 const pages = [
@@ -61,6 +52,7 @@ function ResponsiveAppBar() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const settings = [
     {
@@ -237,6 +229,10 @@ function ResponsiveAppBar() {
     setAnchorElUser(event.currentTarget);
   };
 
+  const handleOpenSearch = (event: React.MouseEvent<HTMLElement>) => {
+    setSearchOpen(!searchOpen);
+  };
+
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
@@ -343,11 +339,14 @@ function ResponsiveAppBar() {
                   onClick={() => {
                     handleCloseNavMenu();
                     router.push(path);
-                  }}
-                 >
-                  <Typography textAlign='center' sx={{
-                    width: '100%'
-                  }}>{name}</Typography>
+                  }}>
+                  <Typography
+                    textAlign='center'
+                    sx={{
+                      width: "100%",
+                    }}>
+                    {name}
+                  </Typography>
                 </MenuItem>
               ))}
               <Visitants visitor={visitor} />
@@ -395,47 +394,69 @@ function ResponsiveAppBar() {
             <Visitants visitor={visitor} />
           </Box>
 
-          <Box sx={{ flex: 0 }}>
-            <Tooltip title="Owner's Profile">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt={"devkimson"} src={PROFILE} />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id='menu-appbar'
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={() => {
-                handleCloseNavMenu();
-                handleCloseUserMenu();
+          <Stack direction='row' gap={1} sx={{ flex: 0 }}>
+            <Box
+              sx={{
+                flex: 0,
               }}>
-              {settings.map(({ name, feature }, i) => (
-                <MenuItem
-                  key={i}
-                  onClick={() => {
-                    handleCloseUserMenu();
-                    feature();
-                  }}
-                  sx={{
-                    justifyContent: "center",
-                  }}>
-                  <Typography textAlign='center'>
-                    {typeof name === "string" ? name.toUpperCase() : name}
-                  </Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
+              <Tooltip title='Search'>
+                <IconButton
+                  id='search-open'
+                  onClick={handleOpenSearch}
+                  sx={{ p: 0 }}>
+                  <Avatar
+                    alt={"search"}
+                    sx={{
+                      backgroundColor: "#a6a6a626",
+                    }}>
+                    🔍
+                  </Avatar>
+                </IconButton>
+              </Tooltip>
+              <SearchBar open={searchOpen} setOpen={setSearchOpen} />
+            </Box>
+            <Box sx={{ flex: 0 }}>
+              <Tooltip title="Owner's Profile">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar alt={"devkimson"} src={PROFILE} />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: "45px" }}
+                id='menu-appbar'
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={() => {
+                  handleCloseNavMenu();
+                  handleCloseUserMenu();
+                }}>
+                {settings.map(({ name, feature }, i) => (
+                  <MenuItem
+                    key={i}
+                    onClick={() => {
+                      handleCloseUserMenu();
+                      feature();
+                    }}
+                    sx={{
+                      justifyContent: "center",
+                    }}>
+                    <Typography textAlign='center'>
+                      {typeof name === "string" ? name.toUpperCase() : name}
+                    </Typography>
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>
+          </Stack>
         </Toolbar>
       </Container>
     </AppBar>

@@ -1,26 +1,15 @@
-import {
-  Box,
-  Chip,
-  Paper,
-  Stack,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
-import { Suspense, useEffect, useState } from "react";
+import { Box, Chip, Stack, Typography, useTheme } from "@mui/material";
 
 import { AUTHOR } from "@/util/global";
 import {
+  changeWhiteSpaceToHipen,
   getReponsiveImageUrl,
-  setAnimate,
   slugToBlogTrailingSlash,
 } from "@/util/tool";
-import anime from "animejs";
-import Link from "next/link";
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import TagIcon from "@mui/icons-material/Tag";
+import Link from "next/link";
 import { useRouter } from "next/router";
-import LazyImage from "./LazyImage";
 
 interface CardInfo {
   post: any;
@@ -34,7 +23,6 @@ function Card({ post }: CardInfo) {
     <Stack
       sx={{
         maxWidth: { sm: "100%", md: 360 },
-        // transform: "translateY(270px)",
         width: "100%",
         "&:hover .card-cover": {
           transform: "scale(1.1)",
@@ -46,20 +34,11 @@ function Card({ post }: CardInfo) {
           width: "100%",
           height: 240,
           overflow: "hidden",
-          // backgroundColor: "#00000016",
-          // display: "flex",
-          // justifyContent: "center",
-          // alignItems: "center",
-          // maskImage:
-          //   "linear-gradient(#000000 70%, #00000036 85%, transparent 90%)",
         }}>
         <Link href={slugToBlogTrailingSlash(post.frontmatter.slug)}>
           <Box
             className='card-cover'
-            // src={getReponsiveImageUrl(post.frontmatter.image)}
-            // width={'100%'}
             sx={{
-              // display: "inline-block",
               transition: "ease-in-out 150ms",
               width: "100%",
               height: "100%",
@@ -127,13 +106,18 @@ function Card({ post }: CardInfo) {
         </Stack>
         <Stack direction='row' gap={1} flexWrap='wrap'>
           {post.frontmatter.categories.map((category: string, i: number) => (
-            <Link key={i} href={`/categories/${category.toLowerCase()}/`}>
+            <Link
+              key={i}
+              href={`/categories/${changeWhiteSpaceToHipen(category)}/`}>
               <Chip
                 size='small'
                 icon={<FolderOpenIcon />}
-                label={category}
+                label={changeWhiteSpaceToHipen(category)}
                 variant={
-                  router.query.category === category ? "filled" : "outlined"
+                  changeWhiteSpaceToHipen(router.query.category as string) ===
+                  changeWhiteSpaceToHipen(category)
+                    ? "filled"
+                    : "outlined"
                 }
                 color='info'
                 sx={{
@@ -151,12 +135,17 @@ function Card({ post }: CardInfo) {
         </Stack>
         <Stack direction='row' gap={1} flexWrap='wrap'>
           {post.frontmatter.tags.map((tag: string, i: number) => (
-            <Link key={i} href={`/tags/${tag.toLowerCase()}/`}>
+            <Link key={i} href={`/tags/${changeWhiteSpaceToHipen(tag)}/`}>
               <Chip
                 size='small'
                 icon={<TagIcon />}
-                label={tag}
-                variant={router.query.tag === tag ? "filled" : "outlined"}
+                label={changeWhiteSpaceToHipen(tag)}
+                variant={
+                  changeWhiteSpaceToHipen(router.query.tag as string) ===
+                  changeWhiteSpaceToHipen(tag)
+                    ? "filled"
+                    : "outlined"
+                }
                 color='primary'
                 sx={{
                   cursor: "pointer",

@@ -1,9 +1,8 @@
 import { Modal } from "@/components/dev/Modal";
-import { Stack, Box, Toolbar, Container } from "@mui/material";
+import { Stack, Toolbar } from "@mui/material";
 import React from "react";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
-import SideBar from "../components/SideBar";
 
 const sidebarSize = {
   min: 250,
