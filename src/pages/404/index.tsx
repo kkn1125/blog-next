@@ -1,5 +1,4 @@
 import GenerateHead from "@/components/GenerateHead";
-import { PostDispatchContext, POST_INIT } from "@/context/PostProvider";
 import { getAllArticles } from "@/libs/service";
 import { AUTHOR, BRAND_DESC, BRAND_LOGO, BRAND_NAME } from "@/util/global";
 import {
@@ -17,7 +16,7 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const metadatas = {
   title: `${BRAND_NAME.toUpperCase()}::Not Found`,
@@ -29,21 +28,13 @@ const metadatas = {
 function Index({ posts }: any) {
   const router = useRouter();
   const [post, setPost] = useState(null);
-  const postDispatch = useContext(PostDispatchContext);
-
   useEffect(() => {
     setPost(
       posts.find((post: any) =>
         post.frontmatter.slug.match(location.pathname.replace(/\/+/g, ""))
       )
     );
-
-    postDispatch({
-      type: POST_INIT.INIT,
-      posts: posts,
-    });
   }, []);
-
   return (
     <Container>
       <GenerateHead metadatas={metadatas} />

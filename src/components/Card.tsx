@@ -22,7 +22,7 @@ function Card({ post }: CardInfo) {
   return (
     <Stack
       sx={{
-        maxWidth: { sm: "100%", md: 360 },
+        // maxWidth: { sm: "100%", md: 360 },
         width: "100%",
         "&:hover .card-cover": {
           transform: "scale(1.1)",

@@ -8,6 +8,12 @@ export const slicedBundle = (gap: number, array: any[]) => {
   for (let i = 0; i < array.length; i += gap) {
     temp.push(array.slice(i, gap + i));
   }
+  if (temp[temp.length - 1] && temp[temp.length - 1].length !== gap) {
+    const contrast = gap - temp[temp.length - 1].length;
+    for (let i = 0; i < contrast; i++) {
+      temp[temp.length - 1].push(undefined);
+    }
+  }
   return temp;
 };
 

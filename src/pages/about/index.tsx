@@ -1,7 +1,5 @@
 import Animated from "@/components/Animated";
 import GenerateHead from "@/components/GenerateHead";
-import { PostDispatchContext, POST_INIT } from "@/context/PostProvider";
-import { getAllArticles } from "@/libs/service";
 import {
   AUTHOR,
   BLOG,
@@ -23,7 +21,6 @@ import {
   Typography,
 } from "@mui/material";
 import Link from "next/link";
-import { useContext, useEffect } from "react";
 
 const ABOUT_LINKS = [
   {
@@ -47,16 +44,7 @@ const metadatas = {
   image: BRAND_LOGO,
 };
 
-function Index({ posts, totalCount }: any) {
-  const postDispatch = useContext(PostDispatchContext);
-
-  useEffect(() => {
-    postDispatch({
-      type: POST_INIT.INIT,
-      posts: posts || [],
-    });
-  }, []);
-
+function Index() {
   return (
     <Stack
       component={Container}
@@ -123,14 +111,3 @@ function Index({ posts, totalCount }: any) {
 }
 
 export default Index;
-
-export const getStaticProps = async () => {
-  const posts = await getAllArticles();
-
-  return {
-    props: {
-      posts: posts,
-      totalCount: posts.length,
-    },
-  };
-};

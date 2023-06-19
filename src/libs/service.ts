@@ -237,12 +237,16 @@ export async function getAllArticles(limit?: number) {
     }
   }
 
-  return convert
+  const result = convert
     .sort((a: any, b: any) =>
       b.frontmatter.date.localeCompare(a.frontmatter.date)
     )
     .filter((article: any) => article.frontmatter.published)
     .slice(0, limit || undefined);
+
+  // fs.writeFileSync("./posts.json", JSON.stringify(result, null, 2));
+
+  return result;
 }
 
 export async function getArticlesByCategory(category: string) {

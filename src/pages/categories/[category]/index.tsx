@@ -1,7 +1,6 @@
 import Animated from "@/components/Animated";
 import Card from "@/components/Card";
 import GenerateHead from "@/components/GenerateHead";
-import { PostDispatchContext, POST_INIT } from "@/context/PostProvider";
 import { getAllArticles, getArticlesByCategory } from "@/libs/service";
 import { AUTHOR, BRAND_DESC, BRAND_LOGO, BRAND_NAME } from "@/util/global";
 import {
@@ -21,7 +20,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { useRouter } from "next/router";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const PAGINATION_AMOUNT = 6;
 
@@ -32,26 +31,18 @@ const metadatas = (param: string) => ({
   image: BRAND_LOGO,
 });
 
-function Index({ posts, totalCount, allPosts }: any) {
+function Index({ posts, totalCount }: any) {
   const theme = useTheme();
   const router = useRouter();
   const [postList, setPostList] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPageCount, setTotalPageCount] = useState(0);
-  const postDispatch = useContext(PostDispatchContext);
 
   useEffect(() => {
     setTotalPageCount(Math.ceil(totalCount / PAGINATION_AMOUNT));
     return () => {
       setPostList((postList) => []);
     };
-  }, []);
-
-  useEffect(() => {
-    postDispatch({
-      type: POST_INIT.INIT,
-      posts: allPosts || [],
-    });
   }, []);
 
   useEffect(() => {
@@ -106,15 +97,19 @@ function Index({ posts, totalCount, allPosts }: any) {
             sx={{
               width: "100%",
             }}>
-            {row.map((post, q) => (
-              <Animated
-                card
-                key={q}
-                order={i * o.length + q + 1}
-                animate='fadeInUp'>
-                <Card post={post} />
-              </Animated>
-            ))}
+            {row.map((post, q) =>
+              post ? (
+                <Animated
+                  card
+                  key={q}
+                  order={i * o.length + q + 1}
+                  animate='fadeInUp'>
+                  <Card post={post} />
+                </Animated>
+              ) : (
+                <div key={q} style={{ flex: "1 1 100%" }}></div>
+              )
+            )}
           </Stack>
         ))}
       </Stack>
@@ -138,7 +133,6 @@ export default Index;
 
 export async function getStaticProps({ params }: any) {
   try {
-    const allPosts = await getAllArticles();
     const posts = await getArticlesByCategory(
       changeHipenToWhiteSpace(params.category)
     );
@@ -147,7 +141,6 @@ export async function getStaticProps({ params }: any) {
       props: {
         posts: posts,
         totalCount: posts.length,
-        allPosts: allPosts,
       },
     };
   } catch (error) {

@@ -3,15 +3,8 @@ import Calendar from "@/components/Calendar";
 import Card from "@/components/Card";
 import GenerateHead from "@/components/GenerateHead";
 import MainCard from "@/components/MainCard";
-import { PostDispatchContext, POST_INIT } from "@/context/PostProvider";
 import { getAllArticles } from "@/libs/service";
-import {
-  AUTHOR,
-  BRAND_DESC,
-  BRAND_LOGO,
-  BRAND_NAME,
-  MAIN_POST_LIMIT,
-} from "@/util/global";
+import { AUTHOR, BRAND_DESC, BRAND_LOGO, BRAND_NAME } from "@/util/global";
 import { slicedBundle } from "@/util/tool";
 import {
   Box,
@@ -22,7 +15,6 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { useContext, useEffect } from "react";
 
 const metadatas = {
   title: BRAND_NAME.toUpperCase(),
@@ -32,17 +24,8 @@ const metadatas = {
 };
 
 export default function Home({ posts }: any) {
-  const postDispatch = useContext(PostDispatchContext);
-  const articles = posts.slice(0, 4);
   const theme = useTheme();
   const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
-
-  useEffect(() => {
-    postDispatch({
-      type: POST_INIT.INIT,
-      posts: posts || [],
-    });
-  }, []);
 
   return (
     <Container maxWidth='lg'>
@@ -74,11 +57,11 @@ export default function Home({ posts }: any) {
         <Toolbar />
         <Stack component={"section"} alignItems='center'>
           <Animated order={2} animate='fadeInUp'>
-            <MainCard post={articles[0]} />
+            <MainCard post={posts[0]} />
           </Animated>
           <Toolbar />
           <Stack gap={5}>
-            {slicedBundle(isMdUp ? 3 : 1, articles.slice(1)).map((row, i) => (
+            {slicedBundle(isMdUp ? 3 : 1, posts.slice(1)).map((row, i) => (
               <Stack
                 key={i}
                 direction='row'
@@ -97,7 +80,7 @@ export default function Home({ posts }: any) {
           </Stack>
         </Stack>
         <Toolbar />
-        <Animated order={articles.length + 3} animate='fadeInUp'>
+        <Animated order={posts.length + 3} animate='fadeInUp'>
           <Calendar />
         </Animated>
         <Toolbar />
@@ -108,7 +91,7 @@ export default function Home({ posts }: any) {
 
 export async function getStaticProps() {
   try {
-    const articles = await getAllArticles();
+    const articles = await getAllArticles(4);
 
     return {
       props: {

@@ -4,7 +4,6 @@ import PostMDXComponent from "@/components/PostMDXComponent";
 import PostNavigator from "@/components/PostNavigator";
 import SideBar from "@/components/SideBar";
 import {
-  getAllArticles,
   getArticleFromSlug,
   getBeforeArticleFromSlug,
   getNextArticleFromSlug,
@@ -14,7 +13,9 @@ import {
 import { AUTHOR, BRAND_NAME } from "@/util/global";
 import { getReponsiveImageUrl, parseHeading } from "@/util/tool";
 import { MergeComponents } from "@mdx-js/react/lib";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import LinkIcon from "@mui/icons-material/Link";
+import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import {
   Box,
   CircularProgress,
@@ -28,10 +29,7 @@ import {
 } from "@mui/material";
 import { MDXComponents } from "mdx/types";
 import { MDXRemote } from "next-mdx-remote";
-import { useContext, useEffect, useRef, useState } from "react";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
-import { PostDispatchContext, POST_INIT } from "@/context/PostProvider";
+import { useEffect, useRef, useState } from "react";
 
 const components: MDXComponents | MergeComponents = {
   code: PostMDXComponent.CodeBlock,
@@ -75,13 +73,11 @@ const metadatas = (frontmatter: any) => ({
 let copyActive = false;
 
 function Index({
-  allPosts,
   post,
   content,
   before,
   next,
 }: {
-  allPosts: any;
   post: any;
   content: any;
   before: any;
@@ -92,18 +88,10 @@ function Index({
   const theme = useTheme();
   const commentEl = useRef<HTMLElement>();
   const [copied, setCopied] = useState(false);
-  const postDispatch = useContext(PostDispatchContext);
 
   useEffect(() => {
     setResponsivePost(post);
   }, [post]);
-
-  useEffect(() => {
-    postDispatch({
-      type: POST_INIT.INIT,
-      posts: allPosts || [],
-    });
-  }, []);
 
   useEffect(() => {
     const scriptEl = document.createElement("script");
@@ -271,7 +259,6 @@ function Index({
 }
 
 export const getStaticProps = async ({ params }: any) => {
-  const allPosts = await getAllArticles();
   const before = await getBeforeArticleFromSlug(params.slug);
   const post = await getArticleFromSlug(params.slug);
   const next = await getNextArticleFromSlug(params.slug);
@@ -360,7 +347,6 @@ export const getStaticProps = async ({ params }: any) => {
       content: post.content,
       before: before,
       next: next,
-      allPosts: allPosts,
     },
   };
 };

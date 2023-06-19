@@ -1,17 +1,13 @@
-import { PostContext } from "@/context/PostProvider";
-import { format, slugToBlogTrailingSlash } from "@/util/tool";
 import {
-  Box,
-  Chip,
-  Paper,
-  Stack,
-  TextField,
-  Toolbar,
-  Typography,
-} from "@mui/material";
+  PostContext,
+  PostDispatchContext,
+  POST_INIT,
+} from "@/context/PostProvider";
+import metapost from "@/database/metapost/posts.json";
+import { format, slugToBlogTrailingSlash } from "@/util/tool";
+import { Box, Chip, Paper, Stack, TextField, Typography } from "@mui/material";
 import Link from "next/link";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { useRouter as useNavigate } from "next/router";
 
 function SearchBar({
   open,
@@ -22,10 +18,14 @@ function SearchBar({
 }) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { posts } = useContext(PostContext);
+  const postDispatch = useContext(PostDispatchContext);
   const [searchList, setSearchList] = useState([]);
-  const navigate = useNavigate();
 
   useEffect(() => {
+    postDispatch({
+      type: POST_INIT.INIT,
+      posts: metapost,
+    });
     window.addEventListener("keyup", handleKeydownClose);
     window.addEventListener("click", handleClickClose);
     return () => {
@@ -35,7 +35,6 @@ function SearchBar({
   }, []);
 
   useEffect(() => {
-    // console.log(posts);
     if (!open) {
       setSearchList([]);
     }

@@ -12,6 +12,7 @@ import Script from "next/script";
 import createEmotionCache from "../libs/createEmotionCache";
 import "./theme/prism-dracular.css";
 // Client-side cache, shared for the whole session of the user in the browser.
+
 const clientSideEmotionCache = createEmotionCache();
 
 export interface MyAppProps extends AppProps {
