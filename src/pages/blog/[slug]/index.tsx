@@ -176,7 +176,7 @@ const components: MDXComponents | MergeComponents = {
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              maxWidth: "90vw",
+              maxWidth: 675,
             }}>
             <Box
               sx={{
@@ -207,8 +207,9 @@ const components: MDXComponents | MergeComponents = {
                 textAlign: "center",
                 backgroundColor: "#565656",
                 color: "#ffffff",
-                fontWeight: 700,
+                // fontWeight: 700,
                 p: 1,
+                fontSize: (theme) => theme.typography.pxToRem(14),
               }}>
               {props.alt}
             </Box>
