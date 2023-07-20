@@ -1,6 +1,18 @@
 {
   "2023": {
     "6": {
+      "19": [
+        {
+          "todo": "Fastify + AdminJS 프로젝트 환경 구축 포스팅",
+          "tag": "check",
+          "time": "2023-07-19 15:02:58",
+          "repeat": false,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": []
+        }
+      ],
       "10": [
         {
           "todo": "Node진영 프론트+백엔드 결합 빌드 포스팅",

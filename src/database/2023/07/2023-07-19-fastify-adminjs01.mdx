@@ -1,0 +1,400 @@
+---
+slug: "/fastify-adminjs01/"
+date: 2023-07-19 10:39:05 +0000
+modified: 2023-07-19 16:44:24 +0000
+title: "[AdminJS] Fastify + AdminJS 프로젝트 환경 구축 01"
+author: Kimson
+categories: [fastify]
+image: /assets/images/post/covers/TIL-fastify-adminjs.png
+tags: [node, fastify, adminjs, build, til]
+description: "Fastify와 AdminJS 프로젝트 환경
+
+안녕하세요. 이번에는 Fastify와 AdminJS를 연동하는 방법과 겪었던 이슈를 정리하는 포스팅이 되겠습니다. 주요하게 다룰 부분은 프로젝트 환경 설정과 이슈 해결/적용에 대한 방법과 과정입니다.
+
+AdminJS는 무엇인가
+
+AdminJS는 AdminBro의 rebrand된 모듈입니다. 초기 AdminBro는 fastify를 지원하지 않았고, 현재 AdminJS로 rebrand되면서 fastify와 커뮤니티 플러그인 등을 지원하며, ESM만을 지원하는 모듈로 점점 발전해나가고 있습니다. 참고로 AdminBro와 AdminJS는 모두 SoftWareBrothers 그룹에서 제작했습니다."
+featured: true
+rating: 4.5
+profile: false
+published: true
+---
+
+# Fastify와 AdminJS 프로젝트 환경
+
+안녕하세요. 이번에는 Fastify와 AdminJS를 연동하는 방법과 겪었던 이슈를 정리하는 포스팅이 되겠습니다. 주요하게 다룰 부분은 프로젝트 환경 설정과 이슈 해결/적용에 대한 방법과 과정입니다.
+
+## AdminJS는 무엇인가
+
+AdminJS는 AdminBro의 rebrand된 모듈입니다. 초기 AdminBro는 fastify를 지원하지 않았고, 현재 AdminJS로 rebrand되면서 fastify와 커뮤니티 플러그인 등을 지원하며, ESM만을 지원하는 모듈로 점점 발전해나가고 있습니다. 참고로 AdminBro와 AdminJS는 모두 SoftWareBrothers 그룹에서 제작했습니다.
+
+먼저 adminjs의 프로세스를 간단하게 짚고 넘어가고자 하는데요. 결국 마주하는 에러가 너무 많아서 모듈을 하나 씩 까보았습니다.
+
+1. adminjs는 knex를 기반으로 DB를 제어한다.
+2. adminjs는 크게 controller, decorator, action… 등으로 이루어져있다
+3. 초기에는 @adminjs/fastify에서 buildRouter하게 되면 multipart를 등록한다.
+4. adminjs 연결 후 패널에서 생성, 수정을 하게 되면 @adminjs/fastify로 데이터를 전송해서 @adminjs/sql모듈에서 받아 데이터를 가공, 사용한다.
+5. multipart문제가 발생하면 정상 연결되더라도 데이터 생성, 수정이 작동하지 않고, 읽어오거나 삭제하는 기능은 정상작동한다.
+
+1~4번까지는 adminjs가 어떤 순서로 데이터를 처리하는지를 요약한 것이고, 5번은 연결 이슈에 대한 내용입니다.
+
+## 프로젝트 환경
+
+fastify와 adminjs를 연결하는 이유는 당연하게도 관리자 페이지가 필요해서 입니다. 직접 만드는데 시간과 비용이 들기 때문에 자동화 된, 잘 만들어진 라이브러리를 사용해서 구축하려 하는데 생각대로 되지 않아 애를 많이 먹었습니다. adminjs 에러 때문에 결국 이전 프로젝트 때는 직접 구축해야 했는데요. 이번에 몇 가지 이슈들을 해결하면서 포스팅을 하게 되었지요.
+
+필자가 제작하는 프로젝트의 환경은 아래와 같습니다.
+
+- fastify
+- @adminjs/sql
+- @adminjs/fastify
+- adminjs
+- node 18.11.0
+- mysql2 (실제 사용하는 DB는 MariaDB입니다. mysql2는 라이브러리 명입니다)
+- typescript
+
+### typescript
+
+프로젝트를 구성할 때에 디버깅과 확장성을 고려해서 typescript를 사용하고 있습니다. 정확성과 주석을 줄이는데도 도움이 된다고 생각합니다. fastify를 typescript로 제작하고 adminjs와 연결하는데 중요한 부분이 tsconfig라고 생각됩니다. 여기서 많은 이슈가 있었기 때문입니다.
+
+```json {8,31-36} showLineNumbers
+{
+  "compilerOptions": {
+    "rootDir": "./",
+    "outDir": "./dist",
+    "target": "ESNext",
+    "types": ["jest", "node"],
+    "lib": ["DOM", "ES7", "ESNext"],
+    "module": "CommonJS",
+    // "moduleResolution": "Node",
+    // "resolveJsonModule": true,
+    "useDefineForClassFields": true,
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "declaration": true,
+    "noImplicitAny": false,
+    // "noEmit": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    // "noImplicitAny": true,
+    // "strictNullChecks": true,
+    "skipLibCheck": true,
+    /* fastify typeorm settings */
+    "strictPropertyInitialization": false,
+    "experimentalDecorators": true,
+    // "typeRoots": ["./node_modules/@types"],
+    "emitDecoratorMetadata": true,
+    "composite": true
+  },
+  "ts-node": {
+    "esm": true,
+    "compilerOptions": {
+      "module": "NodeNext"
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["**/node_modules/*", "build"]
+  // "extends": "@tsconfig/node18/tsconfig.json"
+}
+```
+
+위의 코드는 이번 프로젝트에 설정한 `tsconfig.json` 내용입니다. 혹시나 adminjs를 연결하는데 애를 먹고 있다면 조금이나마 도움이 되었으면 합니다.
+
+### undefined toLowerCase 문제
+
+db는 mariadb를 사용하고 있습니다. 때문에 adminjs의 플러그인 중에 @adminjs/sql을 사용하는데요, mysql이나 postgresql은 상관 없을 수 있지만, mariadb의 경우 조금 특수해서 모듈의 내용 변경이 불가피했습니다. 가급적 모듈을 건드리지 않는 편이 유지보수에 좋지만 사용하기 위해서는 어쩔 수 없었지요.
+
+이유를 설명하기 전에 sql 플러그인에 대해 조금 알아볼 필요가 있는데요. sql 플러그인은 knex를 기반으로 제작되었습니다. knex가 지원하는 db 타입은 mysql, mysql2, postgres 세 가지 입니다. 때문에 sql 플러그인 또한 세 가지로 동일하게 타입 지정 가능합니다.
+
+이제 이유를 말씀드리자면, knex에서 mariadb를 연결하고 받아오는 데이터의 프로퍼티가 소문자로 받아오게 됩니다. 하지만 sql 플러그인에서는 대문자 프로퍼티로 처리하게 되면서 toLowerCase() 메서드가 undefined에서 사용할 수 없다는 에러를 내뱉게 됩니다.
+
+```bash showLineNumbers
+(node:17912) ExperimentalWarning: Importing JSON modules is an experimental feature. This feature could change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+TypeError: Cannot read properties of undefined (reading 'toLowerCase')
+    at getColumnInfo (file:///C:/fake_path/node_modules/@adminjs/sql/src/dialects/mysql.parser.ts:13:33)
+    at file:///C:/fake_path/node_modules/@adminjs/sql/src/dialects/mysql.parser.ts:199:46
+    at Array.map (<anonymous>)
+    at MysqlParser.getProperties (file:///C:/fake_path/node_modules/@adminjs/sql/src/dialects/mysql.parser.ts:199:20)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/fake_path/node_modules/@adminjs/sql/src/dialects/mysql.parser.ts:157:13
+    at async Promise.all (index 0)
+    at async MysqlParser.getResources (file:///C:/fake_path/node_modules/@adminjs/sql/src/dialects/mysql.parser.ts:148:23)
+    at async MysqlParser.parse (file:///C:/fake_path/node_modules/@adminjs/sql/src/dialects/mysql.parser.ts:111:23)
+    at async start (file:///C:/fake_path/admin/src/admin.ts:11:14)
+```
+
+sql 플러그인을 까보면 아래와 같습니다.
+
+```typescript showLineNumbers
+// 예시 mysql 데이터
+const dbData = {
+  DATA_TYPE: '...',
+  DATA_VALUE: '...',
+  // ...
+}
+
+// 예시 mariadb 데이터
+const dbData = {
+  data_type: '...',
+  data_value: '...',
+  // ...
+}
+
+// undefined 에러 발생 부분 sql 플러그인 부분
+const getColumnInfo = (column) => {
+    const type = column.DATA_TYPE.toLowerCase(); // 여기
+    const columnType = column.COLUMN_TYPE.toLowerCase();
+    let availableValues = null;
+    if (type === 'set' || type === 'enum') {
+        if (!columnType.startsWith(type)) {
+            throw new Error(`Unknown column type: ${type}`);
+        }
+        availableValues = columnType
+            .split(type)[1]
+            .replace(/^\('/, '')
+            .replace(/'\)$/, '')
+            .split('\',\'');
+    }
+    const reference = column.REFERENCED_TABLE_NAME;
+    const isId = column.COLUMN_KEY.toLowerCase() === 'pri';
+    const isNullable = column.IS_NULLABLE.toLowerCase() !== 'no';
+    return {
+        name: column.COLUMN_NAME,
+        isId,
+        position: column.ORDINAL_POSITION,
+        defaultValue: column.COLUMN_DEFAULT,
+        isNullable,
+        isEditable: !isId,
+        type: reference ? 'reference' : ensureType(type, columnType),
+        referencedTable: reference ?? null,
+        availableValues,
+    };
+};
+
+async getProperties(table) {
+    const query = this.knex
+        .from('information_schema.columns as col')
+        .select('col.column_name', 'col.ordinal_position', 'col.column_default', 'col.is_nullable', 'col.data_type', 'col.column_type', 'col.column_key', 'col.extra', 'col.column_comment', 'key.referenced_table_name', 'key.referenced_column_name')
+        .leftJoin('information_schema.key_column_usage as key', (c) => c
+        .on('key.table_schema', 'col.table_schema')
+        .on('key.table_name', 'col.table_name')
+        .on('key.column_name', 'col.column_name')
+        .on('key.referenced_table_schema', 'col.table_schema'))
+        .where('col.table_schema', this.connectionOptions.database)
+        .where('col.table_name', table);
+    const columns = await query;
+    return columns.map((col) => new Property(getColumnInfo(col)));
+}
+```
+
+getProperties에서 kenx를 사용하는데 있어 columns의 결과로 mariadb의 경우 소뭄ㄴ자 프로퍼티를 가진 채 받아오게 됩니다. 반환하는 부분에서 getColumnInfo 함수를 거치는데 getColumnInfo함수를 보면 `column.DATA_TYPE.toLowerCase()` 부분이 있습니다. 여기서 에러가 발생하면서 sql 연결이 계속 먹통이 되는 경우가 있습니다. 이 때문에 sql 플러그인 수정이 필요하게 되었습니다.
+
+제가 수정한 방법은 아래와 같습니다.
+
+```typescript showLineNumbers
+// @adminjs/sql/lib/dialects/mysql.parser.js
+
+export class MysqlParser extends BaseDatabaseParser {
+  // ...
+
+  async getProperties(table) {
+    // ...
+    // const columns = await query; // 여기를 아래처럼 변경합니다.
+    const columns = (await query).map((q) =>
+      Object.assign(
+        q,
+        Object.fromEntries(
+          Object.entries(q).map(([k, v]) => [k.toUpperCase(), v])
+        )
+      )
+    );
+    return columns.map((col) => new Property(getColumnInfo(col)));
+  }
+}
+```
+
+columns는 기존에 객체 배열을 받아오게 되어 있었습니다. 해당 배열을 map으로 돌고, 대문자 프로퍼티로 변경하면서 값을 복사하고, 소문자, 대문자 프로퍼티를 모두 가지도록 가공했습니다.
+
+이렇게 하면 sql 플러그인 연결 에러 이슈는 해결이 됩니다.
+
+### esm 문제
+
+프로젝트를 실행하기 위해 ts-node를 설치하고 사용중입니다. ts-node관련한 에러가 초기에 많이 뜹니다. adminjs의 문서가 불친절하지는 않지만 겪었던 이슈들에 대한 탭이나 솔루션이 없어서 많이 아쉬웠습니다. esm문제는 아래 필자가 설정한 tsconfig를 참조해주시면 왠만한 환경에서는 돌아갈 것으로 생각됩니다.
+
+참고로 package.json에서 실행은 아래와 같이 실행했습니다.
+
+```json showLineNumbers
+// package.json
+{
+  // ...
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development nodemon --watch \"src/**\" --ext \"ts,json\" --ignore \"src/**/*.test.ts\" --exec \"ts-node src/index.ts\""
+  }
+  // ...
+}
+```
+
+> 앞서 보여드렸던 `tsconfig.json`의 `ts-node` 설정 부분은 함께 작동되어야 합니다.
+
+### ts-node not found module 문제
+
+module을 찾지 못해서 이것저것 많이 시도해봤는데요. 그중에서 제일 효과적이었던 것은 import()로 모듈을 가져와 사용하는 방법이었습니다.
+
+```tsx showLineNumbers
+import AdminJS from "adminjs"; // ❌
+
+async function start() {
+  const AdminJS = await import("adminjs"); // ✅
+}
+```
+
+이렇게 불러와 적용을 하면 아주 작 적용이 됩니다. 하지만 이렇게 설정하고 나면 from 옆 라이브러리 명칭 밑에 빨간줄이 그어져있을 수 있습니다. 그래도 `not found module`이 뜰 수 있구요.
+
+이때는 `ts-ignore`로 경고를 제거시키면 해당 모듈 문제를 무시하고 프로젝트를 실행시킬 수 있습니다. 기능상 문제는 없었습니다.
+
+```tsx showLineNumbers
+async function start() {
+  // @ts-ignore: unreachable code error
+  const AdminJS = await import("adminjs");
+}
+```
+
+아래는 @adminjs/fastify 플러그인의 초기 설정에 사용되는 buildRouter 함수입니다. 해당 함수가 동작하는 순서를 보면서 데이터를 어떻게 받아오는지 알기 위해 잠시 보겠습니다.
+
+```tsx showLineNumbers
+// @adminjs/fastify/lib/buildRouter.js
+
+// ...
+
+routes.forEach((route) => {
+  // we have to change routes defined in AdminJS from {recordId} to :recordId
+  const path = route.path.replace(/{/g, ":").replace(/}/g, "");
+  const handler = async (request, reply) => {
+    const controller = new route.Controller(
+      { admin },
+      request.session?.adminUser
+    );
+    const { params, query } = request;
+    const method = request.method.toLowerCase();
+    const body = request.body;
+    console.log("check body", body); // 여기
+    const fields = fromPairs(
+      Object.keys(body ?? {}).map((key) => [
+        key,
+        getFile(body[key]) ?? body[key].value,
+      ])
+    );
+    const html = await controller[route.action](
+      {
+        ...request,
+        params,
+        query,
+        payload: fields ?? {},
+        method,
+      },
+      reply
+    );
+    if (route.contentType) {
+      reply.type(route.contentType);
+    } else if (typeof html === "string") {
+      reply.type("text/html");
+    }
+    if (html) {
+      return reply.send(html);
+    }
+  };
+  if (route.method === "GET") {
+    fastifyApp.get(`${admin.options.rootPath}${path}`, handler);
+  }
+  if (route.method === "POST") {
+    fastifyApp.post(`${admin.options.rootPath}${path}`, handler);
+  }
+});
+
+//
+```
+
+![@adminjs/fastify에서 받는 body 데이터](https://github.com/kkn1125/kkn1125.github.io/assets/113876485/27f36ec5-af68-496b-8b08-339461a32eed)
+
+위 이미지는 콘솔로 찍은 부분의 데이터인데요. `@adminjs/fastify` 플러그인에서 직접 multipart를 설정하기 때문에 multipartError decorator 이슈가 발생할 수 있습니다. 현재 프로젝트에서는 multipart를 설정하고 옵션으로 addToBody를 사용하였습니다. 하지만 충돌에러가 발생해서 플러그인과 동일하게 attachFieldsToBody로 변경했습니다.
+
+때문에 모든 POST, PUT API를 수정해야 하는 상황이 생길 수 있습니다. 무턱대고 API를 모두 고쳤다가는 이후 유지보수에 난항이 생기겠지요. 다행스럽게도 fastify는 hook을 제공하기 때문에 요청 전, 중, 후 등의 시점에서 가로채어 데이터를 제어하거나 요청을 돌리는 등의 작업이 가능합니다. buildRouter를 통해 등록되는 경로를 제외한 부분만 body 데이터를 가공하고 admin 패널의 경로로 들어가는 데이터를 유지하기만 해주면 adminjs를 사용하면서 api를 기존 코드 유지하면서 사용할 수 있습니다.
+
+```typescript showLineNumbers
+/* Hooks handler */
+server.addHook("preValidation", async (req) => {
+  // Some code
+  if (!req.url.startsWith("/admin") && req.body) {
+    const preParsingBody = Object.assign({}, Object.assign({}, req.body || {}));
+    Object.assign(
+      preParsingBody,
+      Object.fromEntries(
+        Object.entries(preParsingBody || {}).map(([k, v]) => [
+          k,
+          (v as any).value,
+        ])
+      )
+    );
+    const result = customParser(preParsingBody);
+    Object.assign(req.body, result);
+  }
+
+  if (req.query) {
+    const result = customParser(req.query);
+    Object.assign(req.query, result);
+  }
+});
+```
+
+위 코드는 현재 프로젝트에서 preValidation hook을 통해 어드민과 api 요청을 분기해서 데이터를 제어하는 부분을 발췌한 것 입니다. 예시로 보여드리는 것이니 참고하시기 바랍니다.
+
+### AdminJSFastify buildRouter 문제
+
+buildRouter는 설정할 때 주의할 점이 두 가지 있습니다. 하나는 multipart를 사용한다면 해당 플러그인 등록 전(코드상 위쪽으로) 먼저 호출(등록)해야 합니다.
+
+이유는 adminjs fastify 모듈에서 buildRouter 메서드가 초기화할 당시 multipart를 등록하기 때문에 multipartError decorator가 충돌되는 문제가 발생하게 됩니다.
+
+그리고 앞서 말했듯이 import()를 사용하기 때문에 register로 등록하는 방법을 추천합니다. 묶여있어서 보기도 쉽기 때문입니다.
+
+```tsx showLineNumbers
+server.register(async (req, res, done) => {
+  try {
+    /* admin panel */
+    // @ts-ignore: unreachable code error
+    const AdminJSFastify = await import("@adminjs/fastify");
+    // @ts-ignore: unreachable code error
+    const { Adapter, Database, Resource } = await import("@adminjs/sql"); // or any other adapter
+    // @ts-ignore: unreachable code error
+    const { AdminJS } = await import("adminjs");
+    const db = await new Adapter("mysql2", {
+      /* ... db 정보 ... */
+    }).init();
+
+    AdminJS.registerAdapter({ Database, Resource });
+    const admin = new AdminJS({
+      resources: db.tables(),
+      rootPath: "/admin",
+    });
+
+    await AdminJSFastify.buildRouter(admin, server);
+    // console.log(AdminJSFastify.buildRouter);
+  } catch (error) {
+    console.log("error", error);
+  }
+  done();
+});
+```
+
+## 마무리
+
+이번 포스팅은 빠르게 기록을 남기기 위해 부분부분 적다보니 두서가 없는 것 같아 이후 다듬을 예정입니다.
+
+Fastify API 서버를 구축하고 AdminJS를 연결해서 관리자 패널을 사용할 수 있는 프로젝트 환경을 제작해보았습니다. 정말 문서화가 중요하다는 것을 또 한 번 느끼게 되는 작업이었습니다. AdminJS 문서가 잘 되어 있긴 하지만, 좀 불친절하다고 느끼는 부분이 하나 있습니다. Adapter에서 어떤 종류의 db 타입이 있는지 나와 있으면 좋겠지만 따로 언급이 없습니다. 궁금해서 찾아보니 문서에는 없고, stackoverflow에 있더라구요 😅
+
+참고로 타입은 mysql, mysql2, postgres가 있습니다. @adminjs/sql 플러그인을 이용하고, 이 플러그인이 knex를 사용하다보니 그런 것 같습니다. 추가로 adapter db 연결 시 postgres는 url형식으로 적어야하고, mysql, mysql2는 오브젝트로 적어야합니다. 안그러면 연결조차 안 됩니다.
+
+이전까지만 해도 있는 모듈이나 라이브러리는 그대로 사용했습니다. 하지만 프로젝트에 맞게 커스텀이 필요하고, 해당 라이브러리를 애용한다면 필요에 따라 깃허브에 이슈를 만들어 제안하거나 하는 행위 또한 필요하다고 느꼈습니다. 모듈을 사용하는데 있어서 커뮤니티에 당당하게 버그나 이슈를 던지는 것도 중요하다고 생각이 듭니다.
+
+여하튼 같은 상황에 놓인 분들이 있다면 조금이나마 도움이 되시기를 😊

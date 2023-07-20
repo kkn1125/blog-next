@@ -22,6 +22,7 @@ function PostNavigatorButton({ data, currentPath, order = false }: any) {
         justifyContent={order ? "flex-start" : "flex-end"}
         alignItems={"flex-start"}
         sx={{
+          maxWidth: "90vw",
           minHeight: 110,
           maxHeight: 110,
           flex: 1,
@@ -47,7 +48,12 @@ function PostNavigatorButton({ data, currentPath, order = false }: any) {
           )}
         </Typography>
         <Stack
-          sx={{ flex: 1, textAlign: order ? "left" : "right" }}
+          sx={{
+            flex: 1,
+            textAlign: order ? "left" : "right",
+            width: "100vw",
+            position: "relative",
+          }}
           {...(!order && { alignItems: "flex-end" })}>
           {data ? (
             <>
@@ -57,8 +63,11 @@ function PostNavigatorButton({ data, currentPath, order = false }: any) {
                 sx={{
                   textOverflow: "ellipsis",
                   overflow: "hidden",
+                  wordWrap: "break-word",
+                  minWidth: 150,
+                  maxWidth: "calc(80vw - 40vw - 100px)",
                   whiteSpace: "nowrap",
-                  width: "80%",
+                  wordBreak: "break-all",
                 }}>
                 {data.frontmatter.title}
               </Typography>
