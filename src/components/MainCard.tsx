@@ -37,12 +37,13 @@ function MainCard({ post }: CardInfo) {
         position: "relative",
         width: "100%",
         height: 500,
+        color: "#ffffff",
         "& a": {
           transition: "150ms ease-in-out",
         },
-        "& *": {
-          textShadow: `-0.5px -0.5px 0 ${colors()}, 0.5px -0.5px 0 ${colors()}, -0.5px 0.5px 0 ${colors()}, 0.5px 0.5px 0 ${colors()}`,
-        },
+        // "& *": {
+        //   textShadow: `-0.5px -0.5px 0 ${colors()}, 0.5px -0.5px 0 ${colors()}, -0.5px 0.5px 0 ${colors()}, 0.5px 0.5px 0 ${colors()}`,
+        // },
         // "& > .MuiTypography-root": {
         //   color: `${colors()} !important`,
         // },
@@ -52,8 +53,9 @@ function MainCard({ post }: CardInfo) {
         // "& .dot": {
         //   backgroundColor: "#ffffff",
         // },
-        // "&:hover > a": {
-        //   filter: "brightness(0.9)",
+        // "&:hover > *": {
+        //   filter: "brightness(1)",
+        //   color: "#000000",
         // },
       }}>
       <Box
@@ -77,7 +79,7 @@ function MainCard({ post }: CardInfo) {
           // maskImage:
           //   "linear-gradient(to right, transparent 0%, #00000036 3%, #000000 5%, #000000 95%, #00000036 97%, transparent 100%)",
           transition: "ease-in-out 150ms",
-          filter: "brightness(0.8)",
+          filter: "brightness(0.55)",
         }}
       />
       <Stack

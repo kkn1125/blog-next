@@ -1,0 +1,323 @@
+---
+slug: "/jenkins01/"
+date: 2023-08-03 14:27:24 +0000
+modified: 2023-08-03 14:27:24 +0000
+title: "[Jenkins] Jenkins + Fastify 프로젝트 빌드부터 실행까지01"
+author: Kimson
+categories: [jenkins]
+image: /assets/images/post/covers/TIL-jenkins.png
+tags: [node, fastify, jenkins, build, execute, til]
+description: "Jenkins 시작하기
+
+이번에는 jenkins를 포스팅하게 되었습니다. jenkins는 소프트웨어 개발 시 지속적 통합(CI), 지속적 전달(CD), 자동화 빌드, 테스트, 배포 등이 있고 많은 플러그인이 지원되는 도구입니다.
+
+github와 연동하고 프로젝트를 빌드, 배포하며, 프로젝트를 실행까지 하는 단계를 기록하려합니다.
+
+기존에는 shell script로 자동화해왔는데요, 매번 프로젝트가 있을 때마다 성격에 맞게 설정하는게 손이 많이 가기도 해서 jenkins를 선택하게 되었습니다. 아무래도 기존 방법 보다는 버튼 하나, 클릭 한 번 만으로 관리할 수 있는 GUI로 제어하는게 편하지요.
+
+다행스럽게도 현재 프로젝트는 개발단계이고, 테스트 할 기간이 충분하기 때문에 기초적인 부분만 보고 익힐 수 있는 좋은 경험이었습니다.
+
+이번에 적용하게 된 프로젝트의 이슈는 아래와 같습니다.
+
+1. fastify 프로젝트를 개발, 테스트, 프로덕트 환경에 따라 간편하게 실행하고 싶다.
+2. 실서버는 아직 가동되지 않고 있는 상황이므로 테스트 서버에 모의진행해야한다.
+3. fastify가 종료되더라도 해당 프로세스를 살아있는 상태로 보존하고 싶다.
+4. 데이터베이스(MariaDB)는 도커로 실행된다.
+5. 빌드 할 프로젝트 역시 도커에서 실행된다.
+6. jenkins에서 private organizations github를 연동하고, 버튼하나로 빌드, 배포, 프로젝트 실행까지 하고 싶다."
+featured: true
+rating: 4.5
+profile: false
+published: true
+---
+
+# Jenkins 시작하기
+
+이번에는 jenkins를 포스팅하게 되었습니다. jenkins는 소프트웨어 개발 시 지속적 통합(CI), 지속적 전달(CD), 자동화 빌드, 테스트, 배포 등이 있고 많은 플러그인이 지원되는 도구입니다.
+
+github와 연동하고 프로젝트를 빌드, 배포하며, 프로젝트를 실행까지 하는 단계를 기록하려합니다.
+
+기존에는 shell script로 자동화해왔는데요, 매번 프로젝트가 있을 때마다 성격에 맞게 설정하는게 손이 많이 가기도 해서 jenkins를 선택하게 되었습니다. 아무래도 기존 방법 보다는 버튼 하나, 클릭 한 번 만으로 관리할 수 있는 GUI로 제어하는게 편하지요.
+
+다행스럽게도 현재 프로젝트는 개발단계이고, 테스트 할 기간이 충분하기 때문에 기초적인 부분만 보고 익힐 수 있는 좋은 경험이었습니다.
+
+이번에 적용하게 된 프로젝트의 이슈는 아래와 같습니다.
+
+1. fastify 프로젝트를 개발, 테스트, 프로덕트 환경에 따라 간편하게 실행하고 싶다.
+2. 실서버는 아직 가동되지 않고 있는 상황이므로 테스트 서버에 모의진행해야한다.
+3. fastify가 종료되더라도 해당 프로세스를 살아있는 상태로 보존하고 싶다.
+4. 데이터베이스(MariaDB)는 도커로 실행된다.
+5. 빌드 할 프로젝트 역시 도커에서 실행된다.
+6. jenkins에서 private organizations github를 연동하고, 버튼하나로 빌드, 배포, 프로젝트 실행까지 하고 싶다.
+
+## Jenkins 설치
+
+Jenkins를 설치할 때 추천드리는 방식은 Docker로 설치하는 것 입니다. 데이터베이스 또한 요즘은 Docker로 설치하여 사용하고 있습니다. Docker로 설치하기 위해서는 볼륨 설정도 중요하니 유의하시기 바랍니다.
+
+```bash showLineNumbers
+docker run -d --name jenkins -p 8081:8080 -v /jenkins:/var/jenkins_home -v /usr/bin/docker:/usr/bin/docker -v /var/run/docker.sock:/var/run/docker.sock -u root jenkins/jenkins:lts
+```
+
+현재 8080포트는 이미 사용하고 있기 때문에 8081을 사용했습니다. 8080이 사용되지 않는다면 그대로 사용하셔도 됩니다.
+
+/jenkins 디렉토리를 /var/jenkins_home과 바인딩합니다. 앞의 /jenkins는 로컬의 디렉토리이고 /var/jenkins_home은 jenkins 컨테이너에 존재하는 디렉토리 입니다.
+
+그 뒤의 `/usr/bin/docker:/usr/bin/docker` 와 `/var/run/docker.sock:/var/run/docker.sock`은 젠킨스 컨테이너에서도 호스트 서버의 도커를 사용하기 위한 바인딩입니다.
+
+-u root는 사용자를 root로 지정하는 설정입니다.
+
+jenkins/jenkins:lts가 설치되어 있지 않아도 위 명령을 입력하면 알아서 없다고 설치한다고 합니다.
+
+## Jenkins 로그인
+
+jenkins 컨테이너가 실행 되고 나면 `http://localhost:8080`으로 접속 할 수 있습니다. 하지만 그냥 접속되면 보안에 문제가 생기겠지요. 로그인 없이 접속하는 방법은 있지만 권장드리지 않으며 로그인에 필요한 패스워드는 아래를 참고하여 얻을 수 있습니다.
+
+```bash
+cat /jenkins/secrets/initialAdminPassword
+
+# or
+
+docker logs jenkins
+```
+
+비밀번호를 복사 입력하고, 어드민 계정을 생성하고, 계속 진행 합니다. 초기에 설치할 것이 있어 시간이 1~2분 가량 걸립니다.
+
+## Jenkins에 Fastify 프로젝트 Github 연결
+
+공개된 저장소라면 큰 문제 없이 연결 되지만 private이고 organizations에 있는 저장소라면 조금 손이 갑니다.
+
+저장소를 생성하고 http로 저장소 주소를 복사합니다. 복사하게 되면 아래와 같은 형식입니다.
+
+```bash
+https://github.com/<user_or_organization_name>/<repository_name>.git
+```
+
+여기서 앞서 말한 public과 private의 차이가 발생합니다. 필자는 회사계정의 조직에 속한 private 저장소를 사용했습니다.
+
+추가로 access_token이 필요하며 url 또한 형태가 달라집니다.
+
+```bash
+https://github.com/<access_token>@github.com/<user_or_organization_name>/<repository_name>.git
+```
+
+바로 액세스 토큰이 url에 들어가야 오류가 발생하지 않습니다. 이 에러로 30분을 잡아먹은 걸 생각하면...🫤
+
+![새 아이템 생성](https://github.com/kkn1125/kkn1125.github.io/assets/113876485/602a85ae-4420-4672-9e59-9a242f975fb1)
+
+jenkins 접속 후 사이드 바에서 New Item탭을 눌러 새로운 아이템을 생성합니다.
+
+![이름 설정 및 PipeLine 선택](https://github.com/kkn1125/kkn1125.github.io/assets/113876485/702a0a24-3cc7-46c3-bd67-c8d5a54c4801)
+
+그리고 이름을 입력하고, pipeline으로 지정하여 OK를 누릅니다.
+
+![github 주소 복사](https://github.com/kkn1125/kkn1125.github.io/assets/113876485/86ba7a76-832d-4b0d-b576-8c8871f6167e)
+
+깃허브에서 저장소 주소를 복사하고 아래와 같이 넣어줍니다. 여기서 주의할 점은 github 체크 후 생기는 입력칸에는 access_token이 포함되지 않은 url이어야하고, 이후 아래에 설명될 scm 선택 후 생성되는 입력칸에는 access_token이 결합되어 있어야합니다. access_token은 따로 설명드리지 않습니다.
+
+![github 주소 넣기](https://github.com/kkn1125/kkn1125.github.io/assets/113876485/8c9e2c2b-91cc-4bb5-80b4-12c4f3685a09)
+
+github project를 체크하고 아래 pipeline에서는 pipeline script from SCM으로 선택하여 SCM을 GIT으로 변경합니다.
+
+그러면 아래 저장소를 입력하는 란이 생깁니다. 여기에 access_token이 결합된 url을 입력해주세요.
+
+![잘못된 형식](https://github.com/kkn1125/kkn1125.github.io/assets/113876485/3eb78dfb-b4c6-438d-b68f-14cf1905a5c3)
+
+위 이미지 처럼 빨간 글이 생긴다면 토큰이 잘못되었거나 url이 틀릴 경우 일 수 있습니다.
+
+![옳은 형식](https://github.com/kkn1125/kkn1125.github.io/assets/113876485/3f9985c0-bda4-42fd-8580-2e610cc8831d)
+
+올바르게 입력되면 credentials 없이 아무 경고가 뜨지 않습니다.
+
+특히나 여기서 중요한 부분은 최근에 변경된 github 보안에 따르면 credentials가 아닌 url에 토큰을 넣는 방식으로 변경되었다고 합니다. 영문을 잘 모르기에 조금 틀린 내용일 수 있으나 기존 방식대로 credentials에 jenkins에서 credentials를 생성하여 사용하면 에러가 나는 것은 분명합니다.
+
+## Jenkinsfile 작성
+
+jenkinsfile은 필자가 제작했더라도 회사에서 제작한 제작물이기 때문에 내용 변경 및 부분 삭제하였으며 양해바랍니다.
+
+```groovy showLineNumbers
+pipeline {
+    agent any
+    tools { nodejs 'nodejs' }
+
+    stages {
+
+        // ...
+
+        stage('Pull') {
+          steps {
+            git url: 'https://xxx@github.com/xxx/xxx.git', branch: 'xxx'
+          }
+        }
+
+        // ...
+
+        stage('Build') {
+          steps {
+            sh 'npm install'
+            sh 'npm run build'
+          }
+        }
+        stage('Deploy') {
+          steps {
+            sh 'apt install rsync sshpass -y'
+            sh 'sh copyto_second_server'
+          }
+        }
+        stage('Start Server') {
+          steps {
+            sh 'sh remote_run'
+          }
+        }
+
+        // ...
+    }
+}
+```
+
+여기 부분은 직접 파일을 공개하지는 못하지만 shell script와 명령어들 집합은 알려드릴 수 있습니다.
+
+먼저, Pull 스테이지에서는 아까 Git 선택후 활성화된 입력칸에 작성했던 access_token이 결합된 url을 작성해야합니다. git에 연결하여 해당 저장소의 브랜치에 커밋된 최근 커밋을 fetch하게 됩니다.
+
+Build부분에서는 jenkins 컨테이너에 복사된 프로젝트가 해당 디렉토리에 빌드가 되는 것입니다. 절대 외부 서버에서 빌드 되는게 아닙니다.
+
+Deploy 부분에서는 jenkins 컨테이너가 linux 환경이기 때문에 rsync와 sshpass를 설치하는 명령을 내립니다. 그리고 copyto_second_server라는 가칭의 sh 파일을 실행하게 됩니다.
+
+해당 파일의 내용은 아래와 같습니다.
+
+```bash showLineNumbers
+# copyto_second_server
+
+#!/usr/bin/env bash
+
+sshpass -p 'password' rsync -e 'ssh -p 0000' -arv --exclude=**/node_modules/ --exclude=.git/ ./ root@xxx.xxx.xxx.xxx:/home/my_directory
+```
+
+원격 서버의 원하는 디렉토리로 빌드된 소스파일까지 모두 복사하는 역할을 합니다.
+
+그리고 Start Server에서는 remote_run이라는 스크립트를 실행하게 됩니다. 여기서 remote_run은 원격서버에 명령을 내려 빌드된 프로젝트를 실행하는 명령이 함께 호출되는데요. 종료되지 않고 계속 실행할 수 있게 해주는 forever를 사용하기 때문에 원격 서버에 forever 설치가 선행되어야 합니다.
+
+아래는 remote_run의 일부입니다.
+
+```bash showLineNumbers
+# remote_run
+
+#!/usr/bin/env bash
+
+sshpass -p "password" ssh -p 0000 root@xxx.xxx.xxx.xxx "bash -i -c 'cd /home/my_directory/ && npm i && bash lastrun'"
+```
+
+제일 핵심인 부분만 추렸습니다. 위 명령 중 맨 마지막 bash lastrun은 lastrun이라는 스크립트를 호출하는 부분입니다. 이 부분이 forever로 프로젝트를 실행하는 부분이 적혀있습니다.
+
+일부러 복잡하게 만든 것도 있고, 어떤 명령을 내리는지 숨기기위함도 있습니다. lastrun은 2줄 밖에 되지 않습니다. 심지어 shell script도 아니구요. 그래서 마지막 실행 부분은 한 번 개별적으로 작성해보시면 좋을 것 같습니다.
+
+## 프로젝트 환경변수 매핑하기
+
+Node.js를 사용하면서 Java진영의 Spring boot와 많이 비교하게 됩니다. 이유는 첫 시작 언어가 Java였던 영향이 커서 그런지도 모릅니다.
+
+Spring framework의 경우 프로퍼티즈 또는 yml에 작성한 변수를 불러와 사용하곤 했는데요. Node.js에서 process.env를 사용하는 편이 제 스타일에는 적합했습니다.
+
+때문에 Node.js를 학습할 때도 환경변수 설정을 제일 먼저 하곤 했지요. 환경변수는 광범위하게 사용되면서 중요한 변수를 사용할 때 사용이 됩니다. 그리고 핵심이라 생각되는 부분은 개발 환경을 변경하면서 해당 변수들을 입맛에 맞게 변경해서 사용할 수 있다는 이점이 있습니다.
+
+필자는 아래와 같이 환경변수를 정리합니다.
+
+```bash showLineNumbers
+# .env
+# 모든 환경에서 사용될 변수 (프로덕션도 포함)
+
+HOST=0.0.0.0
+# PORT=3000 # 개발 또는 프로덕션에서 사용하는 포트가 다를 경우 .env에 작성하지 않습니다.
+
+BRAND=devkimson # 예시로 활동명을 적은겁니다.
+
+IMAGE_BASE_PATH=/home/devkimson/resources/images/
+```
+
+dev, production, test 등등의 환경에서 공통으로 사용할 변수는 .env에 정리합니다.
+
+```bash showLineNumbers
+# .env.development
+# 개발 환경 변수
+
+PORT=3000
+
+BRAND=kimson # 예시입니다. .env가 읽혀 우선 적용되기 때문에 이 변수는 사용되지 않습니다. 자세한 적용 순서는 검색해보시기 바랍니다.
+
+DEV_SECRET_KEY="test_secret_key"
+
+# .env.production
+# 프로덕션 환경 변수
+
+PORT=4000
+
+PROD_SECRET_KEY="production_secret_key"
+```
+
+개발환경 일 때는 `.env.development`, 프로덕션 일 때는 `.env.production`을 사용합니다.
+
+개발자 또는 조직 마다 다르겠지만 필자는 `util`이라는 디렉토리를 생성하여 `global`, `tool`이라는 파일을 만들어 사용하는 편입니다.
+
+```md showLineNumbers
+예시입니다.
+
+- util
+  - global.ts
+  - tool.ts
+```
+
+주로 global.ts에 변수들을 정리하게 되는데, 예시는 다음과 같습니다.
+
+```typescript showLineNumbers
+import dotenv from "dotenv";
+import path from "path";
+
+const MODE = process.env.NODE_ENV || "production";
+
+dotenv.config({
+  path: path.join(path.resolve(), "src", ".env"),
+});
+dotenv.config({
+  path: path.join(path.resolve(), "src", `.env.${MODE}`),
+});
+
+// ...
+```
+
+이렇게 설정만 해두면 `NODE_ENV`만 변경해서 개발, 테스트, 프로덕션 모두 제어 가능합니다.
+
+## 마무리
+
+최대한 정리한다고 했는데, 두서 없이 기록한 것 같습니다. 시간이 날 때마다 작성해서 흐름이 끊기는 부분도 있을거라 생각합니다. 글을 다듬고 살을 붙이는 건 뒤로 하고, 마무리 하면서 느낀 점은 Jenkins를 처음 사용해 본 것 치고 좋은 방향으로 활용하고 있다는 생각을 합니다.
+
+불편한 점을 개선하기 위해 찾다보니 이것저것 많이 시도하게 되는데요. 오히려 불편한 상태에서 할 수 있는데 까지 해보고 난 후 더 좋은 것을 발견했을 때 이해가 빠르게 되는 것을 느낍니다.
+
+Jenkins를 더 사용하다보면 이후에는 Redis에 대해 포스팅 해볼 예정입니다.
+
+참고로 원격 서버 명령을 내려 제어하는 것은 jenkins 컨테이너에 인터렉티브로 접속해서 테스트 해본 후 커멘드를 작성하는 것을 추천드립니다. 😊
+
+---
+
+📚 함께 보면 좋은 내용
+
+[Stackoverflow - How to use Github Personal Access Token in Jenkins](https://stackoverflow.com/questions/61105368/how-to-use-github-personal-access-token-in-jenkins/61105369#61105369)
+
+[Github - About remote repositories](https://docs.github.com/en/get-started/getting-started-with-git/about-remote-repositories#cloning-with-https-urls)
+
+[Jenkins - Git checkout is failing](https://community.jenkins.io/t/git-checkout-is-failing/2534)
+
+[Jenkins - Getting started with Pipeline](https://www.jenkins.io/doc/book/pipeline/getting-started/)
+
+[Blog - 호형님 / Jenkins Pipeline script from SCM + Git 활용해 빌드하기](https://oingdaddy.tistory.com/55)
+
+[Blog - 갓대희님 / [Jenkins] [github] Jenkins와 github 연동하기](https://goddaehee.tistory.com/258)
+
+[Blog - 메타몽처럼님 / [Jenkins] github private repository 연동하기 / Credentials 오류날 때](https://be-developer.tistory.com/14)
+
+[Blog - 시큐로그님 / [Jenkins] Jenkins와 Github 연동하기 - 3. Private Repository](https://mingzz1.github.io/development/basic/2021/04/19/jenkins_with_private_repo.html/)
+
+[Blog - eatyourKimchi님 / [Jenkins] 사용자 관리 및 권한 관리 방안](https://be-developer.tistory.com/14)
+
+[Blog - Jen's Space님 / 젠킨스 GitHub 빌드 시 : Error fetching remote repo 'origin'](https://lookingfor.tistory.com/entry/Jenkins-Error-fetching-remote-repo-origin)
+
+[Blog - Jen's Space님 / Jenkins Pipeline Github Private Token 사용하여 연동](https://jenakim47.tistory.com/73)
+
+[Blog - LINDAREX님 / GitHub Webhook으로 젠킨스(Jenkins) Job을 실행(자동화)하는 방법](https://lindarex.github.io/jenkins/jenkins-github-webhook-setting/)

@@ -1,5 +1,19 @@
 {
   "2023": {
+    "7": {
+      "3": [
+        {
+          "todo": "Jenkins 프로젝트 자동 빌드, 배포, 실행 포스팅",
+          "tag": "check",
+          "time": "2023-08-03 14:26:38",
+          "repeat": false,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": []
+        }
+      ]
+    },
     "6": {
       "19": [
         {
