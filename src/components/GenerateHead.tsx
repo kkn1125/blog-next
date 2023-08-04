@@ -24,8 +24,15 @@ function convertToMetadata(metadatas: Metadata) {
       );
       // });
     } else if (k === "image") {
-      dataSet.push(<meta name={k} content={`/assets${v}`} />);
-      dataSet.push(<meta name={`og:${k}`} content={`/assets${v}`} />);
+      dataSet.push(
+        <meta name={k} content={v.match(/^\/assets/) ? v : `/assets${v}`} />
+      );
+      dataSet.push(
+        <meta
+          name={`og:${k}`}
+          content={v.match(/^\/assets/) ? v : `/assets${v}`}
+        />
+      );
     } else {
       dataSet.push(<meta name={k} content={v} />);
       dataSet.push(<meta name={`og:${k}`} content={v} />);

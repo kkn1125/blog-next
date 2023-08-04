@@ -19,7 +19,7 @@ import { useEffect, useState } from "react";
 const metadatas = {
   title: `${BRAND_NAME.toUpperCase()}::Blog`,
   description: BRAND_DESC.trim(),
-  author: AUTHOR,
+  // author: AUTHOR,
   image: BRAND_LOGO,
 };
 

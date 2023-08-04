@@ -27,7 +27,7 @@ const PAGINATION_AMOUNT = 6;
 const metadatas = (param: string) => ({
   title: BRAND_NAME.toUpperCase() + "::Tag" + "-" + param,
   description: BRAND_DESC,
-  author: AUTHOR,
+  // author: AUTHOR,
   image: BRAND_LOGO,
 });
 

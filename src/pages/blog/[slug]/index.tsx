@@ -234,8 +234,8 @@ const components: MDXComponents | MergeComponents = {
 const metadatas = (frontmatter: any) => ({
   title: `${BRAND_NAME.toUpperCase()}::${frontmatter.title}`,
   description: frontmatter.description.trim(),
-  author: AUTHOR,
-  url: location.origin + "/blog" + frontmatter.slug,
+  // author: AUTHOR,
+  // url: location.origin + "/blog" + frontmatter.slug,
   category: frontmatter.categories,
   tag: frontmatter.tags,
   image: frontmatter.image,

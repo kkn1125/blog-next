@@ -1,6 +1,38 @@
 {
   "2023": {
     "7": {
+      "4": [
+        {
+          "todo": "공통 페이지 태그 site_url, type 등 수정 (og 포함)",
+          "tag": "check",
+          "time": "2023-08-04 15:43:28",
+          "repeat": false,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": []
+        },
+        {
+          "todo": "포스팅 페이지 meta 태그 image url 수정",
+          "tag": "check",
+          "time": "2023-08-04 15:43:28",
+          "repeat": false,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": []
+        },
+        {
+          "todo": "Jenkins 프로젝트 Github webhook 연동 포스팅",
+          "tag": "check",
+          "time": "2023-08-04 15:43:28",
+          "repeat": false,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": []
+        }
+      ],
       "3": [
         {
           "todo": "Jenkins 프로젝트 자동 빌드, 배포, 실행 포스팅",

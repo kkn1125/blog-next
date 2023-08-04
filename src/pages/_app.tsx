@@ -2,6 +2,7 @@ import { PostProvider } from "@/context/PostProvider";
 import ThemeModeProvider from "@/context/ThemeModeProvider";
 import { VisitorProvider } from "@/context/VisitorProvider";
 import BaseLayout from "@/layouts/BaseLayout";
+import { AUTHOR, BRAND_NAME } from "@/util/global";
 import { CacheProvider, css, EmotionCache } from "@emotion/react";
 import { GlobalStyles } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -49,6 +50,18 @@ export default function MyApp(props: MyAppProps) {
   return (
     <CacheProvider value={emotionCache}>
       <Head>
+        <meta property='type' content={"website"} />
+        <meta property='og:type' content={"website"} />
+        <meta property='author' content={AUTHOR} />
+        <meta property='og:author' content={AUTHOR} />
+        <meta property='url' content={"https://kkn1125.github.io/"} />
+        <meta property='og:url' content={"https://kkn1125.github.io/"} />
+        <meta property='site_name' content={BRAND_NAME.toUpperCase()} />
+        <meta property='og:site_name' content={BRAND_NAME.toUpperCase()} />
+        <meta property='locale' content={"ko_KR"} />
+        <meta property='og:locale' content={"ko_KR"} />
+        <meta property='locale:alternate' content={"en_US"} />
+        <meta property='og:locale:alternate' content={"en_US"} />
         <link rel='preconnect' href='https://fonts.googleapis.com' />
         <link
           rel='preconnect'

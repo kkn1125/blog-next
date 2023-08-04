@@ -19,7 +19,7 @@ import {
 const metadatas = {
   title: BRAND_NAME.toUpperCase(),
   description: BRAND_DESC.trim(),
-  author: AUTHOR,
+  // author: AUTHOR,
   image: BRAND_LOGO,
 };
 
