@@ -34,7 +34,7 @@ function BaseLayout({
         justifyContent='center'>
         {children}
       </Stack>
-      <Modal />
+      {/* <Modal /> */}
       <Footer />
     </Stack>
   );

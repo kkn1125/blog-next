@@ -1,6 +1,18 @@
 {
   "2023": {
     "7": {
+      "5": [
+        {
+          "todo": "ChatGPT 잦은 사용한도 초과로 제거",
+          "tag": "check",
+          "time": "2023-08-05 00:53:43",
+          "repeat": false,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": []
+        }
+      ],
       "4": [
         {
           "todo": "공통 페이지 태그 site_url, type 등 수정 (og 포함)",

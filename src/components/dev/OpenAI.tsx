@@ -43,7 +43,7 @@ const CHAT_BOT_NAME = "Devkimson ChatBot 🤖";
 let synchronizeMessages = initialMessages;
 const todoList = Object.entries(todoStorage)
   .reverse()
-  .slice(0, 20)
+  .slice(0, 10)
   .flatMap(([k, v]) =>
     Object.entries(v)
       .reverse()
@@ -103,7 +103,7 @@ function OpenAI({ open, onClose }: any) {
       ];
     });
     const result = await api.createChatCompletion({
-      max_tokens: 700,
+      max_tokens: 500,
       model: "gpt-3.5-turbo",
       temperature: 0,
       stream: true,
@@ -126,6 +126,7 @@ function OpenAI({ open, onClose }: any) {
         ...synchronizeMessages,
       ],
     });
+    console.log(result);
     const lines = (result.data as any)
       .split(/\n/g)
       .filter((line: any) => line.trim() !== "");
