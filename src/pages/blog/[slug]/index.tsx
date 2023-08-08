@@ -1,5 +1,7 @@
+import AddToAny from "@/components/AddToAny";
 import GenerateHead from "@/components/GenerateHead";
 import GoTop from "@/components/GoTop";
+import KakaoShare from "@/components/Kakao.Share";
 import PostMDXComponent from "@/components/PostMDXComponent";
 import PostNavigator from "@/components/PostNavigator";
 import SideBar from "@/components/SideBar";
@@ -375,6 +377,8 @@ function Index({
                 {responsivePost.frontmatter.readingTime || ""}
               </Typography>
               <Stack direction='row' justifyContent='center' gap={1}>
+                <KakaoShare frontmatter={responsivePost.frontmatter} />
+
                 <Tooltip
                   title={`링크 복사${copied ? " 완료" : ""}`}
                   placement='bottom'>
@@ -384,6 +388,7 @@ function Index({
                     {copied ? <CheckCircleOutlineIcon /> : <LinkIcon />}
                   </IconButton>
                 </Tooltip>
+
                 <Tooltip title={`준비 중입니다.`} placement='bottom'>
                   <IconButton color={"inherit"}>
                     <QuestionMarkIcon />
