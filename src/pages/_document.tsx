@@ -1,3 +1,4 @@
+import { K_APP_KEY } from "@/util/global";
 import createEmotionServer from "@emotion/server/create-instance";
 import { AppType } from "next/app";
 import Document, {
@@ -21,6 +22,15 @@ export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
   return (
     <Html lang='ko'>
       <Head>
+        <script
+          src='https://t1.kakaocdn.net/kakao_js_sdk/2.3.0/kakao.min.js'
+          integrity='sha384-70k0rrouSYPWJt7q9rSTKpiTfX6USlMYjZUtr1Du+9o4cGvhPAWxngdtVZDdErlh'
+          crossOrigin='anonymous'></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.Kakao.init("${K_APP_KEY}"); // 사용하려는 앱의 JavaScript 키 입력`,
+          }}></script>
+
         <link
           href='https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@100;200;300;400;500;600;700&display=swap'
           rel='stylesheet'
@@ -29,6 +39,9 @@ export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
         <meta name='theme-color' content={theme.palette.primary.main} />
         <link rel='shortcut icon' href='/favicon/favicon.ico' />
         <meta name='emotion-insertion-point' content='' />
+        <meta name="google-site-verification" content="pPnTHKfNmML6i8GiyBMZNoyhbvX7i0SmgjNmj8r4Aos" />
+        <meta name="naver-site-verification" content="6cebf2441529d02294b07c32ba2cd5ce09ba2c71" />
+
         {emotionStyleTags}
       </Head>
       <body>

@@ -4,6 +4,7 @@ export const BLOG_PATH = process.env.BLOG_PATH as string;
 
 /* use client */
 
+export const K_APP_KEY = process.env.NEXT_PUBLIC_K_APP_KEY as string;
 export const AUTHOR = process.env.NEXT_PUBLIC_AUTHOR as string;
 export const BRAND_NAME = process.env.NEXT_PUBLIC_BRAND_NAME as string;
 export const BRAND_DESC = process.env.NEXT_PUBLIC_BRAND_DESC as string;
