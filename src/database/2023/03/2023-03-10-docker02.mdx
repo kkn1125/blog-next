@@ -42,7 +42,7 @@ published: true
 
 ## 수작업으로 파일을 수정하자
 
-```bash
+```bash showLineNumbers
 docker inspect
 ```
 
@@ -52,7 +52,7 @@ docker inspect
 
 테스트에 사용할 도커 이미지는 `ubuntu:22.04`입니다. 이미지를 당겨와서 포트 매핑하지 않고 그냥 실행 시키겠습니다. (저는 docker container ssh 테스트 겸 22포트 매핑을 했습니다. 굳이 안해도 상관 없습니다.)
 
-```bash
+```bash showLineNumbers
 # 이미지 당겨오기
 docker pull ubuntu:22.04
 
@@ -76,7 +76,7 @@ docker attach test_os
 
 파일을 수정하기에 앞서 수정할 대상 컨테이너를 정지하고, 도커 서비스 또한 중지해야 한다고 합니다. 보다 안전하게 컨테이너를 조작하기 위함으로 생각됩니다. 조심해서 안좋을 건 없겠죠 😁
 
-```bash
+```bash showLineNumbers
 # test_os container 정지
 docker stop test_os
 
@@ -90,7 +90,7 @@ systemctl stop docker
 
 > 참고로 `container_hash_id`는 `docker inspect` 또는 `docker ps`로 먼저 컨테이너 아이디를 확인해주세요.
 
-```bash
+```bash showLineNumbers
 # 여기는 port 매핑에 대한 내용으로 보입니다.
 vi /var/lib/docker/containers/<container_hash_id>/hostconfig.json
 
@@ -111,7 +111,7 @@ vi /var/lib/docker/containers/<container_hash_id>/config.v2.json
 
 만일 54000번으로 접근해서 컨테이너의 4000번으로 연결하고 싶다면 아래와 같이 내용을 추가해줍니다.
 
-```json
+```json showLineNumbers
 {
  //...
  "PortBindings": {
@@ -146,7 +146,7 @@ vi /var/lib/docker/containers/<container_hash_id>/config.v2.json
 
 좀 프리티하게 보자면 아래와 같습니다. 대부분은 포트 매핑하여 컨테이너를 실행하면 아래처럼 값이 없는 채로 아래처럼 나타날 것 입니다. 이 녀석이 자동으로 만든 것 처럼 우리도 똑같은 행세를 하면 알아서 매핑해 줄 것이라 생각하고 수정해봅시다.
 
-```json
+```json showLineNumbers
 {
  // ...
  "ExposedPorts": {
@@ -159,7 +159,7 @@ vi /var/lib/docker/containers/<container_hash_id>/config.v2.json
 
 이렇게 도커가 만들어 둔 중요한 문서에 사기를 쳤습니다. 이제 도커 서비스를 다시 시작시키고, 컨테이너도 다시 시작시킵니다. 그리고 container 정보를 출력해보면 아까 사기쳤던 포트가 잘 매핑되었다고 도커가 알려 줄 겁니다.
 
-```bash
+```bash showLineNumbers
 service docker start
 # or
 systemctl start docker
@@ -178,7 +178,7 @@ docker ps
 
 정말 브라보 합니다. 안 될 것 같았던 실행 중인 컨테이너에 포트 추가하는 일이 실현되었습니다. 😎 하지만 필자는 의심이 많기 때문에 사기친 걸 그냥 보여주는게 아닐까 하고 컨테이너에 접근해서 react 프로젝트를 하나 만들어 4000번 포트로 실행해봅니다.
 
-```bash
+```bash showLineNumbers
 docker attach test_os
 # or
 docker exec -it test_os bash
@@ -188,7 +188,7 @@ docker exec -it test_os /bin/bash
 
 그리고 빠르고 간단하게 테스트하기 위해 vite로 react-ts 프로젝트를 생성합니다.
 
-```bash
+```bash showLineNumbers
 # 홈으로 이동
 cd /home
 

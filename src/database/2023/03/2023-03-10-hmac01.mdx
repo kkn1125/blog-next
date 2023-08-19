@@ -58,7 +58,7 @@ HMAC의 원리를 단순히 이야기하면 클라이언트와 서버단에 동�
 
 Secret key를 생성합니다. 테스트용으로는 단순해도 무관하지만 실제 서비스에 사용될 Secret key는 절대로 노출되어서는 안됩니다. 말로 짧게 설명한 원리가 전부이기 때문에 소스코드로 보면서 완성시켜 나가봅시다.
 
-```typescript
+```typescript showLineNumbers
 const accessKey = "MY_ACCESS_KEY"; // 이해를 돕기 위해 적었지만 env를 사용하시기 바랍니다.
 const secretKey = "MY_SUPER_SECRET_KEY"; // 이해를 돕기 위해 적었지만 env를 사용하시기 바랍니다.
 
@@ -103,7 +103,7 @@ class HashGenerator {
 
 15분 만료기간을 검증하기 위해 for문을 사용해서 검증하고자 합니다.
 
-```typescript
+```typescript showLineNumbers
 class HashGenerator {
   static INVALID_TOKEN = {
     ok: false,
@@ -185,7 +185,7 @@ class HashGenerator {
 
 단순하게 알아본 검증 로직입니다. for문이 너무 거슬려서 `Map`에 저장하여 대조하는 방법으로 새로 구성을 해보았습니다.
 
-```typescript
+```typescript showLineNumbers
 class HashGenerator {
   static INVALID_TOKEN = {
     ok: false,

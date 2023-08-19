@@ -83,7 +83,7 @@ openai가 만든 docs를 보면서 많은 혼란이 있었지만 이것저것 �
 2. openai (pip말고 npm으로 설치 함)
 3. 테스트용 정보 (예를 들면, 현재 블로그 일정 데이터)
 
-```bash
+```bash showLineNumbers
 npm create vite@latest chatbot -- --template react-ts
 cd chatbot
 npm i
@@ -92,7 +92,7 @@ npm i openai
 
 `react` 프로젝트를 만드는 방법은 다들 검색만 해보면 알 수 있습니다. 단, 저는 `vite`를 사용해서 프로젝트를 생성하여 테스트 했습니다. `vite`로 프로젝트를 만들고, `openai docs`에서 `secret key`를 받습니다.
 
-```tsx
+```tsx showLineNumbers
 const SECRET_KEY = process.env.VITE_SECRET_KEY;
 
 const config = new Configuration({
