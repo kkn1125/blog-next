@@ -13,14 +13,14 @@ function convertToMetadata(metadatas: Metadata) {
       isTitleExists = true;
       dataSet.push(<title>{v}</title>);
       dataSet.push(<meta name={k} content={v} />);
-      dataSet.push(<meta name={`og:${k}`} content={v} />);
+      dataSet.push(<meta property={`og:${k}`} content={v} />);
     } else if (k === "category" || k === "tag") {
       // (v as unknown as any[]).forEach((vv: string) => {
       dataSet.push(
         <meta name={k} content={(v as unknown as any[]).join(",")} />
       );
       dataSet.push(
-        <meta name={`og:${k}`} content={(v as unknown as any[]).join(",")} />
+        <meta property={`og:${k}`} content={(v as unknown as any[]).join(",")} />
       );
       // });
     } else if (k === "image") {
@@ -29,13 +29,13 @@ function convertToMetadata(metadatas: Metadata) {
       );
       dataSet.push(
         <meta
-          name={`og:${k}`}
+          property={`og:${k}`}
           content={v.match(/^\/assets/) ? v : `/assets${v}`}
         />
       );
     } else {
       dataSet.push(<meta name={k} content={v} />);
-      dataSet.push(<meta name={`og:${k}`} content={v} />);
+      dataSet.push(<meta property={`og:${k}`} content={v} />);
     }
   });
   return dataSet;

@@ -133,7 +133,14 @@ const CodeBlock = ({ children, className }: CodeBlockProps | any) => {
 
 const Pre = ({ children }: any) => <div>{children}</div>;
 
-const Paragraph = ({ children }: any) => <div>{children}</div>;
+const Paragraph = ({ children }: any) => (
+  <Box
+    sx={{
+      lineHeight: (theme) => theme.typography.pxToRem(1.5 * 16),
+    }}>
+    {children}
+  </Box>
+);
 
 const Figure = ({ children }: any) => <>{children}</>;
 
