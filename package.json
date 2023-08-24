@@ -30,6 +30,7 @@
     "@types/serviceworker": "^0.0.67",
     "animate.css": "^4.1.1",
     "animejs": "^3.2.1",
+    "axios": "^1.4.0",
     "date-fns": "^2.30.0",
     "dayjs": "^1.11.7",
     "glob": "^10.2.6",

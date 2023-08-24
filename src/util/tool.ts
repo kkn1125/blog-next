@@ -283,9 +283,13 @@ export const format = (
   use24h: boolean = true
 ) =>
   form.replace(/YYYY|YY|MM|dd|HH|mm|ss|SSS|AP/g, ($1) => {
+    if (typeof time === "string") {
+      time = time.replace(/\+0000/g, "");
+    }
     const timestamp = new Date(time);
+
     const year = timestamp.getFullYear();
-    const month = timestamp.getMonth();
+    const month = timestamp.getMonth() + 1;
     const date = timestamp.getDate();
     const hour = timestamp.getHours();
     const minute = timestamp.getMinutes();
@@ -324,6 +328,5 @@ export const convertIdString = (str: string) =>
     .replace(/#+/gm, "")
     .trim()
     .replace(/[\s]+/gm, "-")
-    .replace(/\?/gm, "")
-    .replace(/[.]+/g, "")
+    .replace(/[.?/]+/g, "")
     .toLowerCase();

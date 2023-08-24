@@ -1,4 +1,3 @@
-import { Modal } from "@/components/dev/Modal";
 import { Stack, Toolbar } from "@mui/material";
 import React from "react";
 import Footer from "../components/Footer";

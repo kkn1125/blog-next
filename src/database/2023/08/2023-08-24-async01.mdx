@@ -1,0 +1,359 @@
+---
+slug: "/async-await01/"
+date: 2023-08-24 18:43:13 +0000
+modified: 2023-08-24 18:43:13 +0000
+title: "[JAVASCRIPT] 콜백과 동기, 비동기를 알아보자"
+author: Kimson
+categories: [javascript]
+image: /assets/images/post/covers/TIL-javascript.png
+tags: [callback, promise, "async/await", til]
+description: "프로그래밍 실행 방식
+
+이번 주제로는 콜백과 비동기 통신에 대한 기록을 하려합니다. 어느새 개발 직군으로 시작한지 1년하고 3개월이 지나는 시점에서 문득 누군가 콜백과 비동기 통신에 대해 물어본다면 제대로 답변할 수 있을까 하는 생각이 들어서 정리하게 되었습니다.
+
+프로그래밍에서 실행 방식을 나타내는 개념으로 동기와 비동기를 말할 수 있습니다.
+
+동기 (Synchronous)
+
+동기 실행은 작성한 소스코드가 순차적으로 실행되는 것을 말합니다. 순차적으로 실행되기 때문에 오류에 대한 예측이나 어떤 작업을 하는지 알아보기 쉽다는 장점이 있습니다. 하지만 순차적으로 작업하는 동안 다른 작업은 블로킹되는 단점이 있다고 볼 수 있습니다."
+featured: true
+rating: 4.5
+profile: false
+published: true
+---
+
+# 프로그래밍 실행 방식
+
+이번 주제로는 콜백과 비동기 통신에 대한 기록을 하려합니다. 어느새 개발 직군으로 시작한지 1년하고 3개월이 지나는 시점에서 문득 누군가 콜백과 비동기 통신에 대해 물어본다면 제대로 답변할 수 있을까 하는 생각이 들어서 정리하게 되었습니다.
+
+프로그래밍에서 실행 방식을 나타내는 개념으로 동기와 비동기를 말할 수 있습니다.
+
+## 동기 (Synchronous)
+
+동기 실행은 작성한 소스코드가 순차적으로 실행되는 것을 말합니다. 순차적으로 실행되기 때문에 오류에 대한 예측이나 어떤 작업을 하는지 알아보기 쉽다는 장점이 있습니다. 하지만 순차적으로 작업하는 동안 다른 작업은 블로킹되는 단점이 있다고 볼 수 있습니다.
+
+## 비동기 (Asynchronous)
+
+비동기 실행은 각각의 작업들이 독립적으로 실행되고, 작업 완료와 상관없이 다음 작업이 실행될 수 있습니다. 만일 3가지의 작업이 서로 다른 소요시간이 발생하고 그 중에서 꽤 긴 시간을 잡아먹는 작업이 선행된다면 동기 방식으로 실행할 경우 다른 작업이 늦어지는 상황이 발생하겠지요. 이러한 상황에서 비동기 방식을 채택한다면 블로킹을 피하면서 효율적인 처리에 유리할 것 입니다.
+
+## 콜백에서 async/await까지의 변화
+
+콜백은 자바스크립트에서 비동기적인 작업을 다루는 가장 기본적인 방법 중 하나입니다. 비동기 작업이 완료 되었을 때 실행되는 특징이 있고, 다음 단계의 작업을 처리하는 데 사용될 수 있습니다. 하지만 콜백이 계속 필요한 작업이 있다면 흔히 들어본 콜백 지옥(Callback hell)을 경험하게 됩니다.
+
+### 콜백 (Callback) 함수
+
+예를 들자면 아래와 같습니다. 상황은 작업 3가지와 1명의 작업자를 가정하겠습니다.
+
+```javascript showLineNumbers
+const workList = [];
+let time = 0;
+
+console.log(time);
+const loop = setInterval(() => {
+  console.log(++time);
+}, 1000);
+
+function hardWork1(worker) {
+  setTimeout(() => {
+    worker("read");
+  }, 1000);
+}
+function hardWork2(worker) {
+  setTimeout(() => {
+    worker("write");
+  }, 5000);
+}
+function hardWork3(worker) {
+  setTimeout(() => {
+    worker("delete");
+  }, 1000);
+}
+
+hardWork1((work1) => {
+  workList.push(work1);
+  console.log("work1 done");
+  hardWork2((work2) => {
+    workList.push(work2);
+    console.log("work2 done");
+    hardWork3((work3) => {
+      workList.push(work3);
+      console.log("work3 done");
+      console.log(workList);
+      clearInterval(loop);
+    });
+  });
+});
+```
+
+이 코드의 결과는 다음과 같습니다.
+
+```bash showLineNumbers
+0
+1
+work1 done
+2
+3
+4
+5
+work2 done
+6
+work3 done
+[ 'read', 'write', 'delete' ]
+```
+
+타이머로 측정하여보면, 1초 뒤 `work1`이 끝나고, 그 다음 5초 뒤 `work2`, 1초 뒤 `work3`이 순차적으로 끝납니다.
+
+단순히 `hardWork*` 메서드를 순서대로 호출한다면 `work1`, `work3`, `work2` 순서대로 끝나게 됩니다. 콜백을 통해 원하는 순서대로 비동기로 실행되는 작업을 동기로 처리할 수 있지요.
+
+하지만 이 hardWork가 3개가 아닌 여러 개라고 생각한다면 계속해서 콜백함수를 추가하는 방식으로 코드를 알아보기 어렵고 어느 부분에서 오류가 발생하는지 예측하기 힘들 수 있습니다.
+
+### Promise
+
+프로미스는 `ES6`부터 도입된 개념입니다. 이러한 비동기 작업을 구조화 된 방식으로 다룰 수 있습니다. 프로미스는 비동기 작업의 결과를 나타내는 객체이고, `resolve`와 `reject`라는 인자를 사용하여 성공했을 때와 실패 했을 때의 값을 제어할 수 있습니다.
+
+위의 `hardWork`를 기반으로 조금 변경하여 보겠습니다.
+
+```javascript showLineNumbers
+const workList = [];
+let time = 0;
+
+console.log(time);
+const loop = setInterval(() => {
+  console.log(++time);
+}, 1000);
+
+function hardWork1() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve("read");
+    }, 1000);
+  });
+}
+function hardWork2() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve("write");
+    }, 5000);
+  });
+}
+function hardWork3() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve("delete");
+    }, 1000);
+  });
+}
+
+hardWork1()
+  .then((data) => {
+    workList.push(data);
+    console.log("work1 done");
+  })
+  .then(() => hardWork2())
+  .then((data) => {
+    workList.push(data);
+    console.log("work2 done");
+  })
+  .then(() => hardWork3())
+  .then((data) => {
+    workList.push(data);
+    console.log("work3 done");
+  })
+  .finally(() => {
+    console.log(workList);
+    clearInterval(loop);
+  });
+```
+
+변경하고 보니 래핑되는 형태보다 나열되는 형식이 보기 편해보입니다. 확인을 위해 콘솔을 추가하였지만 콘솔을 빼고 더욱 간소화 한다면 보기에 더 편해집니다.
+
+```javascript showLineNumbers
+hardWork1()
+  .then((data) => workList.push(data))
+  .then(() => hardWork2())
+  .then((data) => workList.push(data))
+  .then(() => hardWork3())
+  .then((data) => workList.push(data))
+  .finally(() => {
+    console.log(workList);
+    clearInterval(loop);
+  });
+```
+
+콘솔을 제거하고 보니 더 간결해지고 보기 편해졌습니다. 로그를 찍어 확인해보면 아래와 같이 콜백체인을 사용했을 때와 동일한 결과를 얻을 수 있습니다.
+
+```bash showLineNumbers
+0
+1
+work1 done
+2
+3
+4
+5
+work2 done
+6
+work3 done
+[ 'read', 'write', 'delete' ]
+```
+
+### async/await
+
+프로미스는 `then`과 `catch`, `finally` 메서드를 제공하며, 체이닝을 통해 연달아 여러 비동기 작업을 순차적으로 실행 할 수 있는 장점이 있습니다. `ES6` 이후에 도입된 `async/await`는 이 프로미스를 더욱 간결하고 동기적인 코드 스타일을 구현할 수 있게 해줍니다.
+
+```javascript showLineNumbers
+const workList = [];
+let time = 0;
+
+console.log(time);
+const loop = setInterval(() => {
+  console.log(++time);
+}, 1000);
+
+function hardWork1() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve("read");
+    }, 1000);
+  });
+}
+function hardWork2() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve("write");
+    }, 5000);
+  });
+}
+function hardWork3() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve("delete");
+    }, 1000);
+  });
+}
+
+(async () => {
+  const hardWorkResult1 = await hardWork1();
+  console.log("work1 done");
+  const hardWorkResult2 = await hardWork2();
+  console.log("work2 done");
+  const hardWorkResult3 = await hardWork3();
+  console.log("work3 done");
+  workList.push(hardWorkResult1, hardWorkResult2, hardWorkResult3);
+  console.log(workList);
+  clearInterval(loop);
+})();
+```
+
+프로미스와 달리 더 단순하고 일정한 패턴으로 정리된 모습입니다. 결과는 이전과 동일합니다.
+
+```bash showLineNumbers
+0
+1
+work1 done
+2
+3
+4
+5
+work2 done
+6
+work3 done
+[ 'read', 'write', 'delete' ]
+```
+
+콘솔을 제거하면 다음과 같이 더욱 간결한 모습이겠지요.
+
+```javascript showLineNumbers
+(async () => {
+  const hardWorkResult1 = await hardWork1();
+  const hardWorkResult2 = await hardWork2();
+  const hardWorkResult3 = await hardWork3();
+  workList.push(hardWorkResult1, hardWorkResult2, hardWorkResult3);
+  clearInterval(loop);
+})();
+```
+
+콜백과 프로미스, async/await를 순서대로 소스코드를 변경해가며 예시를 들었습니다. 이런 과정을 통해서 간결해짐을 느낍니다.
+
+위에서 예시를 든 상황은 각 작업이 걸리는 시간을 순서대로 완료함에 따라 다음 작업을 하는 방식이었습니다. 그렇다면 각 작업이 끝나는 최대 시간에 모두 끝내는 상황이 있다면 어떻게 해야할까요?
+
+이 다음 알아볼 내용은 프로미스의 부가 기능인 Promise.all을 알아볼텐데요. 위 소스코드를 변경해서 결과와 함께 보겠습니다.
+
+```javascript showLineNumbers
+const workList = [];
+let time = 0;
+
+console.log(time);
+const loop = setInterval(() => {
+  console.log(++time);
+}, 1000);
+
+function hardWork1() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve("read");
+      console.log("work1 done");
+    }, 1000);
+  });
+}
+function hardWork2() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve("write");
+      console.log("work2 done");
+    }, 5000);
+  });
+}
+function hardWork3() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve("delete");
+      console.log("work3 done");
+    }, 1000);
+  });
+}
+
+(async () => {
+  const syncList = await Promise.all([hardWork1(), hardWork2(), hardWork3()]);
+  workList.push(...syncList);
+  console.log(workList);
+  clearInterval(loop);
+})();
+```
+
+`Promise.all`로 기존 소스코드를 수정해보았습니다. 콘솔은 사용법 상 `hardWork`함수 내에 배치했습니다. `Promise.all`은 배열로 `Promise`객체를 받게 됩니다.
+
+다음은 `then`메서드를 사용했을 때의 모습입니다.
+
+```javascript
+Promise.all([hardWork1(), hardWork2(), hardWork3()]).then((syncList) => {
+  workList.push(...syncList);
+  console.log(workList);
+  clearInterval(loop);
+});
+```
+
+각 배열에 비동기 작업을 수행 후 최대로 걸리는 작업이 완료되는 순간 배열 행태로 값을 반환 받습니다. 처음 예시의 `async/await`로 받아온 결과로 `syncList` 변수에 담기는 형태와 `Promise.all` 함수에 `then`메서드를 사용하여 받는 인자값은 동일한 형태입니다.
+
+결과 또한 동일하고 아래와 같습니다.
+
+```bash showLineNumbers
+0
+1
+work1 done
+work3 done
+2
+3
+4
+work2 done
+[ 'read', 'write', 'delete' ]
+```
+
+## 마무리
+
+`콜백함수`와 `Callback hell`, 그리고 `Promise`, `async/await`의 등장과 사용까지 알아보았습니다. 이미 알고 있는 내용이지만 막상 누군가 물어볼 때 더듬거리고 헷갈리고는 했습니다. 이번에 정리하면서 예시도 만들고 하다보니 더 명확하게 머리 속에 그려지고 쉽게 다가오는 것 같습니다. 누군가 도움이 되었으면 하네요 😁
+
+---
+
+📚 함께 보면 좋은 내용
+
+[MDN - Promise](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Promise)

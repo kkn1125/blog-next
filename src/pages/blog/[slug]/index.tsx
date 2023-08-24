@@ -13,7 +13,7 @@ import {
   serializeMdx,
 } from "@/libs/service";
 import { AUTHOR, BRAND_NAME } from "@/util/global";
-import { getReponsiveImageUrl, parseHeading } from "@/util/tool";
+import { format, getReponsiveImageUrl, parseHeading } from "@/util/tool";
 import { MergeComponents } from "@mdx-js/react/lib";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import LinkIcon from "@mui/icons-material/Link";
@@ -401,6 +401,18 @@ function Index({
                   align='center'
                   gutterBottom>
                   {responsivePost.frontmatter.title || ""}
+                </Typography>
+                <Typography
+                  fontSize={(theme) => theme.typography.pxToRem(16)}
+                  fontWeight={200}
+                  fontFamily={`"IBM Plex Sans KR", sans-serif`}
+                  align='center'
+                  gutterBottom>
+                  {format(
+                    responsivePost.frontmatter.date || "",
+                    "YYYY-MM-dd HH:mm",
+                    false
+                  )}
                 </Typography>
                 <Typography
                   fontSize={(theme) => theme.typography.pxToRem(16)}

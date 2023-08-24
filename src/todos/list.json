@@ -1,6 +1,18 @@
 {
   "2023": {
     "7": {
+      "24": [
+        {
+          "todo": "콜백, 동기, 비동기에 대한 포스팅 추가",
+          "tag": "check",
+          "time": "2023-08-24 18:55:34",
+          "repeat": false,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": []
+        }
+      ],
       "23": [
         {
           "todo": "redis 기본편 포스팅",

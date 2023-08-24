@@ -39,8 +39,14 @@ export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
         <meta name='theme-color' content={theme.palette.primary.main} />
         <link rel='shortcut icon' href='/favicon/favicon.ico' />
         <meta name='emotion-insertion-point' content='' />
-        <meta name="google-site-verification" content="pPnTHKfNmML6i8GiyBMZNoyhbvX7i0SmgjNmj8r4Aos" />
-        <meta name="naver-site-verification" content="6cebf2441529d02294b07c32ba2cd5ce09ba2c71" />
+        <meta
+          name='google-site-verification'
+          content='pPnTHKfNmML6i8GiyBMZNoyhbvX7i0SmgjNmj8r4Aos'
+        />
+        <meta
+          name='naver-site-verification'
+          content='6cebf2441529d02294b07c32ba2cd5ce09ba2c71'
+        />
 
         {emotionStyleTags}
       </Head>
