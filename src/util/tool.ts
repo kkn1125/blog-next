@@ -324,5 +324,6 @@ export const convertIdString = (str: string) =>
     .replace(/#+/gm, "")
     .trim()
     .replace(/[\s]+/gm, "-")
+    .replace(/\?/gm, "")
     .replace(/[.]+/g, "")
     .toLowerCase();
