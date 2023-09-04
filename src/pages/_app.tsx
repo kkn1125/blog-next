@@ -124,6 +124,8 @@ export default function MyApp(props: MyAppProps) {
                     height: 100%;
                     margin: 0;
 
+                    line-height: 1.5;
+
                     #__next {
                       height: 100%;
                       font-family: "IBM Plex Sans KR", sans-serif;

@@ -22,9 +22,16 @@ export default function SideBar({ list }: { list: any[] }) {
       sx={{
         position: { xs: "static", md: "sticky" },
         top: 0,
-        width: 300,
+        width: {
+          xs: "auto",
+          md: 350,
+        },
         bgcolor: "inherit",
         overflow: "auto",
+        height: {
+          xs: "auto",
+          md: "calc(100vh - 72px - 64px)",
+        },
       }}
       component='nav'
       subheader={

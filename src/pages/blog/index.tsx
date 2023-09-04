@@ -4,6 +4,8 @@ import GenerateHead from "@/components/GenerateHead";
 import { getAllArticles } from "@/libs/service";
 import { AUTHOR, BRAND_DESC, BRAND_LOGO, BRAND_NAME } from "@/util/global";
 import { slicedBundle } from "@/util/tool";
+import { Badge } from "@mui/material";
+import { Chip } from "@mui/material";
 import {
   Container,
   Pagination,
@@ -55,6 +57,13 @@ function Index({ posts, totalCount }: any) {
     setPage((page) => value);
   };
 
+  const handleRedirectToCategory = (to: string) => {
+    router.push(location.origin + "/categories/" + (to ? to + "/" : ""));
+  };
+  const handleRedirectToTag = (to: string) => {
+    router.push(location.origin + "/tags/" + (to ? to + "/" : ""));
+  };
+
   return (
     <Stack
       component={Container}
@@ -63,11 +72,11 @@ function Index({ posts, totalCount }: any) {
         height: "100%",
       }}>
       <Toolbar />
+      <GenerateHead metadatas={metadatas} />
       <Stack sx={{ flex: 1 }}>
         <Animated order={0} animate='fadeInUp'>
-          <GenerateHead metadatas={metadatas} />
           <Typography
-            fontSize={(theme) => theme.typography.pxToRem(52)}
+            fontSize={(theme) => theme.typography.pxToRem(36)}
             fontWeight={500}
             gutterBottom
             fontFamily={`"IBM Plex Sans KR", sans-serif`}>

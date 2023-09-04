@@ -36,6 +36,14 @@ const pages = [
     path: "/blog/",
   },
   {
+    name: "category",
+    path: "/categories/",
+  },
+  {
+    name: "tag",
+    path: "/tags/",
+  },
+  {
     name: "about",
     path: "/about/",
   },

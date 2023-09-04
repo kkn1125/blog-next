@@ -194,6 +194,7 @@ const components: MDXComponents | MergeComponents = {
                 sx={{
                   userSelect: "none",
                   width: "100%",
+                  maxHeight: 450,
                   height: "auto",
                   transition: "150ms ease-out",
                   ["&:hover"]: {
@@ -347,7 +348,7 @@ function Index({
         id='post-wrap'
         direction={{ xs: "column", md: "row" }}
         sx={{
-          width: { lg: "100%", xl: "70%" },
+          width: { lg: "100%", xl: "80%" },
           height: "fit-content",
           position: "relative",
         }}>

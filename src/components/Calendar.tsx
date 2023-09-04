@@ -297,7 +297,7 @@ function Calendar() {
             sx={{
               "& .MuiDayCalendar-header": {
                 "& > .MuiTypography-root": {
-                  color: "black",
+                  color: (theme) => theme.palette.text.primary,
                   fontWeight: 700,
                 },
                 "& > .MuiTypography-root:last-child": {

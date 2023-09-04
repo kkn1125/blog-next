@@ -46,7 +46,7 @@ published: true
 
 제일 중요한 인터페이스라고 말하고 싶은 녀석입니다. `RTCPeerConnection` 생성자를 통해 만든 인스턴스를 자주 다룰 것 입니다. 제일 핵심이라고 해도 과언이 아니라 생각합니다.
 
-```js
+```javascript showLineNumbers
 const pc = new RTCPeerConnection();
 ```
 
@@ -120,13 +120,13 @@ offer가 만들어지고 전송되면 answer로 응답해주고, 각자 localDes
 
 ### 클라이언트 세팅
 
-```bash
+```bash showLineNumbers
 mkdir webrtc-react-base && cd "$_"
 ```
 
 작업 폴더를 생성하고 이동합니다. 그리고 나서 아래 명령줄로 필요한 종속성을 설치합니다.
 
-```bash
+```bash showLineNumbers
 yarn add express dotenv nodemon concurrently socket.io cors
 ```
 
@@ -134,7 +134,7 @@ yarn add express dotenv nodemon concurrently socket.io cors
 
 cra로 프로젝트를 생성하고 나머지 종속성도 설치해줍니다. (emotion이나 styled-components는 선택)
 
-```bash
+```bash showLineNumbers
 yarn create react-app .
 yarn add @emotion/react styled-components axios styled-components redux @reduxjs/toolkit http-proxy-middleware dotenv socket.io-client
 ```
@@ -143,7 +143,7 @@ yarn add @emotion/react styled-components axios styled-components redux @reduxjs
 
 클라이언트 부분은 env파일에 https설정만 해두면 됩니다만 서버 단에는 인증서 발급이 필요합니다. 클라이언트 단에 .env파일을 생성하고 다음과 같이 기입합니다.
 
-```properties
+```properties showLineNumbers
 PORT=3000 # 굳이 안해도 됩니다.
 HOST=localhost # 굳이 안해도 됩니다.
 
@@ -152,7 +152,7 @@ HTTPS=true
 
 api를 만들 예정이라면 포트가 다른 서버와 통신해야하기 때문에 프록시 설정도 해줍니다. 이 포스팅에서 필수는 아니니 건너뛰셔도 상관없습니다. 여기서 단지 연결 잘 되는지 테스트하기 위한 용도로만 쓰이고 그 외 사용되지 않을 예정입니다.
 
-```javascript
+```javascript showLineNumbers
 // src/setupProxy.js
 
 const { createProxyMiddleware } = require("http-proxy-middleware");
@@ -170,7 +170,7 @@ module.exports = function (app) {
 
 인증서를 발급하는 절차는 포스팅 하단 링크를 참조하시기 바랍니다. 그리고 https로 서버를 열기 위해 .env 환경변수를 설정합니다.
 
-```properties
+```properties showLineNumbers
 # .env
 KEY=localhost-key.pem
 CERT=localhost.pem
@@ -180,7 +180,7 @@ SERVER_PORT=4000
 
 마지막으로 package.json에 서버와 클라이언트를 개발할 때 서버와 클라이언트를 실행해주는 concurrently 설정을 해주면 세팅은 끝납니다.
 
-```json
+```json showLineNumbers
 {
   "scripts": {
     // 추가
@@ -210,7 +210,7 @@ SERVER_PORT=4000
 
 ## 서버 소켓 부분 작성
 
-```javascript
+```javascript showLineNumbers
 // server.js
 
 const fs = require("fs");
@@ -348,7 +348,7 @@ consoleCheck.log = function (roomId, userId, message) {
 
 index.js부터 작성합니다. redux를 사용해서 room정보를 localStorage에 일고 쓰는 작업을 합니다. 스타일을 추가하는 등의 작업이 있어 조금 코드 양이 자잘하게 많을 수 있습니다.
 
-```javascript
+```javascript showLineNumbers
 // index.js
 import React from "react";
 import ReactDOM from "react-dom/client";
@@ -406,7 +406,7 @@ reportWebVitals();
 
 reducer를 정의하는 module과 combineReducers 내용입니다.
 
-```javascript
+```javascript showLineNumbers
 // src/modules/room.js
 const ADD = "room/ADD";
 const READ = "room/READ";
@@ -443,7 +443,7 @@ export default function room(state = initialState, action) {
 }
 ```
 
-```javascript
+```javascript showLineNumbers
 // src/store/index.js
 import { combineReducers } from "redux";
 import room from "../modules/room";
@@ -455,7 +455,7 @@ export default rootReducers;
 
 그 다음, App.js는 routing을 해주는 역할만 작성해둡니다.
 
-```javascript
+```javascript showLineNumbers
 // src/App.js
 import { Routes, Route } from "react-router-dom";
 import Home from "./presentations/Home";
@@ -480,7 +480,7 @@ export default App;
 
 ### Layout
 
-```javascript
+```javascript showLineNumbers
 // src/presentation/Layout/LayoutBlock.js
 
 import React from "react";
@@ -518,7 +518,7 @@ function Layout() {
 export default Layout;
 ```
 
-```javascript
+```javascript showLineNumbers
 // src/presentation/Layout/Parts.js
 
 import { Link } from "react-router-dom";
@@ -582,7 +582,7 @@ const LayoutBlock = styled.div`
 export { fontSize, Container, NavStyle, Text, Menu, Nav, LayoutBlock };
 ```
 
-```javascript
+```javascript showLineNumbers
 // src/presentation/Layout/index.js
 
 export { default } from "./LayoutBlock";
@@ -592,7 +592,7 @@ export { default } from "./LayoutBlock";
 
 각 페이지는 styled components와 로직이 담긴 컴포넌트로 분류해서 작성했습니다.
 
-```javascript
+```javascript showLineNumbers
 // src/presentation/Home/HomeBlock.js
 
 import React, { useState } from "react";
@@ -649,7 +649,7 @@ function Home() {
 export default Home;
 ```
 
-```javascript
+```javascript showLineNumbers
 // src/presentation/Home/Parst.js
 
 import { Link } from "react-router-dom";
@@ -698,7 +698,7 @@ const HomeBlock = styled.div`
 export { Hr, Input, Room, List, HomeBlock };
 ```
 
-```javascript
+```javascript showLineNumbers
 // presentation/Home/index.js
 
 export { default } from "./HomeBlock";
@@ -706,7 +706,7 @@ export { default } from "./HomeBlock";
 
 ### RoomPage
 
-```javascript
+```javascript showLineNumbers
 // src/presentation/Room/RoomBlock.js
 
 import React, { useState } from "react";
@@ -767,7 +767,7 @@ function Room() {
 export default Room;
 ```
 
-```javascript
+```javascript showLineNumbers
 // src/presentation/Room/Parts.js
 
 import styled, { css } from "styled-components";
@@ -848,7 +848,7 @@ const RoomBlock = styled.div`
 export { videoStyles, Button, Tools, LocalVideo, RemoteVideo, Wrap, RoomBlock };
 ```
 
-```javascript
+```javascript showLineNumbers
 // src/presentation/Room/index.js
 
 export { default } from "./RoomBlock";
@@ -862,7 +862,7 @@ export { default } from "./RoomBlock";
 
 RoomPage에서 로직을 추가할 것 입니다. 점점 코드가 늘어나기 떄문에 작성되었던 이전 코드는 스킵해서 적도록 하겠습니다.
 
-```javascript
+```javascript showLineNumbers
 // src/presentations/Room/RoomBlock.js
 
 // ...
@@ -937,7 +937,7 @@ getUserMedia로 카메라권한 요청이 갈 것이고, 아래와 같이 화면
 
 앞서 흐름도에서 봤던 이미지를 참고하면서 만들면 더욱 좋습니다. 이제부터 소켓서버와 통신하면서 icecandidate나 offer, answer를 주고 받으면서 track을 얻어서 remoteVideo에 stream을 저장하여 상대 영상을 띄우겠습니다. 큰 골자는 영상 데이터를 주고받는 것입니다.
 
-```javascript
+```javascript showLineNumbers
 // src/presentations/Room/RoomBlock.js
 
 // ...
