@@ -1,0 +1,42 @@
+---
+slug: "/infra-oracle-cloud01/"
+date: 2023-09-06 17:27:04 +0000
+modified: 2023-09-06 17:27:04 +0000
+title: "[INFRA] 오라클 클라우드 http, https 활성화"
+author: Kimson
+categories: [infra]
+image: /assets/images/post/covers/TIL-docker.png
+tags: [oracle, docker, nginx, cloud, til]
+description: ""
+featured: true
+rating: 4.5
+profile: false
+published: false
+---
+
+# 오라클 클라우드
+
+1. 오라클 클라우드
+2. 인그레스 규칙 추가
+3. 80, 443 포트 추가해도 응답 없음
+4. iptables로 별도 설정 필요
+5. 테스트 및 확인
+
+```bash
+iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT
+iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT
+
+netfilter-persistent save
+```
+
+---
+
+📚 함께 보면 좋은 내용
+
+[cleaver.io - Resolve Oracle Cloud port 80 and 443 issues](https://cleavr.io/cleavr-slice/opening-port-80-and-443-for-oracle-servers)
+
+[devscb님 블로그 - Chrome ERR_UNSAFE_PORT, 크롬 ERR_UNSAFE_PORT 해결방법, 접속불가](https://devscb.tistory.com/121)
+
+[창공님 블로그 - Linux passwd (비밀번호 변경)](https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=diceworld&logNo=220198044511)
+
+[stackoverflow - How to install nvm in docker?](https://stackoverflow.com/questions/25899912/how-to-install-nvm-in-docker)

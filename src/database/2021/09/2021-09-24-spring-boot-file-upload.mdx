@@ -1,8 +1,7 @@
 ---
 slug: "/spring-boot-file-upload/"
-layout: post
-modified: 2022-03-14 00:09:35 +0000
 date:   2021-09-24 20:15:27 +0000
+modified: 2023-09-05 12:40:41 +0000
 title:  "[SPRING] 파일 업로드 하기"
 author: Kimson
 categories: [ spring boot ]
@@ -13,19 +12,15 @@ USED
 `org.springframework.web.multipart.MultipartFile`
 Multipart를 안 쓰다가 사용하니 처음에 조금 버벅거렸습니다."
 featured: false
-hidden: false
 rating: 3.5
-toc: true
 profile: false
-keysum: false
-keywords: ""
 published: true
 ---
 
 # File Upload
 
 > USED
-`org.springframework.web.multipart.MultipartFile`
+> `org.springframework.web.multipart.MultipartFile`
 
 Multipart를 안 쓰다가 사용하니 처음에 조금 버벅거렸습니다.
 
@@ -65,4 +60,4 @@ public String addProduct(HttpServletRequest request, MultipartFile cover) {
 
 `file`의 경로 설정이 다 되면 `transferTo`로 생성하면 끝납니다.
 
------
+---

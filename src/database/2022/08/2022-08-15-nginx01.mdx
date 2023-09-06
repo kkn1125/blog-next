@@ -1,8 +1,7 @@
 ---
 slug: "/aws-nginx01/"
-layout: post
-modified: 2023-04-08 16:57:33 +0000
 date: 2022-08-15 22:16:59 +0000
+modified: 2023-09-05 13:19:04 +0000
 title: "[AWS] AWS EC2 + NGINX + Spring boot + React 환경 01"
 author: Kimson
 categories: [deploy]
@@ -14,13 +13,8 @@ Nginx를 처음 사용해보면서 느낀 점은 정말 많은 부분을 디테�
 
 이번에 AWS EC2에 서버를 구축하기 위해 여러 삽질을 좀 했습니다. 저와 같은 삽질을 하는 분께 도움이 되고자, 저 또한 까먹지 않고자 기록으로 남깁니다."
 featured: true
-hidden: false
 rating: 4.5
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -52,37 +46,17 @@ AWS EC2 생성하는 것을 그렇게 어려운 부분이 없습니다. 뭐든�
 
 > 현재 기록되는 것은 2022-08-15일 기준입니다. 조금씩 ui가 변할 수 있으니 참고바랍니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/184479062-71b54618-cebd-48c8-a0d6-dcd6e738a3fd.png" alt="sample" title="sample" />
-   <figcaption>인스턴스 생성 1</figcaption>
-</span>
-</figure>
+![인스턴스 생성 1](https://user-images.githubusercontent.com/71887242/184479062-71b54618-cebd-48c8-a0d6-dcd6e738a3fd.png)
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/184479112-f6f20d2d-811b-4a46-8bed-e6862555d02a.png" alt="sample" title="sample" />
-   <figcaption>인스턴스 생성 2</figcaption>
-</span>
-</figure>
+![인스턴스 생성 2](https://user-images.githubusercontent.com/71887242/184479112-f6f20d2d-811b-4a46-8bed-e6862555d02a.png)
 
 이름을 지정하구요. 우리의 돈은 소중하니까 프리티어로 진행합니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/184479120-1ec0d686-53ba-4292-a37c-f6a3f1b3be06.png" alt="sample" title="sample" />
-   <figcaption>인스턴스 생성 3</figcaption>
-</span>
-</figure>
+![인스턴스 생성 3](https://user-images.githubusercontent.com/71887242/184479120-1ec0d686-53ba-4292-a37c-f6a3f1b3be06.png)
 
 키페어를 등록합니다. 저는 프로젝트를 위해 키페어를 생성해 두었습니다. 없다면 "새 키페어 생성"을 눌러 생성합니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/184644947-2e17b1fc-fda6-465d-b91e-d893b1c17536.png" alt="sample" title="sample" />
-   <figcaption>인스턴스 생성 4</figcaption>
-</span>
-</figure>
+![인스턴스 생성 4](https://user-images.githubusercontent.com/71887242/184644947-2e17b1fc-fda6-465d-b91e-d893b1c17536.png)
 
 여기서 보안 그룹은 이후에 통신할 포트번호를 설정하는 부분입니다. 예를 들어 MongoDB를 사용한다면 27017포트 또한 등록해주어야 합니다.
 
@@ -94,12 +68,7 @@ AWS EC2 생성하는 것을 그렇게 어려운 부분이 없습니다. 뭐든�
 
 나머지 설정은 건드릴 필요가 없으므로 그냥 "인스턴스 시작"합니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/184479345-6f516340-ff23-49f6-aa4e-5bb026807d67.png" alt="sample" title="sample" />
-   <figcaption>인스턴스 생성 5</figcaption>
-</span>
-</figure>
+![인스턴스 생성 5](https://user-images.githubusercontent.com/71887242/184479345-6f516340-ff23-49f6-aa4e-5bb026807d67.png)
 
 ## mobaXterm으로 ec2 서버 접근
 
@@ -113,30 +82,15 @@ choco install mobaxterm
 
 mobaXterm을 실행하면 아래와 같은 창이 뜹니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/184646569-6ad92552-cda4-4a69-b288-b1a5425069f0.png" alt="sample" title="sample" />
-   <figcaption>mobaXterm 1</figcaption>
-</span>
-</figure>
+![mobaXterm 1](https://user-images.githubusercontent.com/71887242/184646569-6ad92552-cda4-4a69-b288-b1a5425069f0.png)
 
 세션을 생성합니다. 그러면 다음과 같은 창이 뜨는데 ec2 인스턴스에 있는 퍼블릭 ipv4 주소를 가져옵니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/184647045-728e2d0d-6627-449e-87ed-0b5df987b32e.png" alt="sample" title="sample" />
-   <figcaption>mobaXterm 2</figcaption>
-</span>
-</figure>
+![mobaXterm 2](https://user-images.githubusercontent.com/71887242/184647045-728e2d0d-6627-449e-87ed-0b5df987b32e.png)
 
 그리고 session에 붙여넣고 OK 합니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/184646787-d448427d-b937-4b94-9e03-66f52b1b320e.png" alt="sample" title="sample" />
-   <figcaption>mobaXterm 3</figcaption>
-</span>
-</figure>
+![mobaXterm 3](https://user-images.githubusercontent.com/71887242/184646787-d448427d-b937-4b94-9e03-66f52b1b320e.png)
 
 그러고 나면 session ip주소로 이름이 지정되는데 저는 kimson으로 이름을 바꿔 진행하였습니다.
 
@@ -166,12 +120,7 @@ sudo yum list | grep jdk
 
 전 첫 번째 명령줄 사용했습니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/184648454-7ea874c3-3d39-4ba3-8fb7-ddd3ace3dc63.png" alt="sample" title="sample" />
-   <figcaption>openJDK 1</figcaption>
-</span>
-</figure>
+![openJDK 1](https://user-images.githubusercontent.com/71887242/184648454-7ea874c3-3d39-4ba3-8fb7-ddd3ace3dc63.png)
 
 ```bash
 sudo yum install java-1.8.0-openjdk-devel.x86_64 -y
@@ -179,12 +128,7 @@ sudo yum install java-1.8.0-openjdk-devel.x86_64 -y
 
 먼저 openJDK 8을 받았습니다. 설치가 잘 되었는지 버전을 찍어 확인해봅니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/184649180-fb7858fb-8355-4151-903d-9bb4816d4f22.png" alt="sample" title="sample" />
-   <figcaption>openJDK 2</figcaption>
-</span>
-</figure>
+![openJDK 2](https://user-images.githubusercontent.com/71887242/184649180-fb7858fb-8355-4151-903d-9bb4816d4f22.png)
 
 잘 설치가 되었네요. 그 다음으로 openJDK 11을 받읍시다. openJDK 11은 amazon-linux-extras로 설치해야합니다.
 
@@ -200,23 +144,13 @@ sudo alternatives --config java
 
 변경하고자 하면 아래 이미지처럼 친절하게 선택지를 주면서 변경시켜줍니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/184649729-d12d0310-5988-4b5a-a6e2-791698df9c46.png" alt="sample" title="sample" />
-   <figcaption>openJDK 3</figcaption>
-</span>
-</figure>
+![openJDK 3](https://user-images.githubusercontent.com/71887242/184649729-d12d0310-5988-4b5a-a6e2-791698df9c46.png)
 
 #### tomcat 설치
 
 이제 톰캣을 설치할 차례 입니다. [이 링크](https://tomcat.apache.org/download-90.cgi)에서 tar.gz를 받습니다. 저는 9버전을 쓰기때문에 9를 받지만 본인이 한 프로젝트가 몇 버전의 톰캣을 사용하는지 보시고 맞는 버전을 쓰시기 바랍니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/184650146-92030f8c-c540-4673-8200-8b5128af8e3e.png" alt="sample" title="sample" />
-   <figcaption>tomcat9 1</figcaption>
-</span>
-</figure>
+![tomcat9 1](https://user-images.githubusercontent.com/71887242/184650146-92030f8c-c540-4673-8200-8b5128af8e3e.png)
 
 혹은 아래의 명령줄로 설치합니다.
 
@@ -242,12 +176,7 @@ sudo mv apache-tomcat-9.0.65 /usr/local/tomcat9.0
 sudo /usr/local/tomcat9.0/bin/startup.sh
 ```
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/184652361-cb358ded-4026-4667-9a53-8c883cffae28.png" alt="sample" title="sample" />
-   <figcaption>tomcat9 2</figcaption>
-</span>
-</figure>
+![tomcat9 2](https://user-images.githubusercontent.com/71887242/184652361-cb358ded-4026-4667-9a53-8c883cffae28.png)
 
 주소에 자신의 인스턴스의 퍼블릭 ipv4주소에 톰캣 포트인 8080을 작성해서 접속하면 위와 같은 이미지가 나오면 성공입니다.
 

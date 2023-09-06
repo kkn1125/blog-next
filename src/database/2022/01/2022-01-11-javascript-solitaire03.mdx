@@ -1,8 +1,7 @@
 ---
 slug: "/javascript-solitaire03/"
-layout: post
-modified: 2022-03-14 00:09:35 +0000
 date:   2022-01-11 16:05:43 +0000
+modified: 2023-09-05 13:06:30 +0000
 title:  "[JAVASCRIPT] Solitaire를 만들어 보자 03"
 author: Kimson
 categories: [ javascript ]
@@ -18,13 +17,8 @@ description: "솔리테어를 만들어 보자 3편
 
 간단한 카드 뒤집기부터 해서 카드이동, 규칙 적용으로 대부분의 기능을 마무리 하도록 하겠습니다. 이후 주제는 타이머, 점수, 이동횟수, 자동완성이기 때문에 천천히 포스팅하려합니다."
 featured: false
-hidden: false
 rating: 4.5
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -47,15 +41,15 @@ published: true
 ```javascript
 // app.js::Model
 this.cardRender = function () {
-    this.autoBackFlip(); // ++
-    views.cardRender(cardStock, cardPlaying, cardStack);
-}
+  this.autoBackFlip(); // ++
+  views.cardRender(cardStock, cardPlaying, cardStack);
+};
 
 this.autoBackFlip = function () {
-    cardPlaying.forEach(col=>{
-        if(col.length>0) col[col.length-1].isBack = false;
-    });
-}
+  cardPlaying.forEach((col) => {
+    if (col.length > 0) col[col.length - 1].isBack = false;
+  });
+};
 ```
 
 `Model`영역의 `autoBackFlip`입니다. 2번 라인의 `cardRender`는 2편에서 작성한 `view`단에 위임하는 메서드입니다. 항상 어떤 영역을 수정하던 `cardRender`메서드를 거치기 때문에 `view`로 넘어가기전 초기화 개념으로 코드를 넣었습니다.
@@ -72,258 +66,272 @@ this.autoBackFlip = function () {
 
 ```javascript
 // app.js::Controller
-function Controller(){
-    this.init = function (model) {
-        models = model;
+function Controller() {
+  this.init = function (model) {
+    models = model;
 
-        this.cardRender();
-        window.addEventListener('click', this.cardDraw);
-        window.addEventListener('click', this.cardMove); // ++ 추가되었습니다.
-        window.addEventListener('click', this.cardCollect);
-    }
+    this.cardRender();
+    window.addEventListener("click", this.cardDraw);
+    window.addEventListener("click", this.cardMove); // ++ 추가되었습니다.
+    window.addEventListener("click", this.cardCollect);
+  };
 
-    // ... draw, collect ...
+  // ... draw, collect ...
 
-    // ++ 추가되었습니다.
-    this.cardMove = function (ev) {
-        const target = ev.target;
-        if(target.classList.contains('back')) return;
-        if(!target.classList.contains('card')) return;
-        if(!target.parentNode.classList.contains('stacking')) return;
+  // ++ 추가되었습니다.
+  this.cardMove = function (ev) {
+    const target = ev.target;
+    if (target.classList.contains("back")) return;
+    if (!target.classList.contains("card")) return;
+    if (!target.parentNode.classList.contains("stacking")) return;
 
-        models.cardMove(target);
-    }
+    models.cardMove(target);
+  };
 }
 
 // app.js::Model
 function Model() {
-    // 변수, 상수들
+  // 변수, 상수들
 
-    const cardStack = Array.from(new Array(4), () => []); // ++ 배열 생성 방법을 조금 바꿨습니다.
+  const cardStack = Array.from(new Array(4), () => []); // ++ 배열 생성 방법을 조금 바꿨습니다.
 
-    // 변수, 상수들
+  // 변수, 상수들
 
-    // ... init ...
+  // ... init ...
 
-    this.cardSettings = function () {
-        this.initCardSetting(); // ++ 추가 되었습니다.
-        // 카드 배열을 초기화 시켜주는 역할입니다.
-        this.generateCardSuits(parts.card);
-        this.shuffleCard();
-        this.handOutCard();
-    }
+  this.cardSettings = function () {
+    this.initCardSetting(); // ++ 추가 되었습니다.
+    // 카드 배열을 초기화 시켜주는 역할입니다.
+    this.generateCardSuits(parts.card);
+    this.shuffleCard();
+    this.handOutCard();
+  };
 
-    this.generateCardSuits = function ({
-        suits,
-        list
-    }) {
-        [...suits].forEach(type => {
-            return [...list].forEach(num => {
-                cardStock.push({
-                    // 속성등
-                    isBack: false, // 개발용으로 전부 보이게 했습니다.
-                    // 속성등
-                });
-            });
+  this.generateCardSuits = function ({ suits, list }) {
+    [...suits].forEach((type) => {
+      return [...list].forEach((num) => {
+        cardStock.push({
+          // 속성등
+          isBack: false, // 개발용으로 전부 보이게 했습니다.
+          // 속성등
         });
+      });
+    });
+  };
+
+  // ++ 카드 자동 뒤집기
+  this.autoBackFlip = function () {
+    cardPlaying.forEach((col) => {
+      col[col.length - 1].isBack = false;
+    });
+  };
+
+  // ++ 카드 이동
+  this.cardMove = function (elCard) {
+    const isLast = [...elCard.parentNode.children].slice(1);
+    if (Model.selectBundle.length == 0 && !elCard.classList.contains("front"))
+      return;
+    if (elCard.closest(".stock") && isLast[isLast.length - 1] != elCard) return;
+    this.cardSelecter(elCard);
+
+    this.cardRender();
+  };
+
+  // ++ 카드 선택
+  this.cardSelecter = function (elCard) {
+    const card = this.findCard(elCard);
+    const parent = elCard.parentNode;
+    const col = [...parent.parentNode.children].indexOf(parent);
+    const idx = [...parent.children].indexOf(elCard);
+    const pick = {
+      idx: idx,
+      card: card,
+    };
+
+    if (!card && parent.parentNode.classList.contains("row")) {
+      // 카드를 빈칸으로 움직일 때
+      this.cardMoveToEmpty(Model.selectBundle.pop(), col, idx);
+      this.initSelectedCard();
+      return;
+    } else if (!card && !parent.parentNode.classList.contains("row")) {
+      this.initSelectedCard();
+      return;
     }
 
-    // ++ 카드 자동 뒤집기
-    this.autoBackFlip = function () {
-        cardPlaying.forEach(col=>{
-            col[col.length-1].isBack = false;
-        });
+    if (card.$parent[0] instanceof Array)
+      Object.assign(pick, {
+        col: col,
+      });
+
+    if (!this.validBundle(card)) {
+      this.initSelectedCard();
+      return;
     }
 
-    // ++ 카드 이동
-    this.cardMove = function (elCard) {
-        const isLast = [...elCard.parentNode.children].slice(1);
-        if(Model.selectBundle.length==0 && !elCard.classList.contains('front')) return;
-        if(elCard.closest('.stock') && isLast[isLast.length-1] != elCard) return;
-        this.cardSelecter(elCard);
+    pick.card.isSelected = true;
 
-        this.cardRender();
-    }
-    
-    // ++ 카드 선택
-    this.cardSelecter = function (elCard) {
-        const card = this.findCard(elCard);
-        const parent = elCard.parentNode;
-        const col = [...parent.parentNode.children].indexOf(parent);
-        const idx = [...parent.children].indexOf(elCard);
-        const pick = {
-            idx: idx,
-            card: card,
-        };
+    Model.selectBundle.push(pick);
 
-        if(!card && parent.parentNode.classList.contains('row')) {
-            // 카드를 빈칸으로 움직일 때
-            this.cardMoveToEmpty(Model.selectBundle.pop(), col, idx);
-            this.initSelectedCard();
-            return ;
-        } else if(!card && !parent.parentNode.classList.contains('row')){
-            this.initSelectedCard();
-            return ;
-        }
-        
-        if(card.$parent[0] instanceof Array) Object.assign(pick, {
-            col: col
-        })
+    if (Model.selectBundle.length == 2) {
+      const first = Model.selectBundle.shift();
+      const second = Model.selectBundle.shift();
+      const firstCol = first.card.$parent[first.col];
+      const secondCol = second.card.$parent[second.col];
 
-        if(!this.validBundle(card)) {
-            this.initSelectedCard();
-            return;
-        }
-
-        pick.card.isSelected = true;
-        
-        Model.selectBundle.push(pick);
-
-        if(Model.selectBundle.length==2){
-            const first = Model.selectBundle.shift();
-            const second = Model.selectBundle.shift();
-            const firstCol = first.card.$parent[first.col];
-            const secondCol = second.card.$parent[second.col];
-
-            if(this.isStackable([first.card, second.card])){
-                const temp = [];
-                if(first.card.$parent[0] instanceof Array){
-                    for(let i=firstCol.length; i>0; i--){
-                        if(i>=first.idx) {
-                            const last = firstCol.pop();
-                            last.$parent = second.card.$parent;
-                            temp.push(last);
-                        }
-                    }
-                } else {
-                    const last = first.card.$parent.splice(first.card.$parent.indexOf(first.card), 1).pop();
-                    last.$parent = second.card.$parent;
-                    temp.push(last);
-                }
-
-                temp.reverse();
-
-                secondCol.push(...temp);
-            } else {
-                console.log('불가능');
-            }
-            this.initSelectedCard();
-        }
-    }
-
-    // ++ 두번째 선택 카드가 빈 카드면 king만 이동 가능하게 한다.
-    // 첫번째 선택이 묶음이라면 선두의 카드가 king이어야 한다.
-    this.cardMoveToEmpty = function (card, col, idx) {
-        if(card.card.deno!=13) return;
+      if (this.isStackable([first.card, second.card])) {
         const temp = [];
-        const cardCol = card.card.$parent[card.col];
-        if(card.card.$parent[0] instanceof Array){
-            for(let i=cardCol.length; i>0; i--){
-                if(i>=card.idx) {
-                    const last = cardCol.pop();
-                    last.$parent = cardPlaying;
-                    temp.push(last);
-                }
+        if (first.card.$parent[0] instanceof Array) {
+          for (let i = firstCol.length; i > 0; i--) {
+            if (i >= first.idx) {
+              const last = firstCol.pop();
+              last.$parent = second.card.$parent;
+              temp.push(last);
             }
+          }
         } else {
-            const last = card.card.$parent.splice(card.card.$parent.indexOf(card.card), 1).pop();
-            last.$parent = cardPlaying;
-            temp.push(last);
+          const last = first.card.$parent
+            .splice(first.card.$parent.indexOf(first.card), 1)
+            .pop();
+          last.$parent = second.card.$parent;
+          temp.push(last);
         }
+
         temp.reverse();
 
-        cardPlaying[col].push(...temp);
+        secondCol.push(...temp);
+      } else {
+        console.log("불가능");
+      }
+      this.initSelectedCard();
     }
+  };
 
-    // ++ 첫번째 선택한 카드 묶음/단일을 솔리테어 규칙으로 판별
-    this.validBundle = function (card) {
-        /**
-         * 1. 단일일 때 - true 반환
-         * 2. 묶음일 때 - 순차 && 교차
-         *  1. 순차관계인지 - true/false
-         *  2. 교차관계인지 - true/false
-         */
-        const temp = [];
-        if(card.$parent[0] instanceof Array){
-            for(let col of card.$parent){
-                const idx = col.indexOf(card);
-                if(idx>-1){
-                    temp.push(...col.slice(idx));
-                    break;
-                }
-            }
-        } else {
-            temp.push(card.$parent.filter(card=>card.isStaged).shift());
+  // ++ 두번째 선택 카드가 빈 카드면 king만 이동 가능하게 한다.
+  // 첫번째 선택이 묶음이라면 선두의 카드가 king이어야 한다.
+  this.cardMoveToEmpty = function (card, col, idx) {
+    if (card.card.deno != 13) return;
+    const temp = [];
+    const cardCol = card.card.$parent[card.col];
+    if (card.card.$parent[0] instanceof Array) {
+      for (let i = cardCol.length; i > 0; i--) {
+        if (i >= card.idx) {
+          const last = cardCol.pop();
+          last.$parent = cardPlaying;
+          temp.push(last);
         }
+      }
+    } else {
+      const last = card.card.$parent
+        .splice(card.card.$parent.indexOf(card.card), 1)
+        .pop();
+      last.$parent = cardPlaying;
+      temp.push(last);
+    }
+    temp.reverse();
 
-        if(temp.length>1){
-            temp.forEach(card=>card.isSelected=true);
-            return this.isCascade(temp.reverse());
-        } else {
-            return true;
+    cardPlaying[col].push(...temp);
+  };
+
+  // ++ 첫번째 선택한 카드 묶음/단일을 솔리테어 규칙으로 판별
+  this.validBundle = function (card) {
+    /**
+     * 1. 단일일 때 - true 반환
+     * 2. 묶음일 때 - 순차 && 교차
+     *  1. 순차관계인지 - true/false
+     *  2. 교차관계인지 - true/false
+     */
+    const temp = [];
+    if (card.$parent[0] instanceof Array) {
+      for (let col of card.$parent) {
+        const idx = col.indexOf(card);
+        if (idx > -1) {
+          temp.push(...col.slice(idx));
+          break;
         }
+      }
+    } else {
+      temp.push(card.$parent.filter((card) => card.isStaged).shift());
     }
 
-    // ++ 묶음일 때 순차 && 교차관계 검사
-    this.isCascade = function(validList){
-        for(let card=0; card<validList.length-1; card++){
-            if(this.isStackable([validList[card], validList[card+1]])){
-                continue;
-            } else {
-                return false;
-            }
+    if (temp.length > 1) {
+      temp.forEach((card) => (card.isSelected = true));
+      return this.isCascade(temp.reverse());
+    } else {
+      return true;
+    }
+  };
+
+  // ++ 묶음일 때 순차 && 교차관계 검사
+  this.isCascade = function (validList) {
+    for (let card = 0; card < validList.length - 1; card++) {
+      if (this.isStackable([validList[card], validList[card + 1]])) {
+        continue;
+      } else {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  // ++ 순차관계검사 + 교차관계 검사
+  this.isStackable = function ([first, second]) {
+    if (
+      parseInt(first.deno) + 1 == parseInt(second.deno) &&
+      this.isCrossable(first.$suit, second.$suit)
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  // ++ 교차관계인지 검사
+  this.isCrossable = function (first, second) {
+    const isLeft = (type) => parts.card.suits.slice(0, 2).indexOf(type) > -1;
+    const isRight = (type) => parts.card.suits.slice(2).indexOf(type) > -1;
+
+    return (
+      (isLeft(first) && isRight(second)) || (isRight(first) && isLeft(second))
+    );
+  };
+
+  // ++ 선택된 카드 리셋
+  this.initSelectedCard = function () {
+    Model.selectBundle = [];
+    []
+      .concat(
+        [...cardStock],
+        [].concat(...cardStack),
+        [].concat(...cardPlaying)
+      )
+      .map((card) => {
+        card.isSelected = false;
+        return card;
+      });
+  };
+
+  this.cardCollect = function (elCard) {
+    const card = this.findCard(elCard);
+    if (!this.validNextCard(card)) return;
+    let getCard;
+    if (card.$parent[0] instanceof Array) {
+      for (let col of card.$parent) {
+        for (let row of col) {
+          if (row == card) {
+            getCard = col.splice(card.$parent.indexOf(card), 1).pop();
+            break;
+          }
         }
-        return true;
+      }
+    } else {
+      getCard = card.$parent.splice(card.$parent.indexOf(card), 1).pop();
     }
 
-    // ++ 순차관계검사 + 교차관계 검사
-    this.isStackable = function ([first, second]) {
-        if(parseInt(first.deno)+1 == parseInt(second.deno) && this.isCrossable(first.$suit, second.$suit)){
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    // ++ 교차관계인지 검사
-    this.isCrossable = function (first, second) {
-        const isLeft = (type) => parts.card.suits.slice(0,2).indexOf(type)>-1;
-        const isRight = (type) => parts.card.suits.slice(2).indexOf(type)>-1;
-
-        return (isLeft(first) && isRight(second)) || (isRight(first) && isLeft(second));
-    }
-
-    // ++ 선택된 카드 리셋
-    this.initSelectedCard = function () {
-        Model.selectBundle = [];
-        [].concat([...cardStock],[].concat(...cardStack),[].concat(...cardPlaying)).map(card=>{
-            card.isSelected = false;
-            return card;
-        });
-    }
-
-    this.cardCollect = function (elCard) {
-        const card = this.findCard(elCard);
-        if(!this.validNextCard(card)) return ;
-        let getCard;
-        if(card.$parent[0] instanceof Array){
-            for(let col of card.$parent){
-                for(let row of col){
-                    if(row == card){
-                        getCard = col.splice(card.$parent.indexOf(card), 1).pop();
-                        break;
-                    }
-                }
-            }
-        } else {
-            getCard = card.$parent.splice(card.$parent.indexOf(card), 1).pop();
-        }
-        
-        card.$parent = cardStack;
-        cardStack[parts.card.suits.indexOf(card.$suit)].push(getCard);
-        this.initSelectedCard();
-        this.cardRender();
-    }
+    card.$parent = cardStack;
+    cardStack[parts.card.suits.indexOf(card.$suit)].push(getCard);
+    this.initSelectedCard();
+    this.cardRender();
+  };
 }
 ```
 
@@ -357,16 +365,11 @@ function Model() {
 
 다음 4편에서는 이제 남은 자잘한 기능을 완성시키려합니다. 남은 기능은 리셋, 타이머, 점수, 이동횟수, 자동완성입니다.
 
------
+---
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="/assets/images/post/solitaire/solitaire04.png" alt="결과물" title="결과물" />
-   <figcaption>현재까지 결과물</figcaption>
-</span>
-</figure>
+![현재까지 결과물](/assets/images/post/solitaire/solitaire04.png)
 
------
+---
 
 📚 함께 보면 좋은 내용
 

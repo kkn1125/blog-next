@@ -1,8 +1,7 @@
 ---
 slug: "/javascript-data-study/"
-layout: post
-modified: 2022-03-14 00:09:35 +0000
 date:   2021-08-16 13:50:20 +0000
+modified: 2023-09-05 12:36:27 +0000
 title:  "[JAVASCRIPT] LinkedList 만들기"
 author: Kimson
 categories: [ javascript ]
@@ -13,13 +12,8 @@ description: "LinkedList 구현
 
 LinkedList는 `node`의 연결로 이루어져있습니다. `node`는 데이터 값과 `next`, 혹은 `prev`값을 가지며, 이번 주제에서는 `next`만 있는 `node`를 가진 `LinkedList`를 만들어보려합니다."
 featured: false
-hidden: false
 rating: 4
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ''
 published: true
 ---
 
@@ -33,7 +27,7 @@ LinkedList는 `node`의 연결로 이루어져있습니다. `node`는 데이터 
 
 ## LinkedList의 모양
 
-![LinkedList](/assets/images/post/datastudy/linkedlist/linkedlist01.png '도식')
+![LinkedList](/assets/images/post/datastudy/linkedlist/linkedlist01.png "도식")
 [이미지 출처](https://habr.com/en/post/506660/)
 
 모양은 이렇습니다. 각 `node`는 `data`, `next` 프로퍼티를 가지고, 첫 요소는 `head`에 그 다음 추가되는 요소는 이전 요소의 `next`에도 저장이 되면서 쌓여갑니다.
@@ -44,53 +38,52 @@ LinkedList는 `node`의 연결로 이루어져있습니다. `node`는 데이터 
 
 ```javascript
 // 포스팅하면서 지금 보니 굳이 datas라는 배열을 만들 필요는 없습니다. next로 순회해서 전체 출력 가능한 점 알려드립니다.
-function LinkedList(){
-    this.datas = []; // 필요없을 것 같습니다.
-    this.head = null; // 첫 요소입니다.
-    this.size = 0; // 배열 크기
-    this.Node = function(data, next=null) {
-        // 노드 객체
-        this.data = data; // 담기는 데이터
-        this.next = next; // 해당 데이터의 다음 데이터 (Node type)
+function LinkedList() {
+  this.datas = []; // 필요없을 것 같습니다.
+  this.head = null; // 첫 요소입니다.
+  this.size = 0; // 배열 크기
+  this.Node = function (data, next = null) {
+    // 노드 객체
+    this.data = data; // 담기는 데이터
+    this.next = next; // 해당 데이터의 다음 데이터 (Node type)
+  };
+  this.add = function (data) {
+    // node 추가
+    this.datas = [...this.datas, new this.Node(data)];
+    if (this.size > 0) {
+      this.datas[this.size - 1].next = this.datas[this.size];
+      this.head = this.datas[0];
     }
-    this.add = function(data) { // node 추가
-        this.datas = [...this.datas, new this.Node(data)];
-        if(this.size>0){
-            this.datas[this.size-1].next = this.datas[this.size];
-            this.head = this.datas[0];
-        }
-        this.size++;
+    this.size++;
+  };
+  this.get = function (data) {
+    for (let item of this.datas) {
+      if (item.data == data) return item;
     }
-    this.get = function(data){
-        for(let item of this.datas){
-            if(item.data==data)
-                return item;
-        }
+  };
+  this.set = function (data, change) {
+    this.datas.forEach((item, index, list) => {
+      if (item.data == data) {
+        item.data = change;
+        list[index - 1] ? (list[index - 1].next = item) : null;
+      }
+    });
+  };
+  this.remove = function (data) {
+    let change = new Array();
+    for (let item of this.datas) {
+      if (item.data != data) {
+        change = [...change, item];
+      }
     }
-    this.set = function(data, change){
-        this.datas.forEach((item,index,list)=>{
-            if(item.data==data){
-                item.data = change;
-                list[index-1]
-                ?list[index-1].next = item:null;
-            }
-        });
-    }
-    this.remove = function(data) {
-        let change = new Array();
-        for(let item of this.datas){
-            if(item.data != data){
-                change=[...change, item];
-            }
-        }
-        this.datas = change;
-        this.head = this.datas[0];
-        this.size--;
-        return data;
-    }
-    this.toString = function() {
-        return this.datas.map(x=>x.data);
-    }
+    this.datas = change;
+    this.head = this.datas[0];
+    this.size--;
+    return data;
+  };
+  this.toString = function () {
+    return this.datas.map((x) => x.data);
+  };
 }
 ```
 
@@ -101,10 +94,10 @@ function LinkedList(){
 ```javascript
 this.head = null;
 this.size = 0;
-this.Node = function(data, next=null) {
-    this.data = data;
-    this.next = next;
-}
+this.Node = function (data, next = null) {
+  this.data = data;
+  this.next = next;
+};
 ```
 
 `head`는 기본 `null`값이 됩니다. `size`는 당연히 0입니다. 이 부분에서는 크게 2가지 기능이 필요하게 됩니다.
@@ -116,10 +109,10 @@ this.Node = function(data, next=null) {
 
 ```javascript
 // 최초 추가
-const arr1 = {data:'kimson', next: null}
+const arr1 = { data: "kimson", next: null };
 
 // 1회 이상 추가
-const arr2 = {data:'papa', next: null}
+const arr2 = { data: "papa", next: null };
 // arr1.next = arr2가 되야 하는 조건
 ```
 

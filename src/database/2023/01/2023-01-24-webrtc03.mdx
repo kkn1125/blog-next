@@ -1,8 +1,7 @@
 ---
 slug: "/webrtc03/"
-layout: post
-modified: 2023-04-08 16:57:33 +0000
 date: 2023-01-24 13:49:15 +0000
+modified: 2023-09-05 13:21:05 +0000
 title: "[WEBRTC] 3인 이상 영상 교환하는 원리를 알아보자"
 author: Kimson
 categories: [javascript]
@@ -14,13 +13,8 @@ WebRTC를 처음 접한 때는 작년 5~6월 즈음인 것 같습니다. 당시 
 
 이전 1, 2편으로 WebRTC에 대해 포스팅 한 적이 있습니다. 지금 읽어보니 틀린부분도 있고 해서 포스팅을 수정하기보다 새로 올려서 조금 다른 주제로 포스팅을 하려 합니다."
 featured: true
-hidden: false
 rating: 4.5
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -34,7 +28,7 @@ WebRTC를 처음 접한 때는 작년 5~6월 즈음인 것 같습니다. 당시 
 
 자신의 화상카메라로 본인을 웹 상에 비디오로 올리는 것은 매우 간단합니다. 별로 머리를 쓸 것도 없이 navigator api를 사용하면 카메라 권한 요청을 하고 손 쉽게 영상을 띄울 수 있습니다. 사용법은 아래와 같습니다.
 
-```javascript
+```javascript showLineNumbers
 navigator.mediaDevices
   .getUserMedia({
     video: true,
@@ -50,27 +44,9 @@ navigator.mediaDevices
 
 위 코드가 동작하면 브라우저 상단 주소줄 부근에 카메라 또는 마이크 권한 요청 팝업이 뜹니다. 사용하는 브라우저 앱마다 뜨는 위치는 조금 다른 걸로 압니다.
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='https://user-images.githubusercontent.com/71887242/214215604-c48fc18c-4f04-4758-af74-38222dfc2df7.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>예시 이미지</figcaption>
-  </span>
-</figure>
+![예시 이미지](https://user-images.githubusercontent.com/71887242/214215604-c48fc18c-4f04-4758-af74-38222dfc2df7.png)
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='https://user-images.githubusercontent.com/71887242/214216245-44e97204-056c-438e-8d7d-abd84df91be5.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>예시 이미지</figcaption>
-  </span>
-</figure>
+![예시 이미지](https://user-images.githubusercontent.com/71887242/214216245-44e97204-056c-438e-8d7d-abd84df91be5.png)
 
 단일로 영상을 띄우는 것은 쉽지만 1대1 혹은 1대N 영상교환하는 작업을 하게 되면 시그널링 서버가 필요하게 됩니다.
 
@@ -96,7 +72,7 @@ navigator.mediaDevices
 
 코드로 보면 다음과 같습니다.
 
-```javascript
+```javascript showLineNumbers
 // server.js
 
 /* A quite detailed WebSockets example */
@@ -144,7 +120,7 @@ const app = uWs
 
 제가 시도한 방법은 2편에 나온 이미지를 단계별로 조작할 수 있도록 직접 만들고 붙여넣는 방식으로 만들었습니다.
 
-```html
+```html showLineNumbers
 <!DOCTYPE html>
 <html lang="ko">
   <head>
@@ -170,7 +146,7 @@ const app = uWs
 
 css는 제외하겠습니다. 보기 편하게 개인 취향에 맞게 조정하시면 되겠습니다. javascript부분은 아래와 같습니다.
 
-```javascript
+```javascript showLineNumbers
 // src/main.js (frontend)
 
 // 편의상 달러기호($)로 엘리먼트를 잡겠습니다.
@@ -327,57 +303,21 @@ window.addEventListener("click", (e) => {
 
 브라우저 두 개를 켜고 create offer 버튼을 눌러봅니다.
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='https://user-images.githubusercontent.com/71887242/214224726-15e5472f-1553-426b-8385-0bcd644f66f3.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>offer 버튼 클릭 후</figcaption>
-  </span>
-</figure>
+![offer 버튼 클릭 후](https://user-images.githubusercontent.com/71887242/214224726-15e5472f-1553-426b-8385-0bcd644f66f3.png)
 
 그러면 이미지처럼 offer부분에 type과 sdp내용이 출력됩니다. 이 offer를 복사해서 그대로 옆 브라우저의 offer란에 붙여넣고 create answer 버튼을 클릭합니다.
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='https://user-images.githubusercontent.com/71887242/214225175-85bcd0b5-0230-4504-8266-a7a668141988.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>answer 버튼 클릭 후</figcaption>
-  </span>
-</figure>
+![answer 버튼 클릭 후](https://user-images.githubusercontent.com/71887242/214225175-85bcd0b5-0230-4504-8266-a7a668141988.png)
 
 얼굴을 가린 검은 박스는 일부러 css로 가린겁니다. 우측 브라우저에 검은 박스가 덩그러니 있는 이유는 ontrack이벤트가 발생해서 비디오태그가 추가되었기 때문입니다. 아직은 영상 데이터가 교환되지 않았으니 상대방 영상이 출력되지 않습니다.
 
 이제 answer가 작성되었으니 요청했던 브라우저에 answer를 붙여넣습니다.
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='https://user-images.githubusercontent.com/71887242/214225664-dbb09839-977e-4512-9f90-e45bca7c734b.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>answer를 붙여넣고 save 누르기 전</figcaption>
-  </span>
-</figure>
+![answer를 붙여넣고 save 누르기 전](https://user-images.githubusercontent.com/71887242/214225664-dbb09839-977e-4512-9f90-e45bca7c734b.png)
 
 save 버튼을 이제 누를 차례이기 때문에 강조표시로 css를 조금 변경했습니다. 이제 save answer를 누르게 되면 서로 영상 정보를 교환하고 원격 스트림이 비디오에 출력됩니다.
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='https://user-images.githubusercontent.com/71887242/214225880-9b7865b5-6544-404e-add5-e945386ec76c.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>answer를 save한 후</figcaption>
-  </span>
-</figure>
+![answer를 save한 후](https://user-images.githubusercontent.com/71887242/214225880-9b7865b5-6544-404e-add5-e945386ec76c.png)
 
 이 과정을 천천히하게 되면 icecandidate 이벤트에 의해 description내용이 달라지기 때문에 타이밍 또한 중요합니다.
 
@@ -399,85 +339,31 @@ D가 입장하면 A-D, B-D, C-D가 교환되면 4명 모두 서로 영상을 교
 
 예시로 방금 테스트한 브라우저에서 브라우저 하나를 더 열고 테스트해봅시다.
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='https://user-images.githubusercontent.com/71887242/214226675-1f9e7858-fc9c-4c49-b285-e3aacc8b42e1.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>3개의 브라우저</figcaption>
-  </span>
-</figure>
+![3개의 브라우저](https://user-images.githubusercontent.com/71887242/214226675-1f9e7858-fc9c-4c49-b285-e3aacc8b42e1.png)
 
 이제 3명이 영상 교환한다고 볼 때 이미 교환된 유저를 A, B라고 가정하고, 새로 켜진 브라우저를 유저 C라고 한다면, A가 B와 교환했던 과정을 A-C, B-C로 교환해주면 됩니다. 먼저, A-C입니다.
 
 똑같이 A에서 create offer 버튼으로 offer를 새로 작성합니다.
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='https://user-images.githubusercontent.com/71887242/214227000-d09b4337-61b9-4397-9674-6715ebb2147c.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>A offer to C</figcaption>
-  </span>
-</figure>
+![A offer to C](https://user-images.githubusercontent.com/71887242/214227000-d09b4337-61b9-4397-9674-6715ebb2147c.png)
 
 C에 붙여넣고 C에서 answer를 작성합니다. 그리고 answer를 A로 다시 주고 save answer 합니다.
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='https://user-images.githubusercontent.com/71887242/214227153-533eaef1-f236-4ade-be3e-99887aed71e1.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>C answer to A and save answer</figcaption>
-  </span>
-</figure>
+![C answer to A and save answer](https://user-images.githubusercontent.com/71887242/214227153-533eaef1-f236-4ade-be3e-99887aed71e1.png)
 
 이제 A에 영상이 3개, C에 영상이 2개로 A-C 관계가 성공적으로 영상교환이 되었습니다. B는 여전히 2개 입니다.
 
 이제 B-C관계를 연결해주면 아래와 같이 3인이 영상교환에 성공하게 됩니다.
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='https://user-images.githubusercontent.com/71887242/214227491-2a738913-5f9f-4cc1-bdf2-f079a7365c0a.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>3인 영상교환</figcaption>
-  </span>
-</figure>
+![3인 영상교환](https://user-images.githubusercontent.com/71887242/214227491-2a738913-5f9f-4cc1-bdf2-f079a7365c0a.png)
 
 이 원리를 소켓서버에서 어떻게 전달하고, 현재 textarea에 저장하고 받아오는 방식에 조금의 변형을 주면 접속하자마자 자동으로 영상을 교환하는 화상채팅을 구현할 수 있게 됩니다.
 
 추가적으로 확인차 보여드리자면, 사용자 C가 접속을 끊게 되면 영상 교환도 끊기므로 아래 이미지처럼 나간 사용자의 영상은 멈추게 됩니다. 만일 추후에 나간 사용자의 영상을 지우기 위해 시그널링서버를 통해 나간 유저에 대한 작업을 여러 방법으로 해줄 수도 있습니다.
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='https://user-images.githubusercontent.com/71887242/214227733-bd672363-47d9-4935-ab20-338201ab34db.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>사용자 C가 나갔을 때</figcaption>
-  </span>
-</figure>
+![사용자 C가 나갔을 때](https://user-images.githubusercontent.com/71887242/214227733-bd672363-47d9-4935-ab20-338201ab34db.png)
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='https://user-images.githubusercontent.com/71887242/214228379-430bc784-6eb9-4777-bfad-a6445769bc85.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>사용자 A를 제외하고 모두 나갔을 때</figcaption>
-  </span>
-</figure>
+![사용자 A를 제외하고 모두 나갔을 때](https://user-images.githubusercontent.com/71887242/214228379-430bc784-6eb9-4777-bfad-a6445769bc85.png)
 
 위의 예시 이미지를 통해 명확히 알수 있는 사실은 교환되었던 각 영상이 B, C의 영상임이 분명해졌습니다.
 

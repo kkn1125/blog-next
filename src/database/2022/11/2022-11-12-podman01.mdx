@@ -1,8 +1,7 @@
 ---
 slug: "/podman01/"
-layout: post
-modified: 2023-04-08 16:57:33 +0000
 date: 2022-11-12 15:22:54 +0000
+modified: 2023-09-05 13:20:29 +0000
 title: "[CONTAINER] Docker와 Podman"
 author: Kimson
 categories: [container]
@@ -16,13 +15,8 @@ description: "Docker란?
 
 각설하고, podman을 알아보기에 앞서 docker에 대해 간략하게 짚고 넘어가려 합니다."
 featured: true
-hidden: false
 rating: 4.5
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -38,12 +32,7 @@ published: true
 
 도커는 리눅스 응용 프로그램들을 `프로세스 격리 기술`을 통해 컨테이너로 실행하고 관리하는 `오픈 소스 프로젝트`입니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/201458999-9ca1a432-523d-488c-bc78-29a336ba2b38.png" alt="docker container" title="docker container" />
-   <figcaption>[출처] https://www.docker.com/resources/what-container/</figcaption>
-</span>
-</figure>
+![[출처] https://www.docker.com/resources/what-container/](https://user-images.githubusercontent.com/71887242/201458999-9ca1a432-523d-488c-bc78-29a336ba2b38.png)
 
 컨테이너는 코드, 종속성을 모두 패키징하는 앱 계층 추상화입니다. 컨테이너에 접속해서 명령어를 입력하거나 CPU와 메모리 사용량을 제한 할 수 있습니다. 또한 호스트의 특정 포트와 연결하는 포트포워딩 등이 가능합니다.
 
@@ -59,12 +48,7 @@ published: true
 
 먼저 앞서 말한 이야기를 한 눈에 볼 필요가 있을 것 같습니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/201459922-47156871-e164-4b4c-852e-abc62f66f1bf.png" alt="docker container" title="docker container" />
-   <figcaption>[출처] https://darumatic.com/blog/podman_introduction</figcaption>
-</span>
-</figure>
+![[출처] https://darumatic.com/blog/podman_introduction](https://user-images.githubusercontent.com/71887242/201459922-47156871-e164-4b4c-852e-abc62f66f1bf.png)
 
 위 이미지를 보면 알기가 쉽습니다. 이미지와 커널, 컨테이너는 동일하지만 도커는 데몬을 통하고 포드맨은 데몬이 없는 형태로 구성되어 있습니다. 도커와 다른 점이라 하면 `데몬이 없다는`것을 강조하는데요, 예를 들면 리눅스 환경에서 service를 사용해서 start할 필요가 없다는 이야기가 됩니다. 포드맨이 도커보다 버그가 적다는 말이 있는데요, 그렇다고해서 포드맨이 버그가 아예 없는 것은 아니지만 도커 이미지와 호환이 되고 데몬이 없다는 장점과 도커와 거의 동일한 명령들이 있기 때문에 선택하게 되었다고 말할 수 있겠습니다.
 
@@ -117,12 +101,7 @@ $ podman pull ubuntu:20.04
 
 입력하게 되면 아래와 같이 과정과 이미지 아이디가 출력됩니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/201461262-9f431db4-e397-457b-a426-c58fe836a1f7.png" alt="docker container" title="docker container" />
-   <figcaption>command line</figcaption>
-</span>
-</figure>
+![command line](https://user-images.githubusercontent.com/71887242/201461262-9f431db4-e397-457b-a426-c58fe836a1f7.png)
 
 그 다음 아래의 명령을 입력하면 컨테이너가 대화형 모드에서 실행 될 것입니다. `-i`옵션이 `--interactive`의 축약형이고, `STDIN`을 유지하는 옵션입니다.
 

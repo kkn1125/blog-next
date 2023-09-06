@@ -1,8 +1,7 @@
 ---
 slug: "/spring-boot-hidden-method/"
-layout: post
-modified: 2022-03-14 00:09:35 +0000
 date:   2021-08-23 18:38:35 +0000
+modified: 2023-09-05 12:38:04 +0000
 title:  "[SPRINGBOOT] Hidden Method 사용"
 author: Kimson
 categories: [ spring boot ]
@@ -12,13 +11,8 @@ description: "Hidden Method
 
 요즘 자바스크립트만 만지다 보니 spring을 점점 잊어가는 느낌이 듭니다. hidden method를 잘 쓰다가 multipart를 쓸 상황이 생겨 같이 쓰다보니 여러가지 오류나는 부분을 체크하는데 많이 미흡해서 기록으로 남깁니다."
 featured: false
-hidden: false
 rating: 3.5
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -32,7 +26,7 @@ published: true
 
 1. `enctype="multipart/form-data"` 확인하기
 2. `HiddenHttpMethodFilter`설정 했는지 확인하기
-    - Spring Boot에서는 `apllicationwebstart.java`에 Bean으로 만들어 줘야하는 것을 알았습니다.
+   - Spring Boot에서는 `apllicationwebstart.java`에 Bean으로 만들어 줘야하는 것을 알았습니다.
 
 ```java
 @SpringBootApplication

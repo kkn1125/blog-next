@@ -1,8 +1,7 @@
 ---
 slug: "/express-typescript01/"
-layout: post
-modified: 2023-04-08 16:57:33 +0000
 date: 2022-09-04 16:50:12 +0000
+modified: 2023-09-05 13:19:27 +0000
 title: "[EXPRESS] Express + Typescript 환경 구축 01"
 author: Kimson
 categories: [deploy]
@@ -15,13 +14,8 @@ spring boot로 작성된 프로젝트를 express로 변경하는 중에 발생�
 
 node에서 commonjs를 사용하는데 import 구문을 사용하기위해 몇 가지 설정이 필요합니다. package.json에서 `type`필드에 `module`을 추가해야합니다. 그리고 tsconfig.json에서 target과 module, ts-node 설정이 필요합니다."
 featured: true
-hidden: false
 rating: 4.5
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -66,16 +60,7 @@ published: true
 
 파일 구조는 다음과 같습니다.
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='https://user-images.githubusercontent.com/71887242/188854754-9e16f266-2450-4522-93cf-4c2d526b8f5a.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>file tree by tree parser</figcaption>
-  </span>
-</figure>
+![file tree by tree parser](https://user-images.githubusercontent.com/71887242/188854754-9e16f266-2450-4522-93cf-4c2d526b8f5a.png)
 
 ## Express 설정
 

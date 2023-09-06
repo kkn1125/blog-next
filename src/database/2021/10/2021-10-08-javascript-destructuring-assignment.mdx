@@ -1,8 +1,7 @@
 ---
 slug: "/javascript-destructuring-assignment/"
-layout: post
-modified: 2022-03-14 00:09:35 +0000
 date:   2021-10-08 21:18:08 +0000
+modified: 2023-09-05 12:41:41 +0000
 title:  "[JAVASCRIPT] 구조 분해 할당"
 author: Kimson
 categories: [ javascript ]
@@ -12,12 +11,8 @@ description: "구조 분해 할당
 
 이번에 DocumentifyJS(문서화 js)를 만들면서 자주 사용한 표현식입니다. 구조 분해 할당은 배열이나 객체 속성을 헤체해서 값을 변수마다 담아주는 기특한? 표현입니다."
 featured: false
-hidden: false
 rating: 4.5
-toc: true
 profile: false
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -34,7 +29,7 @@ let testArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
 
 [a, b, ...c] = testArray;
 
-console.log(a, b, c);  // 1 2 (8) [3, 4, 5, 6, 7, 8, 9, 0]
+console.log(a, b, c); // 1 2 (8) [3, 4, 5, 6, 7, 8, 9, 0]
 console.log(testArray); // (10) [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
 
 g = [...testArray];
@@ -49,68 +44,64 @@ console.log(g, testArray); // (9) [1, 2, 3, 4, 5, 6, 7, 8, 9] (10) [1, 2, 3, 4
 ```javascript
 // 객체의 예
 
-const UserForm1 = ({
-    name,
-    age,
-    gender
-}) => {
-    return {
-        name: name,
-        age: age,
-        gender: gender,
-    }
-}
+const UserForm1 = ({ name, age, gender }) => {
+  return {
+    name: name,
+    age: age,
+    gender: gender,
+  };
+};
 
 const UserForm2 = function (name, age, gender) {
-    return {
-        name: name,
-        age: age,
-        gender: gender
-    };
-}
+  return {
+    name: name,
+    age: age,
+    gender: gender,
+  };
+};
 
-function User1(name='', age=20, gender=1){
-    this.name = name;
-    this.age = age;
-    this.gender = gender;
+function User1(name = "", age = 20, gender = 1) {
+  this.name = name;
+  this.age = age;
+  this.gender = gender;
 }
 
 const User2 = function (name, age, gender) {
-    this.name = name;
-    this.age = age;
-    this.gender = gender;
-}
+  this.name = name;
+  this.age = age;
+  this.gender = gender;
+};
 
-let user = new User1('james', 29, 'man'); // User2 동일
-let user2 = UserForm2('kim', 30, 'man');
-let user3 = UserForm2('john', 40, 'man');
+let user = new User1("james", 29, "man"); // User2 동일
+let user2 = UserForm2("kim", 30, "man");
+let user3 = UserForm2("john", 40, "man");
 
 console.log(user, user2, user3);
 // User {name: 'kim', age: 29, gender: 'man'}
 // {name: 'kim', age: 30, gender: 'man'}
 // {name: 'kim', age: 40, gender: 'man'}
-console.log(Form({name:'yom', age:31, gender:'man'}));
+console.log(Form({ name: "yom", age: 31, gender: "man" }));
 // {name: 'kim', age: 31, gender: 'man'}
-console.log(new Forms('tom'));
+console.log(new Forms("tom"));
 // Forms {name: 'kim', age: 20, gender: 1}
 
-let {name, age, gender} =  user;
+let { name, age, gender } = user;
 
-function prints(data){
-    console.log(data.name);
+function prints(data) {
+  console.log(data.name);
 }
 
-console.debug('====================')
+console.debug("====================");
 
-console.log(name)
-console.log(age)
-console.log(gender)
+console.log(name);
+console.log(age);
+console.log(gender);
 
-prints(user2)
+prints(user2);
 
-console.debug('====================')
+console.debug("====================");
 
-user2.name = 'kolson';
+user2.name = "kolson";
 
 console.log(user2 instanceof UserForm2, user instanceof User1); // false true
 console.log(user2 instanceof Object, user instanceof Object); // true true
@@ -126,4 +117,4 @@ console.log(user2 instanceof Object, user instanceof Object); // true true
 
 코드기록
 
------
+---

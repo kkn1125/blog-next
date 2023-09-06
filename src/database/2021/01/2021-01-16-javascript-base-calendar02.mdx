@@ -1,8 +1,7 @@
 ---
 slug: "/javascript-base-calendar02/"
-layout: post
-modified: 2022-03-23 16:02:22 +0000
 date:   2021-01-16 21:25:04 +0000
+modified: 2022-03-23 16:02:22 +0000
 title:  "[JAVASCRIPT] 달력 만들기 (글쓰기 기능)"
 author: Kimson
 categories: [ javascript ]
@@ -11,14 +10,9 @@ tags: [ calendar, backup, til ]
 description: "달력 만들기 어떻게 코드를 짤까
 
 크게 하나의 객체로 관리하고자 했습니다. 폴더처럼요!"
-featured: false
-hidden: false
-rating: 3
-toc: true
+featured: true
+rating: 4.5
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -34,7 +28,7 @@ published: true
 4. 또! day객체에는 words라는 배열이 들어감
 5. 그다음엔 words라는 배열에 쓴 글들을 push
 
-```javascript
+```javascript showLineNumbers
 var indexs = {
   // index Obj
   2020: {
@@ -53,7 +47,7 @@ var indexs = {
 
 대략 내가 생각한 객체 트리 구조
 
-```javascript
+```javascript showLineNumbers
 target.innerHTML = indexs[2021][1][16][1];
 ```
 
@@ -61,7 +55,7 @@ target.innerHTML = indexs[2021][1][16][1];
 
 ## 이제 글쓰기 기능을 구현 해보자
 
-```html
+```html showLineNumbers
 <!-- 먼저 테스트용 HTML 구조입니다. -->
 
 <!DOCTYPE html>
@@ -89,7 +83,7 @@ target.innerHTML = indexs[2021][1][16][1];
 2. indexs객체에 year,month의 객체를 형성하고 day는 배열로 형성
 3. 2번이 중복생성되는 것을 막고, 마지막 day배열에 글 객체를 push
 
-```javascript
+```javascript showLineNumbers
 function dump() {
   // [object Object]형태를 읽기위해 만든 확인용 함수
   var str = "";
@@ -128,7 +122,7 @@ function addwords() {
 
 저는 dump()라는 출력함수를 만들고, addwords()의 마지막 실행에 넣었습니다. 글 추가시 자동으로 볼 수 있게요. 어차피 나중에 달력만들면서 dump말고 다른 기능으로 대체 할 예정입니다
 
-```javascript
+```javascript showLineNumbers
 function addwords() { // 혼동을 줄이기 위해 이전에 썼던 주석우만 지움
   var nyear = prompt('yyyy');
   var nmonth = prompt('mm');
@@ -174,9 +168,4 @@ function addwords() { // 혼동을 줄이기 위해 이전에 썼던 주석우�
 
 그리고 indexs[year][month][day]배열에 push합니다.
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img src='/assets/images/post/back/back01.png' alt='sample' title='sample' />
-    <figcaption>kimson</figcaption>
-  </span>
-</figure>
+![kimson](/assets/images/post/back/back01.png)

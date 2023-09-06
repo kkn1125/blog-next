@@ -1,4 +1,4 @@
-<h1 align="center"><a href="https://kkn1125.github.io/"><strong>Devkimson Blog</strong></a></h1>
+<h1 align="center"><a href="https://kkn1125.github.io/"><strong>Devkimson Tech Blog</strong></a></h1>
 
 <p align="center">
   <a href="#blog-운영의-목적-🎯" title="Blog 운영의 목적"><strong>Blog 운영의 목적</strong></a>
@@ -20,24 +20,18 @@
 
 ## **Blog 주 내용 ✏️**
 
-- Network
-- Back-end
+- 환경설정
 - Trouble-Shooting
-- MySQL / Mybatis / MariaDB / GraphQL / MongoDB
+- Back-end
 - Rest API
 - Node.js
 - TypeScript
+- MySQL / Mybatis / MariaDB / GraphQL / MongoDB
+- Network
 - React / Next.js
 - Material-UI
-- Java / Spring / Spring Boot
 - Python / Django
-- Vue / Nuxt
-- HTML / CSS / SCSS / JavaScript
-- Json
-- Metacrypto
-- Blockchain
-- Ganache
-- Truffle
+- Java / Spring / Spring Boot
 - 등등
 
 ## **블로그 외 페이지**
@@ -52,14 +46,14 @@
 
 #### **사이드 프로젝트**
 
-| 프로젝트 저장소                                                    | 프로젝트 데모                                                                                       |
-| ------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
-| [Project Narang Repo](https://github.com/kkn1125/narang)           | [Project Narang Demo](https://kkn1125.github.io/portfolio/#portfolio-projectNarang "멘티 커뮤니티") |
-| [Mentees Repo](https://github.com/kkn1125/mentees)                 | [Mentees Demo](https://kkn1125.github.io/portfolio/#portfolio-mentees "멘티 커뮤니티")              |
-| [Typer Repo](https://github.com/kkn1125/typer)                     | [Typer Demo](https://kkn1125.github.io/typer "한글타이핑")                                          |
-| [mkDocumentifyJS Repo](https://github.com/kkn1125/mkDocumentifyJS) | [mkDocumentifyJS Demo](https://kkn1125.github.io/mkDocumentifyJS "자바스크립트 문서화")             |
-| [Tutorial Repo](https://github.com/kkn1125/)                       | [Tutorial Demo](https://kkn1125.github.io/tutorial "웹 튜토리얼 생성")                              |
-| [Penli Repo](https://github.com/kkn1125/penli)                     | [Penli Demo](https://kkn1125.github.io/penli "편리한 CSS")                                          |
+| 프로젝트 저장소                                                    | 프로젝트 데모                                                                                          |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| [Project Narang Repo](https://github.com/kkn1125/narang)           | [❌ Project Narang Demo](https://kkn1125.github.io/portfolio/#portfolio-projectNarang "멘티 커뮤니티") |
+| [Mentees Repo](https://github.com/kkn1125/mentees)                 | [Mentees Demo](https://kkn1125.github.io/portfolio/#portfolio-mentees "멘티 커뮤니티")                 |
+| [Typer Repo](https://github.com/kkn1125/typer)                     | [Typer Demo](https://kkn1125.github.io/typer "한글타이핑")                                             |
+| [mkDocumentifyJS Repo](https://github.com/kkn1125/mkDocumentifyJS) | [mkDocumentifyJS Demo](https://kkn1125.github.io/mkDocumentifyJS "자바스크립트 문서화")                |
+| [Tutorial Repo](https://github.com/kkn1125/)                       | [Tutorial Demo](https://kkn1125.github.io/tutorial "웹 튜토리얼 생성")                                 |
+| [Penli Repo](https://github.com/kkn1125/penli)                     | [Penli Demo](https://kkn1125.github.io/penli "편리한 CSS")                                             |
 
 ## **Copyright**
 
@@ -74,3 +68,11 @@ Copyright 2022 kimson, <https://kkn1125.github.io/>
 [MD 참고 사이트 3](https://about.gitlab.com/handbook/markdown-guide/#tables "Markdown Guide") - Markdown Guide
 
 [Liquid 자료](https://shopify.github.io/liquid/tags/control-flow/ "Liquid Guide")
+
+<!-- <figure[\s\nA-Za-z0-9-_='"]+>[\w\n\s<>='"-_]+src=['"]([\w\s/-_.]+)['"][\w\n\s<>='"-_]+<figcaption>([\w\s/-_.]+)<\/figcaption>[\w\n\s<>='"-_]+<\/figure> -->
+
+<!-- <figure.+[\n\s]*<span.+[\n\s]*<img[\n\s]*src=['"](.+)['"][\n\s]*alt=['"].+['"][\s\n]*title=['"].+['"][\s\n]*\/>[\s\n]*<figcaption>(.+)<\/figcaption>[\s\n]*.+\n\s*<\/figure> -->
+
+<!-- <figure.+[\n\s]*<span.+[\n\s]*<img[\n\s]*src=['"](.+)['"][\n\s]*alt=['"].+['"][\s\n]*title=['"].+['"][\s\n]*\/>[\s\n]*<figcaption>([\[\]ㄱ-힣\s\-?+_:=/.0-9A-Za-z]+)<\/figcaption>[\s\n]*.+\n\s*<\/figure> -->
+
+<!-- <figure.+[\n\s]*<span.+[\n\s]*<img[\n\s]*src=['"](.+)['"][\n\s]*alt=['"].+['"][\s\n]*title=['"].+['"][\s\n]*\/>[\s\n]*<figcaption>([\[\]ㄱ-힣\s\-?,()+_:=/.0-9A-Za-z]+)<\/figcaption>[\s\n]*.+\n\s*<\/figure> -->

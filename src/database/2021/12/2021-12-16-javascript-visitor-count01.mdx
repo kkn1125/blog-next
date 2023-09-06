@@ -1,8 +1,7 @@
 ---
 slug: "/javascript-visitor-count01/"
-layout: post
-modified: 2022-03-14 00:09:35 +0000
 date:   2021-12-16 14:31:34 +0000
+modified: 2023-09-05 13:04:43 +0000
 title:  "[JAVASCRIPT] 정적 웹에서 방문자 수 나타내기"
 author: Kimson
 categories: [ javascript ]
@@ -14,13 +13,8 @@ description: "정적 웹에서 방문자 수 나타내기
 
 이 글을 보시는 고수 분들은 어딘가에 저촉되는 부분이 있다면 알려주시기바랍니다 :)"
 featured: true
-hidden: false
 rating: 4
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -55,12 +49,15 @@ published: true
 
 ```javascript
 async function sendFing() {
-    const visiteCount = await fetch('targetUrl', {
-        method: 'get',
-        mode: "no-cors",
-        credentials: 'same-origin'
-    });
-    const getResponse = await visiteCount.text().catch(e=>console.error(e.message)).finally(e=>console.info('fing'));
+  const visiteCount = await fetch("targetUrl", {
+    method: "get",
+    mode: "no-cors",
+    credentials: "same-origin",
+  });
+  const getResponse = await visiteCount
+    .text()
+    .catch((e) => console.error(e.message))
+    .finally((e) => console.info("fing"));
 }
 
 sendFing();
@@ -71,20 +68,24 @@ sendFing();
 방문 카운팅이 된 후 결과 값을 가져와야하기 때문에 방문자 수를 표시해주는 `url`로 함수를 하나 더 만듭니다.
 
 ```javascript
-async function getVisitorCount(){
-    const response = await fetch(`yourUrl`, {
-        // 설정들...
-    });
-    const data = await response.text();
+async function getVisitorCount() {
+  const response = await fetch(`yourUrl`, {
+    // 설정들...
+  });
+  const data = await response.text();
 
-    const parsedResponse = new DOMParser();
-    const body = [...parsedResponse.parseFromString(data.contents, 'text/html').body.querySelectorAll('targetParent')];
+  const parsedResponse = new DOMParser();
+  const body = [
+    ...parsedResponse
+      .parseFromString(data.contents, "text/html")
+      .body.querySelectorAll("targetParent"),
+  ];
 
-    const total = body[1];
-    const today = body[2];
+  const total = body[1];
+  const today = body[2];
 
-    document.querySelector('#total').textContent = total.textContent+'명';
-    document.querySelector('#today').textContent = today.textContent+'명';
+  document.querySelector("#total").textContent = total.textContent + "명";
+  document.querySelector("#today").textContent = today.textContent + "명";
 }
 
 getVisitorCount();

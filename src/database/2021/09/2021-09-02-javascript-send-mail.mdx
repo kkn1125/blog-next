@@ -1,8 +1,7 @@
 ---
 slug: "/javascript-send-mail/"
-layout: post
-modified: 2022-03-14 00:09:35 +0000
 date:   2021-09-02 13:35:47 +0000
+modified: 2023-09-05 12:38:51 +0000
 title:  "[JAVASCRIPT] 자바스크립트 메일 보내기"
 author: Kimson
 categories: [ javascript ]
@@ -14,12 +13,8 @@ description: "메일 보내기
 
 현재 블로그는 운영 중이지만 포트폴리오를 정리한 페이지를 따로 만들어야 할 것 같아서 만드는 중에 궁금해져서 찾아봤습니다."
 featured: false
-hidden: false
 rating: 4.5
-toc: true
 profile: false
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -49,11 +44,16 @@ published: true
 ### form 방식
 
 ```html
-<form class="gform" action="[appURL]" method="post" data-email="yourmail@domain.com">
-    <input type="name">
-    <input type="email">
-    <input type="message">
-    <input type="submit" value="전송">
+<form
+  class="gform"
+  action="[appURL]"
+  method="post"
+  data-email="yourmail@domain.com"
+>
+  <input type="name" />
+  <input type="email" />
+  <input type="message" />
+  <input type="submit" value="전송" />
 </form>
 ```
 
@@ -65,20 +65,20 @@ published: true
 
 ```javascript
 $.ajax({
-    data: {
-        name: name,
-        message: message,
-        email: email
-    },
-    url: 'Your app url',
-    method: 'post',
-    success: (data) => {
-        console.log(data)
-        // parsing = JSON.parse(data.data);
-    },
-    error: (xhr, err) => {
-        console.log(err);
-    }
+  data: {
+    name: name,
+    message: message,
+    email: email,
+  },
+  url: "Your app url",
+  method: "post",
+  success: (data) => {
+    console.log(data);
+    // parsing = JSON.parse(data.data);
+  },
+  error: (xhr, err) => {
+    console.log(err);
+  },
 });
 ```
 
@@ -98,8 +98,7 @@ success시 데이터 자체는 JSON이지만 data의 형태는 아래의 이미�
 
 ![메일](/assets/images/post/sendMail/mail02.png)
 
-
------
+---
 
 > 참고 사이트
 

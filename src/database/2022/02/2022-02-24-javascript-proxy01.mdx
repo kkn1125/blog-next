@@ -1,8 +1,7 @@
 ---
 slug: "/javascript-proxy01/"
-layout: post
-modified: 2022-03-14 00:09:35 +0000
 date:   2022-02-24 21:22:08 +0000
+modified: 2023-09-05 13:13:07 +0000
 title:  "[JAVASCRIPT] Proxy와 Reflect 맛보기 02 - Todo List를 만들어보자"
 author: Kimson
 categories: [ javascript ]
@@ -12,13 +11,8 @@ description: "Todo List를 만들어 보자 Proxy를 통한 내용 자동 업데
 
 `Proxy`를 이용해서 변수 변경을 감지, 즉, 정확히 말해서 객체의 속성 값이 변경되는 것을 감지해서 자동으로 화면을 업데이트 하는 `Todo List`를 만들려고 합니다. 최근에 `Svelte`를 `Vue`와 다른 차이점을 접하기 위해 사용해보고 있는데요. 예전에 `Vue`가 어떻게 자동으로 변수를 업데이트하는지 `class`를 사용해 컴포넌트를 만들고, 컴포넌트가 생성될 때 로직을 짜 넣어 변수 업데이트를 했던 기억이 납니다."
 featured: true
-hidden: false
 rating: 4
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -39,15 +33,15 @@ published: true
 ```javascript
 const autoValue = {};
 
-Object.defineProperty(autoValue, 'watch', {
-   set(data){
-      console.log('Value has changed !');
-      this._watch = data;
-   },
-   get(){
-      console.log('This type is ' + typeof this._watch);
-      return this._watch;
-   }
+Object.defineProperty(autoValue, "watch", {
+  set(data) {
+    console.log("Value has changed !");
+    this._watch = data;
+  },
+  get() {
+    console.log("This type is " + typeof this._watch);
+    return this._watch;
+  },
 });
 
 autoValue.a = 1;
@@ -72,12 +66,10 @@ console.log(autoValue.watch);
 ```javascript
 let autoValue = {};
 const autoValueHandler = {
-   set(target, thisArg, args, proxy){
-
-   },
-   get(target, thisArg, proxy){
-      return Reflect.apply(target, thisArg); // proxy는 뺍니다.
-   }
+  set(target, thisArg, args, proxy) {},
+  get(target, thisArg, proxy) {
+    return Reflect.apply(target, thisArg); // proxy는 뺍니다.
+  },
 };
 
 autoValue = new Proxy(autoValue, autoValueHandler);
@@ -98,49 +90,56 @@ autoValue = new Proxy(autoValue, autoValueHandler);
 ```html
 <div id="display">내용이 없습니다</div>
 <div id="remaining">0개 중 0개 완료 구문 👍</div>
-<input type="text" id="input">
+<input type="text" id="input" />
 ```
 
 `Todo List`의 데이터를 감지하는 `Proxy`를 만듭니다.
 
 ```javascript
-const display = document.querySelector('#display');
-const input = document.querySelector('#input');
+const display = document.querySelector("#display");
+const input = document.querySelector("#input");
 
 let todoList = {};
 
 todoList = new Proxy(list, {
-   set(origin, propName, arg, proxy) {
-      if(propName == 'todos') {
-         if(!origin[`_${propName}`]) origin[`_${propName}`] = [];
-         // todos가 없으면 배열로 값을 초기화합니다.
-         if(arg instanceof Array) origin[`_${propName}`] = arg;
-         // 배열이 들어오면 값을 배열로 대체합니다.
-         else origin[`_${propName}`].push(arg);
-         
-         completionCountNotification(origin[`_${propName}`]);
-         writeOnDisplay(origin[`_${propName}`]);
-      }
-      else origin[`_${propName}`] = arg;
-      // todos 외에는 그냥 저장
-   },
-   get(origin, propName, proxy) {
-      if(propName == 'todos') return origin[`_${propName}`] || [];
-      else return origin[`_${propName}`];
-   }
+  set(origin, propName, arg, proxy) {
+    if (propName == "todos") {
+      if (!origin[`_${propName}`]) origin[`_${propName}`] = [];
+      // todos가 없으면 배열로 값을 초기화합니다.
+      if (arg instanceof Array) origin[`_${propName}`] = arg;
+      // 배열이 들어오면 값을 배열로 대체합니다.
+      else origin[`_${propName}`].push(arg);
+
+      completionCountNotification(origin[`_${propName}`]);
+      writeOnDisplay(origin[`_${propName}`]);
+    } else origin[`_${propName}`] = arg;
+    // todos 외에는 그냥 저장
+  },
+  get(origin, propName, proxy) {
+    if (propName == "todos") return origin[`_${propName}`] || [];
+    else return origin[`_${propName}`];
+  },
 });
 
 function completionCountNotification(target) {
-    return remaining.innerHTML = `${target.length}개 중 ${target.filter(t=>t.done).length}개 완료 👍`;
+  return (remaining.innerHTML = `${target.length}개 중 ${
+    target.filter((t) => t.done).length
+  }개 완료 👍`);
 }
 
 function writeOnDisplay(target) {
-   return display.innerHTML = target.map((t, i) =>
-      `<li>
-         <span class="${t.done?'check':''}">${i+1}. ${t.text||''}</span>
-         <button ${t.done?'class="checked"':''} onclick="checkHandler(${t.id})">Check</button>
+  return (display.innerHTML = target
+    .map(
+      (t, i) =>
+        `<li>
+         <span class="${t.done ? "check" : ""}">${i + 1}. ${t.text || ""}</span>
+         <button ${t.done ? 'class="checked"' : ""} onclick="checkHandler(${
+          t.id
+        })">Check</button>
          <button onclick="deleteHandler(${t.id})">&times;</button>
-      </li>`).join('');
+      </li>`
+    )
+    .join(""));
 }
 ```
 
@@ -152,38 +151,43 @@ function writeOnDisplay(target) {
 
 ```javascript
 function writeOnDisplay(target) {
-   return display.innerHTML = target.map((t, i)=>
+  return (display.innerHTML = target
+    .map(
+      (t, i) =>
         `<li>
-            <span class="${t.done?'check':''}">${i+1} ${t.text||''}</span>
+            <span class="${t.done ? "check" : ""}">${i + 1} ${
+          t.text || ""
+        }</span>
             <button onclick="checkHandler(${t.id})">Check</button>
             <button onclick="deleteHandler(${t.id})">&times;</button>
-        </li>`)
-    .join('');
+        </li>`
+    )
+    .join(""));
 }
 
 function checkHandler(id) {
-    todoList.todos = todoList.todos.map(t => {
-        if (t.id == id) t.done = !t.done;
-        return t;
-    })
+  todoList.todos = todoList.todos.map((t) => {
+    if (t.id == id) t.done = !t.done;
+    return t;
+  });
 }
 
 function deleteHandler(id) {
-    todoList.todos = todoList.todos.filter(t => t.id != id);
+  todoList.todos = todoList.todos.filter((t) => t.id != id);
 }
 
-input.addEventListener('keyup', (ev) => {
-    if (ev.key == 'Enter') {
-        if(ev.target.value=='') return;
+input.addEventListener("keyup", (ev) => {
+  if (ev.key == "Enter") {
+    if (ev.target.value == "") return;
 
-        todoList.todos = {
-            id: [...todoList.todos].reduce((t, n) => t < n.id ? n.id : t, 0) + 1,
-            text: ev.target.value,
-            done: false,
-        }
+    todoList.todos = {
+      id: [...todoList.todos].reduce((t, n) => (t < n.id ? n.id : t), 0) + 1,
+      text: ev.target.value,
+      done: false,
+    };
 
-        ev.target.value = '';
-    }
+    ev.target.value = "";
+  }
 });
 ```
 
@@ -197,23 +201,13 @@ input.addEventListener('keyup', (ev) => {
 
 ## 결과
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="/assets/images/post/proxy/proxy01.png" alt="결과" title="결과" />
-   <figcaption>결과</figcaption>
-</span>
-</figure>
+![결과](/assets/images/post/proxy/proxy01.png)
 
 ## Scss로 조금 꾸민 후
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="/assets/images/post/proxy/proxy02.png" alt="꾸민 후" title="꾸민 후" />
-   <figcaption>꾸민 후</figcaption>
-</span>
-</figure>
+![꾸민 후](/assets/images/post/proxy/proxy02.png)
 
------
+---
 
 📚 함께 보면 좋은 내용
 

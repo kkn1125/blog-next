@@ -229,9 +229,10 @@ function Calendar() {
           return true;
         }
       }
+      if ((item.due || 1) > 1) {
+      }
       return false;
     });
-
     const isEmptyCommon = (commonTodos?.length || 0) === 0;
     const isEmptyRepeat = (repeatTodos?.length || 0) === 0;
 

@@ -1,8 +1,7 @@
 ---
 slug: "/javascript-design-pattern01/"
-layout: post
-modified: 2022-03-14 00:09:35 +0000
 date:   2021-11-28 14:35:56 +0000
+modified: 2023-09-05 12:43:18 +0000
 title:  "[JAVASCRIPT] 자바스크립트 디자인 패턴 - 모듈 패턴"
 author: Kimson
 categories: [ javascript ]
@@ -18,12 +17,8 @@ description: "Module Pattern
 
 활용되었던 형태는 이렇습니다."
 featured: false
-hidden: false
 rating: 4
-toc: true
 profile: false
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -38,34 +33,28 @@ published: true
 활용되었던 형태는 이렇습니다.
 
 ```javascript
-'use strict';
-const Sample = (function(){
-    function Controller(){
-        this.init = function(){
-            
-        }
-        // this.* :: method
-    }
+"use strict";
+const Sample = (function () {
+  function Controller() {
+    this.init = function () {};
+    // this.* :: method
+  }
 
-    function Model(){
-        this.init = function(){
-            
-        }
-        // this.* :: method
-    }
+  function Model() {
+    this.init = function () {};
+    // this.* :: method
+  }
 
-    function View(){
-        this.init = function(){
+  function View() {
+    this.init = function () {};
+    // this.* :: method
+  }
 
-        }
-        // this.* :: method
-    }
-
-    return {
-        init: function(){
-            // 정의되는 초기화 내용
-        }
-    }
+  return {
+    init: function () {
+      // 정의되는 초기화 내용
+    },
+  };
 })(); // 괄호 있습니다!
 ```
 
@@ -106,33 +95,33 @@ const Sample = (function(){
 만약 `todo-list`를 만든다는 가정을 들겠습니다.
 
 ```javascript
-const TodoList = (function(){
-    function Controller(){
-        this.init = function(){
-            // 초기화 코드
-        }
-        // this.* :: method
-    }
+const TodoList = (function () {
+  function Controller() {
+    this.init = function () {
+      // 초기화 코드
+    };
+    // this.* :: method
+  }
 
-    function Model(){
-        this.init = function(){
-            // 초기화 코드
-        }
-        // this.* :: method
-    }
+  function Model() {
+    this.init = function () {
+      // 초기화 코드
+    };
+    // this.* :: method
+  }
 
-    function View(){
-        this.init = function(){
-            // 초기화 코드
-        }
-        // this.* :: method
-    }
+  function View() {
+    this.init = function () {
+      // 초기화 코드
+    };
+    // this.* :: method
+  }
 
-    return {
-        init: function(){
-            // 정의되는 초기화 내용
-        }
-    }
+  return {
+    init: function () {
+      // 정의되는 초기화 내용
+    },
+  };
 })();
 ```
 
@@ -164,7 +153,7 @@ const generator = {
 };
 
 const TodoList = (function(){
-    // mvc ... 
+    // mvc ...
     return {
         init: function(){
             const components = {
@@ -191,7 +180,7 @@ const TodoList = (function(){
 // const generator...
 
 const TodoList = (function(){
-    // mvc ... 
+    // mvc ...
 
     function Controller(){
         let models = null;
@@ -208,7 +197,7 @@ const TodoList = (function(){
             let type = target.dataset.type;
             if(type !== 'add' && type !== 'delete' && type !== 'update') return;
             ev.preventDefault();
-            
+
             switch(type){
                 case 'add':
                     this.addList(target);
@@ -221,7 +210,7 @@ const TodoList = (function(){
                     break;
             }
         }
-        
+
         this.addList = function(){
             models.addList();
         }

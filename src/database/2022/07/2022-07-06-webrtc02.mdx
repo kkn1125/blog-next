@@ -1,8 +1,7 @@
 ---
 slug: "/webrtc02/"
-layout: post
-modified: 2023-04-08 16:57:33 +0000
 date: 2022-07-06 22:12:46 +0000
+modified: 2023-09-05 13:18:18 +0000
 title: "[WEBRTC] node.js express + React + WebRTC + WebSocket 환경 구축하기 02"
 author: Kimson
 categories: [software]
@@ -16,13 +15,8 @@ description: "양방향 영상출력을 해보자
 
 이것저것 참고한 것들과 작업한 결과물과 작업하면서 겪은 오류 상황 및 문제해결을 기록하려합니다."
 featured: true
-hidden: false
 rating: 4.5
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -54,12 +48,7 @@ const pc = new RTCPeerConnection();
 
 미디어를 주고 받는 흐름을 알면 나중에 어떤 방식으로 무엇부터 해야하는지 감이 잡히기 때문에 흐름도를 보겠습니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/177593218-5a772304-d7c0-4ac7-96bb-73993d4ed8bd.png" alt="sample" title="sample" />
-   <figcaption>흐름도</figcaption>
-</span>
-</figure>
+![흐름도](https://user-images.githubusercontent.com/71887242/177593218-5a772304-d7c0-4ac7-96bb-73993d4ed8bd.png)
 
 순서를 나열해보면 다음과 같습니다.
 
@@ -201,12 +190,7 @@ SERVER_PORT=4000
 
 세팅이 되고 나면 아래와 같은 폴더구조가 되어야 합니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/178133552-ffb54a58-93d1-4fa9-b30e-8847ead85e43.png" alt="sample" title="sample" />
-   <figcaption>폴더구조</figcaption>
-</span>
-</figure>
+![폴더구조](https://user-images.githubusercontent.com/71887242/178133552-ffb54a58-93d1-4fa9-b30e-8847ead85e43.png)
 
 ## 서버 소켓 부분 작성
 
@@ -746,8 +730,8 @@ function Room() {
   return (
     <RoomBlock>
       <Wrap>
-        <RemoteVideo autoPlay/>
-        <LocalVideo autoPlay/>
+        <RemoteVideo autoPlay />
+        <LocalVideo autoPlay />
       </Wrap>
       <Tools>
         <Button onClick={handleToggleMic}>
@@ -913,12 +897,10 @@ function Room() {
   return (
     <RoomBlock>
       <Wrap>
-        <RemoteVideo ref={remoteVideo} autoPlay/>
-        <LocalVideo ref={localVideo} autoPlay/>
+        <RemoteVideo ref={remoteVideo} autoPlay />
+        <LocalVideo ref={localVideo} autoPlay />
       </Wrap>
-      <Tools>
-        ...
-      </Tools>
+      <Tools>...</Tools>
     </RoomBlock>
   );
 }
@@ -926,12 +908,7 @@ function Room() {
 
 getUserMedia로 카메라권한 요청이 갈 것이고, 아래와 같이 화면이 출력 되면 성공입니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/178299921-8f9e6747-5cd8-4c57-ae4e-1d4202016a64.png" alt="sample" title="sample" />
-   <figcaption>비디오 연결</figcaption>
-</span>
-</figure>
+![비디오 연결](https://user-images.githubusercontent.com/71887242/178299921-8f9e6747-5cd8-4c57-ae4e-1d4202016a64.png)
 
 ### 상대 영상 띄우기
 
@@ -1075,16 +1052,13 @@ function Room() {
     dataChannel.send(JSON.stringify(msg));
   }
 
-
   return (
     <RoomBlock>
       <Wrap>
-        <RemoteVideo ref={remoteVideo} autoPlay/>
-        <LocalVideo ref={localVideo} autoPlay/>
+        <RemoteVideo ref={remoteVideo} autoPlay />
+        <LocalVideo ref={localVideo} autoPlay />
       </Wrap>
-      <Tools>
-        ...
-      </Tools>
+      <Tools>...</Tools>
     </RoomBlock>
   );
 }

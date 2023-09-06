@@ -1,8 +1,7 @@
 ---
 slug: "/javascript-object-this/"
-layout: post
-modified: 2023-04-08 16:57:33 +0000
 date:   2022-04-10 17:43:00 +0000
+modified: 2023-09-05 13:16:31 +0000
 title:  "[JAVASCRIPT] Object와 This"
 author: Kimson
 categories: [ javascript ]
@@ -16,13 +15,8 @@ description: "Object 이해하기
 
 이전에 `object`와 `proxy`, `defineproperty` 등의 내용을 다룬 포스팅이 있습니다. 당시 포스팅과 달리 `Object`를 작성하는 것과 프로토타입 기반인 `javascript`의 상속문제, 그리고 `this`의 정해진 규칙을 정리하는 것을 중점으로 이야기하고자 합니다."
 featured: true
-hidden: false
 rating: 4.5
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -46,17 +40,17 @@ published: true
 
 ```javascript
 const myObj = {
-    name: 'kimson',
-    age: 30,
-    behavior: function () {
-        // 함수를 정의하는 방식 1
-        console.log('움직였다!');
-    },
-    behavior () {
-        // 함수를 정의하는 방식 2
-        console.log('움직였다!');
-    },
-}
+  name: "kimson",
+  age: 30,
+  behavior: function () {
+    // 함수를 정의하는 방식 1
+    console.log("움직였다!");
+  },
+  behavior() {
+    // 함수를 정의하는 방식 2
+    console.log("움직였다!");
+  },
+};
 ```
 
 프로퍼티를 지정하는 것은 위처럼 한 번에 작성하는 방법도 있고, `defineProperty`메서드를 통해 세부적으로 지정하는 방법도 있습니다. 나아가서는 `Proxy API`를 사용해서 굉장히 강력한 기능을 가지는 객체를 작성할 수도 있습니다. 예를 들면, 데이터를 객체에 넣고 뺄 때를 감지 가능하게 하는 등의 기능입니다.
@@ -65,19 +59,19 @@ const myObj = {
 
 ```javascript
 function Human(name, age) {
-    // Human 객체
-    this.name = name;
-    this.age = age;
-    this.live = true;
+  // Human 객체
+  this.name = name;
+  this.age = age;
+  this.live = true;
 }
 
 // or
 
 const Human = function (name, age) {
-    this.name = name;
-    this.age = age;
-    this.live = true;
-}
+  this.name = name;
+  this.age = age;
+  this.live = true;
+};
 
 // 위의 두 방법은 동일하게 Human 객체를 정의합니다. 차이점은 작성하는 방식이 변수형태인 것과 함수형태인 것의 차이와 호이스팅의 차이입니다.
 ```
@@ -101,10 +95,10 @@ const Human = function (name, age) {
 
 ```javascript
 function test() {
-    console.log(this.name);
+  console.log(this.name);
 }
 
-var name = 'kimson';
+var name = "kimson";
 
 test(); // 'kimson'
 ```
@@ -115,12 +109,12 @@ test(); // 'kimson'
 
 ```javascript
 function calling() {
-    console.log(this.msg);
+  console.log(this.msg);
 }
 
 let obj = {
-    msg: 'kimson',
-    test: calling
+  msg: "kimson",
+  test: calling,
 };
 
 obj.test(); // 'kimson'
@@ -134,11 +128,11 @@ obj.test(); // 'kimson'
 
 ```javascript
 function calling() {
-    console.log(this.msg);
+  console.log(this.msg);
 }
 
 let obj = {
-    msg: 'kimson',
+  msg: "kimson",
 };
 
 calling.bind(obj)(); // 'kimson'
@@ -153,11 +147,11 @@ calling.apply(obj); // 'kimson'
 ```javascript
 let arr = [];
 
-arr.push.apply(arr, [1,2,3]); // ✅
+arr.push.apply(arr, [1, 2, 3]); // ✅
 // [1, 2, 3]
-arr.push.call(arr, 1,2,3); // ✅
+arr.push.call(arr, 1, 2, 3); // ✅
 // [1, 2, 3, 1, 2, 3]
-arr.push.call(arr, [1,2,3]); // ❌
+arr.push.call(arr, [1, 2, 3]); // ❌
 // [1, 2, 3, 1, 2, 3, Array(3)]
 ```
 
@@ -167,16 +161,16 @@ arr.push.call(arr, [1,2,3]); // ❌
 
 ```javascript
 function calling() {
-    console.log(this.msg);
+  console.log(this.msg);
 }
 
 let obj = {
-    msg: 'kimson',
+  msg: "kimson",
 };
 
 const hardBinding = function () {
-    calling.call(obj);
-}
+  calling.call(obj);
+};
 
 hardBinding(); // 'kimson'
 ```
@@ -188,11 +182,11 @@ hardBinding(); // 'kimson'
 
 ```javascript
 function calling() {
-    console.log(this.msg);
+  console.log(this.msg);
 }
 
 let obj = {
-    msg: 'kimson',
+  msg: "kimson",
 };
 
 const hardBinding = calling.bind(obj);
@@ -204,15 +198,15 @@ hardBinding(); // 'kimson'
 
 ```javascript
 const Human = function (name, age) {
-    this.name = name;
-    this.age = age;
-    this.calling = function (prop){
-        console.log(this[prop]);
-    };
-}
+  this.name = name;
+  this.age = age;
+  this.calling = function (prop) {
+    console.log(this[prop]);
+  };
+};
 
-const kimson = new Human('kimson', 30);
-kimson.calling('name');
+const kimson = new Human("kimson", 30);
+kimson.calling("name");
 // 'kimson'
 ```
 
@@ -222,40 +216,40 @@ kimson.calling('name');
 
 ```javascript
 const Human = function (name, age) {
-    this.name = name;
-    this.age = age;
-    this.calling = function (){
-        console.log(this);
-    };
-}
+  this.name = name;
+  this.age = age;
+  this.calling = function () {
+    console.log(this);
+  };
+};
 
 const Student = function (name, age, schoolName, classNumber, grade) {
-    Human.call(this, name, age);
-    // 실행해보면 프로토타입 Human의 name과 age는 undefined이고
-    // Student객체의 프로퍼티에 정의되는 것을 볼 수 있습니다.
+  Human.call(this, name, age);
+  // 실행해보면 프로토타입 Human의 name과 age는 undefined이고
+  // Student객체의 프로퍼티에 정의되는 것을 볼 수 있습니다.
 
-    // 만일 프로토타입의 Human의 name, age에 저장하려면 this를 this.__proto__로 변경하면
-    // Human의 프로퍼티에 적용되는 것을 볼 수 있습니다.
+  // 만일 프로토타입의 Human의 name, age에 저장하려면 this를 this.__proto__로 변경하면
+  // Human의 프로퍼티에 적용되는 것을 볼 수 있습니다.
 
-    this.schoolName = schoolName;
-    this.classNumber = classNumber;
-    this.grade = grade;
-    this.test = function () {
-        console.log(this);
-    }
-}
+  this.schoolName = schoolName;
+  this.classNumber = classNumber;
+  this.grade = grade;
+  this.test = function () {
+    console.log(this);
+  };
+};
 
 Student.prototype = Object.create(Human.prototype);
 // 또는
-Student.prototype = new Human;
+Student.prototype = new Human();
 
 Student.prototype.constructor = Student;
 
-let kimson = new Student('kimson', 30, 'sch', 5, 3);
+let kimson = new Student("kimson", 30, "sch", 5, 3);
 
-window.addEventListener('click', e => {
-    kimson.test();
-    kimson.calling();
+window.addEventListener("click", (e) => {
+  kimson.test();
+  kimson.calling();
 });
 ```
 
@@ -270,62 +264,61 @@ window.addEventListener('click', e => {
 다른 예제를 가져오겠습니다. 모듈 패턴으로 어떠한 기능을 짠다고 가정할 때 `MVC`가 있다고 가정하겠습니다.
 
 ```javascript
-
 const Something = (function () {
-    
-    function Controller () {
-        let models;
+  function Controller() {
+    let models;
 
-        this.init = function (model) {
-            models = model;
+    this.init = function (model) {
+      models = model;
 
-            // 예제가 이 부분 입니다.
-            window.addEventListener('click', this.firstCall);
-        }
+      // 예제가 이 부분 입니다.
+      window.addEventListener("click", this.firstCall);
+    };
 
-        this.firstCall = function () {
-            this.getMyName();
-            models.something();
-        }
+    this.firstCall = function () {
+      this.getMyName();
+      models.something();
+    };
 
-        this.getMyName = function () {
-            console.log('My name is kimson!');
-        }
-    }
+    this.getMyName = function () {
+      console.log("My name is kimson!");
+    };
+  }
 
-    function Model () {
-        let views;
+  function Model() {
+    let views;
 
-        this.init = function (view) {
-            views = view;
-        }
+    this.init = function (view) {
+      views = view;
+    };
 
-        this.something = function () { /** ... */ }
-    }
+    this.something = function () {
+      /** ... */
+    };
+  }
 
-    function View () {
-        let options;
+  function View() {
+    let options;
 
-        this.init = function (option) {
-            options = option;
-        }
-    }
+    this.init = function (option) {
+      options = option;
+    };
+  }
 
-    return {
-        init(options) {
-            const view = new View();
-            const model = new Model();
-            const controller = new Controller();
+  return {
+    init(options) {
+      const view = new View();
+      const model = new Model();
+      const controller = new Controller();
 
-            view.init(options);
-            model.init(view);
-            controller.init(model);
-        }
-    }
+      view.init(options);
+      model.init(view);
+      controller.init(model);
+    },
+  };
 })();
 
 Something.init({});
-
 ```
 
 제가 실제로 자주 사용하는 방식입니다. 위에 주석이 달린 예제 부분을 볼 때 `firstCall`이 이벤트에 걸려 클릭할 때마다 호출하게 되는데, `firstCall`내부의 `getMyName`은 제대로 작동할까요?
@@ -337,27 +330,27 @@ Something.init({});
 추측하는 것이지만 `addEventListener` 내부 코드에서 `call`을 해서 `this`를 바인딩 하는 부분이 있다고 생각합니다. 실제로 찾아보니 누군가 작성한 `addEventListener`의 `pollyfill` 소스코드를 보니 `call`로 `window`객체로 덮어쓰도록 하게 되어 있습니다.
 
 ```javascript
-function Window () {
-    this.addEventListener = function (type, func, bool) {
-        // ...
-        func.call(this);
-        // ...
-    }
+function Window() {
+  this.addEventListener = function (type, func, bool) {
+    // ...
+    func.call(this);
+    // ...
+  };
 }
 ```
 
 이해를 돕고자 대략적인 형태를 작성해보면, 위처럼 함수가 전달되고 실행될 것 입니다. 그렇다면 `func`가 아래처럼 정의된 내용이였다고 가정하겠습니다.
 
 ```javascript
-function Window () {
-    this.addEventListener = function (type, func, bool) {
-        // ...
-        (function () {
-            this.getMyName();
-            models.something();
-        })();
-        // ...
-    }
+function Window() {
+  this.addEventListener = function (type, func, bool) {
+    // ...
+    (function () {
+      this.getMyName();
+      models.something();
+    })();
+    // ...
+  };
 }
 ```
 
@@ -375,30 +368,30 @@ function Window () {
 
 ```javascript
 const store = {
-    doubleCalling: function (type, func) {
-        console.log(type, this);
-        func.call(this);
-    }
-}
+  doubleCalling: function (type, func) {
+    console.log(type, this);
+    func.call(this);
+  },
+};
 
-function Controller () {
-    let models;
+function Controller() {
+  let models;
 
-    this.init = function (model) {
-        models = model;
+  this.init = function (model) {
+    models = model;
 
-        // 예제가 이 부분 입니다.
-        store.doubleCalling('click', this.firstCall);
-    }
+    // 예제가 이 부분 입니다.
+    store.doubleCalling("click", this.firstCall);
+  };
 
-    this.firstCall = function () {
-        console.log(this)
-        this.getMyName();
-    }
+  this.firstCall = function () {
+    console.log(this);
+    this.getMyName();
+  };
 
-    this.getMyName = function () {
-        console.log('My name is kimson!');
-    }
+  this.getMyName = function () {
+    console.log("My name is kimson!");
+  };
 }
 
 const con = new Controller();
@@ -410,7 +403,7 @@ con.init();
 그렇다면 위에서 언급한 `addEventListener`처럼 명시적 바인딩을 통해서 원했던 `Controller`가 `this`에 바인딩되면서 콘솔에 `Controller`가 찍히게 될 것 입니다.
 
 ```javascript
-store.doubleCalling.call(this, 'click', this.firstCall);
+store.doubleCalling.call(this, "click", this.firstCall);
 ```
 
 명시적 바인딩으로 해당 함수 내에 작성한 `this`를 원하는 객체로 변경할 수 있는 점만 알아도 왜 `this`가 여기서는 `window`이고, 어디서는 변경이 안되는지 알 수 있을 것 입니다.
@@ -424,22 +417,22 @@ store.doubleCalling.call(this, 'click', this.firstCall);
 코드를 작성하다보면 디버그하거나 오류를 찾아낼 때 프로퍼티나 메서드들을 거슬러 올라가 찾아내곤 합니다. 그 와중에 거슬로 올라왔지만 못 찾는 경우가 생깁니다. 물론 제가 이상하게 짠 탓이지만 가령 이러한 예제가 있습니다.
 
 ```javascript
-function Test (type) {
-    this.type = type;
-    this.active = function () {
-        return this.type;
-    }
+function Test(type) {
+  this.type = type;
+  this.active = function () {
+    return this.type;
+  };
 }
 
 function OtherTest(type) {
-    this.type = type;
-    this.mytype = function () {
-        console.log(this.active());
-    }
+  this.type = type;
+  this.mytype = function () {
+    console.log(this.active());
+  };
 }
 
-const test1 = new Test('test1');
-const otherTest1 = new OtherTest('other test1');
+const test1 = new Test("test1");
+const otherTest1 = new OtherTest("other test1");
 
 otherTest1.mytype.call(test1);
 ```
@@ -452,7 +445,7 @@ otherTest1.mytype.call(test1);
 
 포스팅 전체는 대략 한 달 주기로 내용을 점검하고 수정하려고 노력합니다. 틀린 내용이나 적절하지 않은 표현 등이 있다면 제보 바랍니다.
 
------
+---
 
 📚 함께 보면 좋은 내용
 

@@ -1,8 +1,7 @@
 ---
 slug: "/spring-jpa01/"
-layout: post
-modified: 2022-03-14 00:09:35 +0000
 date:   2021-12-28 22:23:21 +0000
+modified: 2023-09-05 13:05:30 +0000
 title:  "[SPRING] Spring에서 JPA를 사용해보자"
 author: Kimson
 categories: [ spring ]
@@ -12,13 +11,8 @@ description: "Spring Boot말고 Spring에서 JPA를 사용해보자
 
 이번에는 `JPA`를 `Spring`에서 사용하는 방법을 기록하려합니다. 대부분의 블로그가 `Spring Boot`를 기준으로 설명되어 있어 `Spring Framework`로 `JPA`를 구현하는데 조금 어려움을 겪다가 결국 `Spring`공식 홈페이지 등을 통해 원문을 읽어가며 작동은 시켰습니다."
 featured: true
-hidden: false
 rating: 5
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -28,7 +22,6 @@ published: true
 
 ## 필요한 설정
 
-
 > 필요한 `Dependency`를 먼저 연결합니다.  
 > 사용된 내용은 아래와 같습니다.
 
@@ -37,7 +30,7 @@ published: true
 3. `javax.persistence-api` &#8594; `2.2`
 4. `mysql-connector-java` &#8594; `8.0.23`
 5. `spring-jdbc` &#8594; `5.3.6`
-7. lombok &#8594; `1.18.22`
+6. lombok &#8594; `1.18.22`
 
 `lombok`은 선택사항입니다.
 
@@ -77,10 +70,10 @@ public class Member {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long mbrNo;
-	
+
 	private String id;
 	private String name;
-	
+
 	@Builder
 	public Member(String id, String name) {
 		this.id = id;
@@ -130,7 +123,7 @@ public class RootConfig {
 		em.setPackagesToScan(new String[] {"com.springtest.web"});
 		em.setJpaVendorAdapter(vendorAdapter);
 		em.setJpaProperties(additioanlProperties());
-		
+
 		return em;
 	}
 
@@ -138,7 +131,7 @@ public class RootConfig {
 	public PlatformTransactionManager transactionManager() {
 		JpaTransactionManager transactionManager = new JpaTransactionManager();
 		transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
-		
+
 		return transactionManager;
 	}
 
@@ -187,10 +180,10 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 // MemberService.java
 @Service
 public class MemberService {
-	
+
 	@Autowired
 	private MemberRepository memberRepository;
-	
+
 	public List<Member> findAll(){
 		List<Member> members = new ArrayList<>();
 		List<Member> list = memberRepository.findAll();
@@ -210,7 +203,7 @@ public class MemberService {
 public class HomeController {
 	@Autowired
 	public MemberService service;
-	
+
 	@GetMapping("")
 	public String home(Locale locale, Model model) {
 		service.findAll();
@@ -229,7 +222,7 @@ public class HomeController {
 
 잘못된 내용이 있다면 알려주시면 감사하겠습니다 :)
 
------
+---
 
 📚 함께 보면 좋은 내용
 

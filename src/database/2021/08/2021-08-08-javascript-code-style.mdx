@@ -1,8 +1,7 @@
 ---
 slug: "/javascript-code-style/"
-layout: post
-modified: 2022-03-23 22:47:05 +0000
 date:   2021-08-08 14:19:05 +0000
+modified: 2023-09-05 12:36:27 +0000
 title:  "[JAVASCRIPT] 내 코드는 왜 이렇게 난잡할까"
 author: Kimson
 categories: [ javascript ]
@@ -16,22 +15,8 @@ description: "깔끔한 코드는 무엇일까
 
 그러면 프로그래밍에서 깔끔한 코드는 무엇일까요? 아직 실무를 경험하지도 못했지만 감히 얕은 지식으로 방법론을 알아보고자 합니다."
 featured: false
-hidden: false
 rating: 5
-toc: true
 profile: false
-istop: true
-keysum: true
-keywords: '
-A instanceof B # A가 B의 인스턴스이면 true, 아니면false
-_typeof A # A의 타입이 무엇인지 반환
-_!boolean # boolean값을 반대로
-_Array.filter() # 배열의 구성을 조정하여 재구성한다.
-_Array.slice() # 배열을 잘라내어 배열로 리턴한다 (원본 보존)
-_보기쉬운 # 변수와 메서드의 네이밍으로 가독성 향상
-_조립가능한 # 변수와 메서드의 독립성 부여
-_반환하는 # 메서드의 리턴값을 활용한 변수 선언 최소화
-'
 published: true
 ---
 
@@ -143,8 +128,8 @@ Controller를 통해 이벤트 관리와 checkout, return 등의 기능을 호�
 
 ```javascript
 // src/core/book-controller.js
-export function Controller(){
-    // codes ...
+export function Controller() {
+  // codes ...
 }
 ```
 
@@ -152,8 +137,8 @@ export function Controller(){
 
 ```javascript
 // src/core/book-checkout.js
-export function BookCheckout(){
-    // codes ...
+export function BookCheckout() {
+  // codes ...
 }
 ```
 
@@ -161,8 +146,8 @@ export function BookCheckout(){
 
 ```javascript
 // src/core/book-return.js
-export function BookReturn(){
-    // codes ...
+export function BookReturn() {
+  // codes ...
 }
 ```
 
@@ -183,20 +168,20 @@ export {return: BookReturn}
 
 ```javascript
 // main.js
-import * as BookModule from 'src/core/book-modules.js';
+import * as BookModule from "src/core/book-modules.js";
 (function () {
-    return {
-        init() {
-            const controller = new BookModule.controller();
-            const bookCheckout = new BookModule.checkout();
-            const bookReturn = new BookModule.return();
+  return {
+    init() {
+      const controller = new BookModule.controller();
+      const bookCheckout = new BookModule.checkout();
+      const bookReturn = new BookModule.return();
 
-            bookReturn.init();
-            bookCheckout.init();
-            controller.init();
-        }
-    }
-})().init()
+      bookReturn.init();
+      bookCheckout.init();
+      controller.init();
+    },
+  };
+})().init();
 ```
 
 이제 기능별로 파일이 분리되고 깔끔해진 모습입니다. 파일명도 잘 지어두면 굳이 설명없이 이해되는 파일 구조와 코드가 될 것이라 생각합니다.
@@ -218,27 +203,27 @@ import * as BookModule from 'src/core/book-modules.js';
 // src/store/store.js
 
 export function Store() {
-    const store = {}
-        
-    this.init = function(){
-        // 초기화
-        store.userInfo = loadUserInfo(); // 모든 유저 정보를 가져온다고 가정합니다.
-    }
-        
-    this.recordInfo = function(userNum, replaceInfo, bookExistence){
-        // 회원정보 조회
-        // 정보 수정
-        // 기록 저장
-        store.userInfo.map(u => {
-            if(u.num != userNum) return u;
+  const store = {};
 
-            u.info = replaceInfo;
-            u.hasBook = bookExistence;
-            return u;
-        });
-    }
+  this.init = function () {
+    // 초기화
+    store.userInfo = loadUserInfo(); // 모든 유저 정보를 가져온다고 가정합니다.
+  };
 
-    // 더 많은 공통 함수들 (libs)
+  this.recordInfo = function (userNum, replaceInfo, bookExistence) {
+    // 회원정보 조회
+    // 정보 수정
+    // 기록 저장
+    store.userInfo.map((u) => {
+      if (u.num != userNum) return u;
+
+      u.info = replaceInfo;
+      u.hasBook = bookExistence;
+      return u;
+    });
+  };
+
+  // 더 많은 공통 함수들 (libs)
 }
 ```
 
@@ -246,22 +231,22 @@ Store를 아까 만들었던 main.js에서 import하고, Store를 new연산자�
 
 ```javascript
 // main.js
-import * as BookModule from 'src/core/book-modules.js';
-import {Store} from 'src/store/store.js'; // +
+import * as BookModule from "src/core/book-modules.js";
+import { Store } from "src/store/store.js"; // +
 
 (function () {
-    return {
-        init() {
-            const store = new Store();      // + 상태관리 store 인스턴스 생성
-            const controller = new BookModule.controller();
-            const bookCheckout = new BookModule.checkout();
-            const bookReturn = new BookModule.return();
+  return {
+    init() {
+      const store = new Store(); // + 상태관리 store 인스턴스 생성
+      const controller = new BookModule.controller();
+      const bookCheckout = new BookModule.checkout();
+      const bookReturn = new BookModule.return();
 
-            bookReturn.init(store);         // + 상태관리 store를 초기화 함수에 전달
-            bookCheckout.init(store);       // + 상태관리 store를 초기화 함수에 전달
-            controller.init(bookReturn, bookCheckout); // + 컨트롤러는 반납, 대출 기능을 초기값으로 받습니다.
-        }
-    }
+      bookReturn.init(store); // + 상태관리 store를 초기화 함수에 전달
+      bookCheckout.init(store); // + 상태관리 store를 초기화 함수에 전달
+      controller.init(bookReturn, bookCheckout); // + 컨트롤러는 반납, 대출 기능을 초기값으로 받습니다.
+    },
+  };
 })().init();
 ```
 
@@ -281,8 +266,6 @@ import {Store} from 'src/store/store.js'; // +
 
 반환에 대한 이야기는 크게 없지만 예를 들면 아래와 같습니다.
 
-
-
 ```javascript
 const store = {
     data: 'marco-polo,test wow'
@@ -301,8 +284,6 @@ capitalize(store.data);
 console.log(store.data);
 // 'Marco-Polo,Test Wow'
 ```
-
-
 
 위의 `capital`함수는 인자 값을 무엇을 대입해도 원본 데이터가 변하지 않는 순수함수이다. 그리고 몇 번을 실행해도 같은 결과를 나타냅니다.
 

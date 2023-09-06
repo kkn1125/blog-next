@@ -1,8 +1,7 @@
 ---
 slug: "/docker02/"
-layout: post
-modified: 2023-04-08 16:57:33 +0000
 date: 2023-03-11 00:00:04 +0000
+modified: 2023-09-05 13:21:54 +0000
 title: "[DOCKER] 실행 중인 Docker Container 포트 변경"
 author: Kimson
 categories: [docker]
@@ -18,13 +17,8 @@ Docker Container의 Port를 변경하는 명령은 없다
 
 도커를 사용하다보면 이미 실행 중인 컨테이너에 포트를 더 열어줘야 한다거나 이후 확장성을 고려해서 포트를 증가해야하는 상황을 마주한 적이 한 번이라도 있을 겁니다. 포트를 변경하는 명령이 없다 뿐이지 변경하지 못한다는 말은 어디에도 없더라구요."
 featured: true
-hidden: false
 rating: 4.5
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -67,12 +61,7 @@ docker attach test_os
 
 실행되고 있는 컨테이너를 간단하게 조회해서 확인해보면 아래와 같을겁니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/224359086-84ec46ac-2b99-41c1-820e-98af0ba7eedb.png" alt="sample" title="sample" />
-   <figcaption>초기 포트 매핑</figcaption>
-</span>
-</figure>
+![초기 포트 매핑](https://user-images.githubusercontent.com/71887242/224359086-84ec46ac-2b99-41c1-820e-98af0ba7eedb.png)
 
 파일을 수정하기에 앞서 수정할 대상 컨테이너를 정지하고, 도커 서비스 또한 중지해야 한다고 합니다. 보다 안전하게 컨테이너를 조작하기 위함으로 생각됩니다. 조심해서 안좋을 건 없겠죠 😁
 
@@ -100,12 +89,7 @@ vi /var/lib/docker/containers/<container_hash_id>/config.v2.json
 
 첫 번째 파일을 열면 다닥다닥 붙어있는 `json`이 나옵니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/224355211-7679ab2b-3e94-40c3-bcf3-dc815b93f139.png" alt="sample" title="sample" />
-   <figcaption>프리티하지 못한 json - 1</figcaption>
-</span>
-</figure>
+![프리티하지 못한 json - 1](https://user-images.githubusercontent.com/71887242/224355211-7679ab2b-3e94-40c3-bcf3-dc815b93f139.png)
 
 이 중에서 `PortBindings`라는 프로퍼티를 찾습니다. 필자의 경우는 `ssh` 테스트를 해야했기에 `22/tcp`가 딱 써있어서 찾기 쉬웠습니다. 그러면 이제 추가로 매핑하고 싶은 포트를 적어야합니다.
 
@@ -113,21 +97,21 @@ vi /var/lib/docker/containers/<container_hash_id>/config.v2.json
 
 ```json showLineNumbers
 {
- //...
- "PortBindings": {
-  "22/tcp": [
-   {
-    "HostIp":"",
-    "HostPort":"50022"
-   }
-  ],
-  "4000/tcp": [
-   {
-    "HostIp":"",
-    "HostPort":"54000"
-   }
-  ]
- }
+  //...
+  "PortBindings": {
+    "22/tcp": [
+      {
+        "HostIp": "",
+        "HostPort": "50022"
+      }
+    ],
+    "4000/tcp": [
+      {
+        "HostIp": "",
+        "HostPort": "54000"
+      }
+    ]
+  }
 }
 ```
 
@@ -137,23 +121,18 @@ vi /var/lib/docker/containers/<container_hash_id>/config.v2.json
 
 두 번째 파일을 열게 되면 첫 번째 파일과 똑같이 다닥다닥 붙은 `json`이 나옵니다. 아마 좀 더 긴 `json`이 나올텐데요, 여기서 `ExposedPorts`라는 프로퍼티를 찾습니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/224365777-bc814b53-27dc-49bf-ab56-4754adbcfa52.png" alt="sample" title="sample" />
-   <figcaption>프리티하지 못한 json - 2</figcaption>
-</span>
-</figure>
+![프리티하지 못한 json - 2](https://user-images.githubusercontent.com/71887242/224365777-bc814b53-27dc-49bf-ab56-4754adbcfa52.png)
 
 좀 프리티하게 보자면 아래와 같습니다. 대부분은 포트 매핑하여 컨테이너를 실행하면 아래처럼 값이 없는 채로 아래처럼 나타날 것 입니다. 이 녀석이 자동으로 만든 것 처럼 우리도 똑같은 행세를 하면 알아서 매핑해 줄 것이라 생각하고 수정해봅시다.
 
 ```json showLineNumbers
 {
- // ...
- "ExposedPorts": {
-  "22/tcp": {}
-  // 추가 포트
-  , "4000/tcp": {}
- }
+  // ...
+  "ExposedPorts": {
+    "22/tcp": {},
+    // 추가 포트
+    "4000/tcp": {}
+  }
 }
 ```
 
@@ -169,12 +148,7 @@ docker start test_os
 docker ps
 ```
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/224360046-3f6b6456-20dd-4066-ace5-07e88366444b.png" alt="sample" title="sample" />
-   <figcaption>추가된 포트 확인</figcaption>
-</span>
-</figure>
+![추가된 포트 확인](https://user-images.githubusercontent.com/71887242/224360046-3f6b6456-20dd-4066-ace5-07e88366444b.png)
 
 정말 브라보 합니다. 안 될 것 같았던 실행 중인 컨테이너에 포트 추가하는 일이 실현되었습니다. 😎 하지만 필자는 의심이 많기 때문에 사기친 걸 그냥 보여주는게 아닐까 하고 컨테이너에 접근해서 react 프로젝트를 하나 만들어 4000번 포트로 실행해봅니다.
 
@@ -206,12 +180,7 @@ vite --host 0.0.0.0 --port 4000
 
 프로젝트가 실행되면 로컬에서 ping 또는 tcping으로 해당 포트가 열려있는지 확인합니다. 제일 간편한 방법은 http://localhost:4000 이 아닌 http://localhost:54000 으로 접속해보면 됩니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/224348785-71bb10e9-d540-4bfc-a677-4adca74c12b1.png" alt="sample" title="sample" />
-   <figcaption>페이지 접속해서 포트 확인</figcaption>
-</span>
-</figure>
+![페이지 접속해서 포트 확인](https://user-images.githubusercontent.com/71887242/224348785-71bb10e9-d540-4bfc-a677-4adca74c12b1.png)
 
 이제는 도커가 출력해 준 포트 매핑에 믿음이 갑니다 😆
 

@@ -1,8 +1,7 @@
 ---
 slug: "/javascript-module01/"
-layout: post
-modified: 2022-03-14 00:09:35 +0000
 date:   2021-12-29 16:17:41 +0000
+modified: 2023-09-05 13:05:39 +0000
 title:  "[JAVASCRIPT] Vanilla JavaScript에서 Module사용하기"
 author: Kimson
 categories: [ javascript ]
@@ -12,13 +11,8 @@ description: "Vanilla Javascript에서 Module 사용하기
 
 기능들이 한 파일에 모두 모여있어 제가 짠 코드지만 매우 보기 불편해서 모듈화가 필요하게 되었습니다. 그래서 사용법을 짧게 기록하기 위해 포스팅하게 되었습니다."
 featured: false
-hidden: false
 rating: 3.5
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -34,14 +28,14 @@ published: true
 
 ```javascript
 // calculator.js
-function Calculator(){
-	this.plus = function(a, b){
-		return a + b;
-	}
-	this.minus = function(a, b){
-		return a - b;
-	}
-	// ... 등등
+function Calculator() {
+  this.plus = function (a, b) {
+    return a + b;
+  };
+  this.minus = function (a, b) {
+    return a - b;
+  };
+  // ... 등등
 }
 
 const myCalc = new Calculator();
@@ -63,16 +57,16 @@ myCalc.plus(4, 5); // 9
 
 ```javascript
 // calc-base.js
-function plus(a, b){
-	return a + b;
+function plus(a, b) {
+  return a + b;
 }
 
-function minus(a, b){
-	return a - b;
+function minus(a, b) {
+  return a - b;
 }
 // ... 등등
 
-export {plus, minus}; // 내보낼 함수가 많으면 콧수염 괄호에 넣습니다.
+export { plus, minus }; // 내보낼 함수가 많으면 콧수염 괄호에 넣습니다.
 ```
 
 그럼 이제 모듈화 되었으니 기존에 `calculator.js`에서 `import`합니다.
@@ -82,26 +76,26 @@ export {plus, minus}; // 내보낼 함수가 많으면 콧수염 괄호에 넣�
 
 // from의 경로에는 확장자 명이 있어야 합니다.
 
-import * as calcBase from './calc-base.js'
+import * as calcBase from "./calc-base.js";
 // 1. 모두 불러오려면 아스트릭을 사용하고 as로 명칭을 부여합니다.
 // ex) calcBase.plus ...
 
-import {plus, minus} from './calc-base.js';
+import { plus, minus } from "./calc-base.js";
 // 2. 함수명을 기입해서 특정 함수들만 불러올 수 있습니다.
 // ex) plus ...
 
 // 1. 아스트릭을 사용해서 모두 불러올 때 사용 예시
-function Calculator(){
-	this.plus = calcBase.plus;
-	this.minus = calcBase.minus;
-	// ... 등등
+function Calculator() {
+  this.plus = calcBase.plus;
+  this.minus = calcBase.minus;
+  // ... 등등
 }
 
 // 2. 특정 함수만을 불러올 때 사용 예시
-function Calculator(){
-	this.plus = plus;
-	this.minus = minus;
-	// ... 등등
+function Calculator() {
+  this.plus = plus;
+  this.minus = minus;
+  // ... 등등
 }
 
 const myCalc = new Calculator();
@@ -115,7 +109,7 @@ myCalc.plus(4, 5); // 9
 
 아래는 제가 참고한 사이트입니다.
 
------
+---
 
 📚 함께 보면 좋은 내용
 

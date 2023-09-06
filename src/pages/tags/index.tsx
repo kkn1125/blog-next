@@ -2,7 +2,11 @@ import Animated from "@/components/Animated";
 import GenerateHead from "@/components/GenerateHead";
 import { getAllArticles, getArticlesByCategory } from "@/libs/service";
 import { BRAND_NAME, BRAND_DESC, BRAND_LOGO } from "@/util/global";
-import { changeHipenToWhiteSpace } from "@/util/tool";
+import {
+  changeHipenToWhiteSpace,
+  changeWhiteSpaceToHipen,
+  duplicateRemoveArrayFromTag,
+} from "@/util/tool";
 import { Container } from "@mui/material";
 import { Toolbar } from "@mui/material";
 import { Stack, Typography, Chip } from "@mui/material";
@@ -53,7 +57,7 @@ function Index({ tags }: any) {
             <Chip
               key={tag}
               component={Link}
-              href={"/tags/" + tag + "/"}
+              href={"/tags/" + tag.toLowerCase() + "/"}
               label={tag}
               sx={{
                 cursor: "pointer",
@@ -74,14 +78,28 @@ function Index({ tags }: any) {
 }
 
 export const getStaticProps = async () => {
-  const posts = await getAllArticles();
-
+  const articles = await getAllArticles();
+  const tags = duplicateRemoveArrayFromTag(articles);
+  const hipens = tags
+    .filter((tag: string) => tag.toLowerCase().match(/[\s]+/g))
+    .map((tag: string) => changeWhiteSpaceToHipen(tag));
   return {
     props: {
       tags: [
-        ...new Set(posts.map((post: any) => post.frontmatter.tags).flat(2)),
+        ...new Set(
+          tags
+            .map((tag: any) => ({
+              params: {
+                tag: tag.toLowerCase(),
+              },
+            }))
+            .concat(
+              hipens.map((tag: string) => ({
+                params: { tag: tag.toLowerCase() },
+              }))
+            )
+        ),
       ],
-      // totalCount: posts.length,
     },
   };
 };

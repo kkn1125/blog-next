@@ -1,8 +1,7 @@
 ---
 slug: "/javascript-routing02/"
-layout: post
-modified: 2022-03-14 00:09:35 +0000
 date:   2022-01-28 16:52:37 +0000
+modified: 2023-09-05 13:12:15 +0000
 title:  "[JAVASCRIPT] Vanilla JavaScript로 SPA를 구현해보자 02"
 author: Kimson
 categories: [ javascript ]
@@ -12,13 +11,8 @@ description: "Router 구현
 
 작년 12월 즈음 spa에 관한 이야기를 했었습니다. 그 당시 구현 방식에 대해 짧게 다루어 보았는데요. 궁금하신 분은 링크를 참조하시기 바랍니다. 지금보니 쓸데없이 메서드가 많은 느낌이 들어서 개편?하고자 새롭게 `rotuer`를 만들게 되었습니다."
 featured: true
-hidden: false
 rating: 4.5
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -50,8 +44,8 @@ published: true
 
 ```javascript
 // coreBus.js
-import { Router, Route, Layout, App } from '/cdn/path'
-export { Router, Route, Layout, App }
+import { Router, Route, Layout, App } from "/cdn/path";
+export { Router, Route, Layout, App };
 ```
 
 `import` 후 바로 `export`해줍니다. 사용방식은 `vue`와 유사하지만 `vue`를 언급하기에는 너무나도 허접해서 민망합니다 :(
@@ -64,45 +58,41 @@ export { Router, Route, Layout, App }
 
 `router`는 아래와 같이 설정합니다.
 
-
-
 ```javascript
 // router.js
-import {Router} from './core/core.js'
+import { Router } from "./core/core.js";
 
-import Home from './views/page/home.js'
-import nav from './views/module/nav.js'
+import Home from "./views/page/home.js";
+import nav from "./views/module/nav.js";
 
 // 페이지 설정
-Router.setPage('pageHash', Home);
+Router.setPage("pageHash", Home);
 
 // 모듈 설정
-Router.setModulePage('templateModuleName', nav);
+Router.setModulePage("templateModuleName", nav);
 
 // page는 약속된 명칭이기 때문에 바꾸면 안됩니다.
 // page부분에는 알아서 페이지가 교체되어 들어갑니다.
-// templateModuleName는 모듈설정에서 지정한 이름을 사용하면 됩니다. 
+// templateModuleName는 모듈설정에서 지정한 이름을 사용하면 됩니다.
 Layout.template(`
     {{templateModuleName}}
     {{page}}
 `);
 ```
 
-
-
 ### route 설정
 
 이제 페이지 설정이 끝났으니 페이지를 생성해주고 페이지를 `hash`방식으로 조작가능하게 해주는 `route` 설정입니다.
 
 ```javascript
-import {Router, Route, Layout} from './core/core.js'
-import router from './routes/router.js'
+import { Router, Route, Layout } from "./core/core.js";
+import router from "./routes/router.js";
 
 Route.init({
-    el: '#app', // index.html에 <div id="app"></div>을 만들어 두어야 합니다.
-    Layout,
-    router, // 대소문자 주의해주세요.
-})
+  el: "#app", // index.html에 <div id="app"></div>을 만들어 두어야 합니다.
+  Layout,
+  router, // 대소문자 주의해주세요.
+});
 ```
 
 ### 각 페이지 설정
@@ -110,42 +100,43 @@ Route.init({
 이제 페이지만 설정해주면 끝이 납니다. `router.js`에서 봤던 import로 각 페이지들 불러오는 것을 작동되도록 하기 위해서입니다.
 
 ```javascript
-import {Router} from '../../core/core.js'
+import { Router } from "../../core/core.js";
 
-import homesub from './home.sub.js'
+import homesub from "./home.sub.js";
 
-homesub.parent = '#home';
-Router.setPage('homesub', homesub);
+homesub.parent = "#home";
+Router.setPage("homesub", homesub);
 
 export default {
-    title: 'Home',
-    // 1. 즉시 실행함수 (onclick 등 이벤트 속성 사용시)
-    counter: `(()=>{
+  title: "Home",
+  // 1. 즉시 실행함수 (onclick 등 이벤트 속성 사용시)
+  counter: `(()=>{
         if(isNaN(this.innerHTML)) this.innerHTML = 1;
         else this.innerHTML = parseInt(this.innerHTML)+1
     })()`,
-    // 2. 구문만 (onclick 등 이벤트 속성 사용시)
-    counter: `if(isNaN(this.innerHTML)) this.innerHTML = 1;
+  // 2. 구문만 (onclick 등 이벤트 속성 사용시)
+  counter: `if(isNaN(this.innerHTML)) this.innerHTML = 1;
         else this.innerHTML = parseInt(this.innerHTML)+1`,
-    // 3. 클로저 사용 (onclick 등 이벤트 속성 사용시)
-    counter: `{
+  // 3. 클로저 사용 (onclick 등 이벤트 속성 사용시)
+  counter: `{
         if(isNaN(this.innerHTML)) this.innerHTML = 1;
         else this.innerHTML = parseInt(this.innerHTML)+1
     }`,
-    capitalize: () => this.title.charAt(0).toUpperCase() + this.title.slice(1),
-    module: {
-        // 페이지에 종속된 하위 페이지를 만들기 위함
-        homesub: Router['homesub']
-    },
-    template(){ // 모듈, 페이지, 종속 페이지 모두 동일하게 있어야합니다. (필수)
+  capitalize: () => this.title.charAt(0).toUpperCase() + this.title.slice(1),
+  module: {
+    // 페이지에 종속된 하위 페이지를 만들기 위함
+    homesub: Router["homesub"],
+  },
+  template() {
+    // 모듈, 페이지, 종속 페이지 모두 동일하게 있어야합니다. (필수)
     // return 에서 템플릿 리터럴 안에 해당 default에서 지정한 속성을 this로 사용할 수 있습니다.
-        return `
+    return `
             <div>${this.title}</div>
             <div>${this.capitalize()}</div>
             <div onclick="${this.counter}">0</div>
-        `
-    }
-}
+        `;
+  },
+};
 ```
 
 `default`내에 작성한 속성은 `return`시에 `this`로 가져와 사용할 수 있습니다. `this.title` 혹은 메서드인 `this.capitalize()` 또한 사용 가능합니다.
@@ -160,7 +151,7 @@ export default {
 
 조금이나마 흥미롭다면 👏
 
------
+---
 
 📚 함께 보면 좋은 내용
 

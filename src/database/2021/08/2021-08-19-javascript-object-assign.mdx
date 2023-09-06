@@ -1,8 +1,7 @@
 ---
 slug: "/javascript-object-assign/"
-layout: post
-modified: 2022-03-14 00:09:35 +0000
 date:   2021-08-19 20:01:02 +0000
+modified: 2023-09-05 12:36:23 +0000
 title:  "[JAVASCRIPT] Object assign 활용하기"
 author: Kimson
 categories: [ javascript ]
@@ -13,13 +12,8 @@ description: "Object assign 메서드
 `assign`이라는 메서드는 이렇습니다. 대상 객체로부터 열거 가능한 하나 이상의 속성들을 목표 객체로 복사합니다. 수정된 객체를 반환하는 특징이있습니다.
 기본적으로 사용방법은 위와 같이 간단합니다. 만일 특정 요소에 `style`이나 `attribute`를 여러개 설정하려면 `setAttribute('property','value')`로 단일 요소를 작성하거나, `el.style.property = value`로 스타일을 단일로 지정하였습니다."
 featured: false
-hidden: false
 rating: 4
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -38,39 +32,38 @@ console.log(result); // { a: 1, b: 4, c: 7 }
 
 기본적으로 사용방법은 위와 같이 간단합니다. 만일 특정 요소에 `style`이나 `attribute`를 여러개 설정하려면 `setAttribute('property','value')`로 단일 요소를 작성하거나, `el.style.property = value`로 스타일을 단일로 지정하였습니다.
 
-이제 `jquery`처럼 여러 속성을 더 단순하게 설정할 수 있게 됐습니다. 
+이제 `jquery`처럼 여러 속성을 더 단순하게 설정할 수 있게 됐습니다.
 
 ```javascript
-const element = document.getElementById('test');
+const element = document.getElementById("test");
 
-Object.assign(element.style,{
-    backgroundColor: 'blue',
-    color: 'coral',
-    fontSize: '14px',
-    // ...
+Object.assign(element.style, {
+  backgroundColor: "blue",
+  color: "coral",
+  fontSize: "14px",
+  // ...
 });
 
 Object.assign(element, {
-    class: "test awesome",
-    id: "first",
-    style: `
+  class: "test awesome",
+  id: "first",
+  style: `
         color: blue;
         background: yellow;
-    `
+    `,
 });
 
 // setAttributes 함수 생성
-function setAttributes (el, options={}){
-    Object.keys(options).forEach(x=>{
-            console.log(options[x])
-            el.setAttribute(x, options[x])
-        }
-    );
+function setAttributes(el, options = {}) {
+  Object.keys(options).forEach((x) => {
+    console.log(options[x]);
+    el.setAttribute(x, options[x]);
+  });
 }
 
 setAttributes(document.body, {
-    class: 'test',
-    id: 'tom'
+  class: "test",
+  id: "tom",
 });
 ```
 
@@ -87,7 +80,7 @@ document.body.style.cssText = `
     background-color: red;
     color: blue;
     opacity: .5;
-`
+`;
 ```
 
 > 참고 사이트

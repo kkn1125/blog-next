@@ -1,8 +1,7 @@
 ---
 slug: "/javascript-detecting-scroll-direction/"
-layout: post
-modified: 2022-03-14 00:09:35 +0000
 date:   2021-09-21 20:23:12 +0000
+modified: 2023-09-05 12:40:16 +0000
 title:  "[JAVASCRIPT] 스크롤 방향 감지 (Detecting scroll direction)"
 author: Kimson
 categories: [ javascript ]
@@ -14,12 +13,8 @@ description: "스크롤 방향 감지
 
 현재 작업 중인 프로젝트에 필요해서 생각하다보니 여기에 적용하는 중에 기록용으로 남깁니다."
 featured: false
-hidden: false
 rating: 3.5
-toc: true
 profile: false
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -40,10 +35,10 @@ published: true
 ```javascript
 let before = [];
 
-window.addEventListener('scroll',(ev)=>{
-	if(before.pop() < window.scrollY) console.log("Down Scroll");
-	else console.log("Up Scroll");
-	before.push(window.scrollY);
+window.addEventListener("scroll", (ev) => {
+  if (before.pop() < window.scrollY) console.log("Down Scroll");
+  else console.log("Up Scroll");
+  before.push(window.scrollY);
 });
 ```
 
@@ -52,9 +47,9 @@ window.addEventListener('scroll',(ev)=>{
 ```javascript
 let before = 0;
 
-window.addEventListener('scroll',(ev)=>{
-	if(before < window.scrollY) console.log("Down Scroll");
-	else console.log("Up Scroll");
-	before = window.scrollY;
+window.addEventListener("scroll", (ev) => {
+  if (before < window.scrollY) console.log("Down Scroll");
+  else console.log("Up Scroll");
+  before = window.scrollY;
 });
 ```

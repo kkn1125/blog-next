@@ -1,8 +1,7 @@
 ---
 slug: "/java-timestamp01/"
-layout: post
-modified: 2022-03-23 16:02:35 +0000
 date:   2021-07-03 16:21:27 +0000
+modified: 2022-03-23 16:02:35 +0000
 title:  "[JAVA] Timestamp 시간 나타내기"
 author: Kimson
 categories: [ java ]
@@ -11,9 +10,7 @@ image: /assets/images/post/mysql_cover.png
 description: "MySQL Timestamp타입 웹에서 시간 표기  
 남의 코드를 하나씩 뜯어보며 공부하는 방식을 취하는데 반해 생각없이 관습적으로 따라 쓰는 경우가 종종 있습니다."
 featured: false
-hidden: false
 rating: 4
-toc: false
 published: true
 ---
 
@@ -30,8 +27,6 @@ published: true
 나아가서 시간에 대한 포멧은 `SimpleDateFormat` 클래스로 쉽게 조작가능합니다.
 
 아주 간단하게 `MySQL`에서 `timestamp`타입을 지정한 것이 `java`에도 `timestamp`라는 타입이 있어 이것으로 선언하고 `SimpleDateFormat`으로 쉽게 표시 가능했습니다.
-
-
 
 ```java
 import java.text.SimpleDateFormat;
@@ -58,8 +53,6 @@ public class HomeController {
 ```html
 <%= formedTime %> 0000년 00월 00일 00:00
 ```
-
-
 
 다시보니 너무 내용이 부실해서 예제를 좀 바꿨습니다. 위에서 누락된 설명은 `service`에서 받아온 `board`의 `regdate`필드인데요. `regdate`는 `mysql`에서 `timestamp`타입으로 작성되어 있습니다.
 

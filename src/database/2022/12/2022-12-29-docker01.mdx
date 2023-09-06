@@ -1,8 +1,7 @@
 ---
 slug: "/docker01/"
-layout: post
-modified: 2023-04-08 16:57:33 +0000
 date: 2022-12-29 00:19:48 +0000
+modified: 2023-09-05 13:20:58 +0000
 title: "[DOCKER] docker-compose로 여러 컨테이너 관리하기"
 author: Kimson
 categories: [docker]
@@ -17,13 +16,8 @@ description: "도커를 어느정도 알고 이 글을 찾으셨으리라 짐작
 2. 각 서버별 환경변수를 조금씩 다르게 주어야합니다.
 3. relay server가 2개 이상이라면 서로 통신하는지 테스트해야합니다."
 featured: true
-hidden: false
 rating: 4.5
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -67,33 +61,33 @@ docker-compose를 사용하기위해 yml파일을 작성해야하는데요. 여�
 version: "3.8" # 3이라고하면 3버전의 최신 버전을 적용한다고 합니다.
 
 services:
-# 이제 만들고자 하는 컨테이너를 등록하는 곳입니다.
-# docker-compose up -d 명령을 하게 되면 container로 등록되는 녀석들입니다.
- api_server:
-  image: node:lts
-  command: nodemon index.js
-  build:
-   context: .
-   dockerfile: ./backend/Dockerfile
-  ports:
-   - 3001:3001
-  working_dir: /home/
-  volumes:
-   - ./backend/:/home/
-  environment:
-   HOST: 0.0.0.0
-   PORT: <port_number>
-   NODE_ENV: production
-   DB_HOST: <host>
-   DB_PORT: 3306
-   DB_DATABASE: db_name
-   DB_USER: <user_name>
-   DB_PASS: <password>
-   SOCKET_HOS: <socket_host>
-   RELAY_HOST: <relay_host>
- 
- other_server:
-   # ...
+  # 이제 만들고자 하는 컨테이너를 등록하는 곳입니다.
+  # docker-compose up -d 명령을 하게 되면 container로 등록되는 녀석들입니다.
+  api_server:
+    image: node:lts
+    command: nodemon index.js
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+    ports:
+      - 3001:3001
+    working_dir: /home/
+    volumes:
+      - ./backend/:/home/
+    environment:
+      HOST: 0.0.0.0
+      PORT: <port_number>
+      NODE_ENV: production
+      DB_HOST: <host>
+      DB_PORT: 3306
+      DB_DATABASE: db_name
+      DB_USER: <user_name>
+      DB_PASS: <password>
+      SOCKET_HOS: <socket_host>
+      RELAY_HOST: <relay_host>
+
+  other_server:
+    # ...
 ```
 
 위의 예시 아래 11개의 컨테이너가 더 있지만 속성 값만 다르고 구조가 같기에 생략합니다. 하나 씩 뜯어보겠습니다. 처음보면 이해하기 힘든 것을 아니까요.

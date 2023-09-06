@@ -1,8 +1,7 @@
 ---
 slug: "/spring-jdbc-template01/"
-layout: post
-modified: 2022-03-14 00:09:35 +0000
 date:   2021-10-19 18:23:12 +0000
+modified: 2023-09-05 12:42:10 +0000
 title:  "[SPRING] JDBC Template 사용 기록"
 author: Kimson
 categories: [ spring ]
@@ -14,12 +13,8 @@ description: "JDBC Template 사용법
 
 MyBatis를 spring-boot에서는 간단하게 사용했었지만 spring에서는 Mybatis를 구현해 본 적이 없어서 이것저것 하던 중 jdbc template도 한 번 써봐야겠다 싶어서 사용법만 기록하려합니다."
 featured: false
-hidden: false
 rating: 4.5
-toc: true
 profile: false
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -31,7 +26,7 @@ MyBatis를 spring-boot에서는 간단하게 사용했었지만 spring에서는 
 
 ## RootConfig 설정
 
-```java
+```java showLineNumbers
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = {"com.test.web"})
@@ -53,7 +48,7 @@ RootConfig로 db를 연결하고 datasource를 받아 사용하려합니다.
 
 ## template 사용전
 
-```java
+```java showLineNumbers
 @Repository
 public class UserDao implements DAOImpl<User>
 {
@@ -103,7 +98,7 @@ template을 쓰기 전에는 각 메서드를 만들때마다 연결하고 연�
 
 ## template 사용 후
 
-```java
+```java showLineNumbers
 @Repository
 public class UserDao implements DAOImpl<User>
 {
@@ -135,7 +130,7 @@ public class UserDao implements DAOImpl<User>
 
 JPA를 배워서 나중에는 MyBatis 등 여러가지를 비교하는 포스팅을 할 예정입니다. 많이 먼 이야기지만요...
 
-```java
+```java showLineNumbers
 @ComponentScan(basePackages = {"com.test.web"})
 @Controller
 @RequestMapping("/")

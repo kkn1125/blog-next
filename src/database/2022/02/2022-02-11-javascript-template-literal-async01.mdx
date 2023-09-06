@@ -1,8 +1,7 @@
 ---
 slug: "/javascript-template-literal-async01/"
-layout: post
-modified: 2022-03-14 00:09:35 +0000
 date:   2022-02-11 15:17:59 +0000
+modified: 2023-09-05 13:12:39 +0000
 title:  "[JAVASCRIPT] 템플릿 리터럴에서 비동기로 내용을 넣어보자"
 author: Kimson
 categories: [ javascript ]
@@ -12,13 +11,8 @@ description: "템플릿 리터럴
 
 템플릿 리터럴은 내장된 표현식을 허용하는 문자열 리터럴입니다. 여러 줄로 이뤄진 문자열과 문자 보간기능을 사용할 수 있습니다. 이전 버전 ES2015사양 명세에서는 `template strings(템플릿 문자열)`이라 불렀습니다."
 featured: true
-hidden: false
 rating: 4.5
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -32,9 +26,7 @@ published: true
 
 ```javascript
 // 문자열 줄바꿈 시 😣
-const str = '나는'
-    + '킴슨'
-    + '입니다';
+const str = "나는" + "킴슨" + "입니다";
 
 // Template Literal 😄
 const str = `나는
@@ -58,31 +50,33 @@ const str = `나는 ${user.name}입니다.`;
 함수에 바로 붙여 사용할 수 있는데요. 기존에는 `test`라는 함수가 있으면 `test()`로 함수를 호출 했습니다. 아래의 예제를 보면 괄호 대신 백 틱(\`)으로 호출하는데 (test\`blah blah...\`) 이를 태그가 지정된 템플릿, 태그 표현식이라 합니다.
 
 ```javascript
-const name = 'kimson', age = 30, emoji = '😁';
+const name = "kimson",
+  age = 30,
+  emoji = "😁";
 
-function test(str, nameExp, ageExp, emojiExp){
-    const str0 = str[0];
-    const str1 = str[1];
-    const str2 = str[2];
-    /**
-     * 3개의 변수만 지정했지만
-     * 기술적으로 str의 길이는 4입니다.
-     * 이유는 이모지 다음에
-     * ''공백이 하나 있기 때문입니다.
-     */
+function test(str, nameExp, ageExp, emojiExp) {
+  const str0 = str[0];
+  const str1 = str[1];
+  const str2 = str[2];
+  /**
+   * 3개의 변수만 지정했지만
+   * 기술적으로 str의 길이는 4입니다.
+   * 이유는 이모지 다음에
+   * ''공백이 하나 있기 때문입니다.
+   */
 
-    let validAge;
+  let validAge;
 
-    if(ageExp>30){
-        validAge = '30이상';
-    } else {
-        validAge = '30미만';
-    }
+  if (ageExp > 30) {
+    validAge = "30이상";
+  } else {
+    validAge = "30미만";
+  }
 
-    return str0 + nameExp + str1 + validAge + str2 + emojiExp;
+  return str0 + nameExp + str1 + validAge + str2 + emojiExp;
 }
 
-test`나는 ${ name }입니다. 나이는 ${ age }. ${ emoji }`;
+test`나는 ${name}입니다. 나이는 ${age}. ${emoji}`;
 
 // '나는 kimson입니다. 나이는 30미만. 😁'
 ```
@@ -90,23 +84,23 @@ test`나는 ${ name }입니다. 나이는 ${ age }. ${ emoji }`;
 좀 더 나아가 활용법을 보겠습니다.
 
 ```javascript
-function template(str, ...keys){
-    console.log(str.raw); // 문자 배열의 escape 되지 않은 원시 문자열을 액세스 할 수 있습니다.
-    return (function (...values){
-        let dict = values[values.length - 1] || {};
-        let result = [str[0]];
+function template(str, ...keys) {
+  console.log(str.raw); // 문자 배열의 escape 되지 않은 원시 문자열을 액세스 할 수 있습니다.
+  return function (...values) {
+    let dict = values[values.length - 1] || {};
+    let result = [str[0]];
 
-        keys.forEach(function (key, i){
-            let value = Number.isInteger(key) ? values[key] : dict[key];
-            result.push(value, str[i+1]);
-        });
-
-        return result.join(' ');
+    keys.forEach(function (key, i) {
+      let value = Number.isInteger(key) ? values[key] : dict[key];
+      result.push(value, str[i + 1]);
     });
+
+    return result.join(" ");
+  };
 }
 
-let test1 = template`${0}${1}${0}${'nation'}${1}${0}`;
-test1('kimson', 'wow', {nation: 'korea'});
+let test1 = template`${0}${1}${0}${"nation"}${1}${0}`;
+test1("kimson", "wow", { nation: "korea" });
 
 // ' kimson  wow  kimson  korea  wow  kimson '
 ```
@@ -119,11 +113,11 @@ test1('kimson', 'wow', {nation: 'korea'});
 
 ```javascript
 // template 함수...
-let test1 = (function (...values){
-    // 내용들 ...
-});
+let test1 = function (...values) {
+  // 내용들 ...
+};
 
-test1('kimson', 'wow', {nation: 'korea'});
+test1("kimson", "wow", { nation: "korea" });
 ```
 
 이 상태에서 함수를 리턴 받아 함수가 된 `test1`을 인자와 함께 호출하게 됩니다.
@@ -178,34 +172,42 @@ test1('kimson', 'wow', {nation: 'korea'});
 의사코드를 자바스크립트로 구현해보았습니다.
 
 ```javascript
-function templateInsertAsync({...options}){
-    const id = new Date().getTime().toString().split('').map(x=>String.fromCharCode(65+parseInt(x))).join('');
-    
-    (async function(){
-        let result;
+function templateInsertAsync({ ...options }) {
+  const id = new Date()
+    .getTime()
+    .toString()
+    .split("")
+    .map((x) => String.fromCharCode(65 + parseInt(x)))
+    .join("");
 
-        if(options.string) result = options.string;
+  (async function () {
+    let result;
 
-        if(options.url){
-            let res = await fetch(options.url);
-            let data = await res.text();
-            result = data;
-        }
+    if (options.string) result = options.string;
 
-        setTimeout(() => {
-            let target = document.querySelector(`#${id}`);
-            target.insertAdjacentHTML('afterend', `<span class="delay-injection">${result}</span>`);
-            target.remove();
-        }, options.delay);
-    })();
-    
-    return `<temp id="${id}"></temp>`;
+    if (options.url) {
+      let res = await fetch(options.url);
+      let data = await res.text();
+      result = data;
+    }
+
+    setTimeout(() => {
+      let target = document.querySelector(`#${id}`);
+      target.insertAdjacentHTML(
+        "afterend",
+        `<span class="delay-injection">${result}</span>`
+      );
+      target.remove();
+    }, options.delay);
+  })();
+
+  return `<temp id="${id}"></temp>`;
 }
 
 templateInsertAsync({
-    string: '출력 테스트',
-    // url: '',
-    delay: 0
+  string: "출력 테스트",
+  // url: '',
+  delay: 0,
 });
 
 // <temp id="id"></temp> => <span class="delay-injection">출력 테스트</span>
@@ -218,7 +220,7 @@ templateInsertAsync({
 ```javascript
 function templateInsertAsync({...options}){
     const id = new Date().getTime().toString().split('').map(x=>String.fromCharCode(65+parseInt(x))).join('');
-    
+
     (async function(){
         let result;
 
@@ -260,8 +262,8 @@ templateInsertAsync({
 
 아래에는 잘 정리된 `MDN Web Docs`링크를 올렸습니다. 더 자세한 내용은 참고바랍니다.
 
------
+---
 
 📚 함께 보면 좋은 내용
 
-[MDN Web Docs::Template Literals](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Template_literals 'MDN Web Docs::Template Literal')
+[MDN Web Docs::Template Literals](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Template_literals "MDN Web Docs::Template Literal")

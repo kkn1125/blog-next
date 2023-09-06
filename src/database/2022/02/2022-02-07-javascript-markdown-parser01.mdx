@@ -1,8 +1,7 @@
 ---
 slug: "/javascript-markdown-parser01/"
-layout: post
-modified: 2022-03-14 00:09:35 +0000
 date:   2022-02-07 19:53:39 +0000
+modified: 2023-09-05 13:12:32 +0000
 title:  "[JAVASCRIPT] Markdown Parser를 만들어보자 (특히 리스트)"
 author: Kimson
 categories: [ javascript ]
@@ -16,13 +15,8 @@ description: "Markdown Parser를 만들어보자
 
 그런데 페이지 내용을 리터럴 템플릿으로 태그를 하나하나 작성하기가 번거롭기도 하고 시간이 많이 들어 마크다운을 파싱하여 내용을 관리하는게 효율적일 것 같아 필요하게 되었습니다."
 featured: true
-hidden: false
 rating: 4.5
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -72,8 +66,6 @@ published: true
 
 #### 문단 파싱
 
-
-
 문단을 파싱하기 위해 정한 기준은 엔터 (\n)가 두번 이상 들어간 것을 기준으로 했습니다.
 
 ```javascript
@@ -119,15 +111,11 @@ const Markdown = (function (){
 Markdown.parse(mdContents);
 ```
 
-
-
 먼저 내용을 문단으로 나누어 배열을 복사하고 `block`에서 파싱된 내용을 파싱하자마자 지우고 `converted`에 같은 인덱스에 넣는 방법으로 파싱합니다.
 
 해당되는 기호들의 중복 파싱을 하지 않기 위해서 입니다.
 
 ### Heading
-
-
 
 ```javascript
 this.heading = function (){
@@ -142,8 +130,6 @@ this.heading = function (){
 }
 ```
 
-
-
 `ol`, `ul`, `blockquote`를 제외한 나머지를 이런 식으로 변환시키면 `converted`에 변환된 내용만 담기게 되므로 나중에 `join`해서 화면에 렌더해주면 됩니다. 처음 만들어 보시는 분들은 나머지 기능은 한 번 구현해보시면서 익혀보시길...
 
 ### ol과 ul, blockquote
@@ -153,8 +139,6 @@ this.heading = function (){
 나름의 가닥을 잡은 것을 기록하겠습니다.
 
 여러 시도를 해봤지만 배열을 사용해서 스택자료처럼 만드는게 가장 근접한 방식이 아닌가 생각합니다.
-
-
 
 ```javascript
 this.listify = function (){
@@ -167,7 +151,7 @@ this.listify = function (){
             convertedHTML[id] = line.split(\/\n\/gm).filter(x=>x!='').map(li=>{
                 let temp = '';
                 let space = li.match(\/(^\s*)\/)[1];
-                
+
                 indent = space.length;
 
                 if(indent>before){ // 들여쓰기가 늘어날 때
@@ -196,7 +180,7 @@ this.listify = function (){
                 }
 
                 temp += `<li>${li.replace(\/^\s*\-\s*(.+)\/gm, '$1')}</li>`;
-                
+
                 before = indent;
                 return temp;
             }).join('\n');
@@ -213,8 +197,6 @@ this.listify = function (){
 }
 ```
 
-
-
 이렇게 배열에 담고 래핑된 횟수만큼 닫아주고를 반복시키면 쉽게 계층형 리스트화를 할 수 있습니다. 리스트화할 때 `ol`인지 `ul`인지 `blockquote`인지 판별하는 정규식을 짜고 `types`에 넣어주면 래핑되는 태그와 닫는 태그가 알아서 들어가게 됩니다.
 
 조건식에서 어느정도 래핑이 오버되거나 하면 몇 단계는 생략되도록 되어 있습니다. 사용하고자 목적에 따라 분기문을 변경해서 사용하면 되겠습니다.
@@ -225,8 +207,8 @@ this.listify = function (){
 2. 계층형 요소가 있다면 스택자료형으로 래핑하는 방법이 단순하고 조작이 쉽습니다.
 3. 공부차원에서 시도했지만 라이브러리 사용하는게 최고입니다. 😅
 
------
+---
 
 📚 함께 보면 좋은 내용
 
-[위키백과::스택](https://ko.wikipedia.org/wiki/%EC%8A%A4%ED%83%9D '위키::스택')
+[위키백과::스택](https://ko.wikipedia.org/wiki/%EC%8A%A4%ED%83%9D "위키::스택")

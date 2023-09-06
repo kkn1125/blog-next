@@ -1,22 +1,16 @@
 ---
 slug: "/react-study02/"
-layout: post
-modified: 2023-04-08 16:57:33 +0000
 date: 2022-05-13 10:34:26 +0000
-title: '[REACT] React 시작하기 02'
+modified: 2023-09-05 13:16:57 +0000
+title: "[REACT] React 시작하기 02"
 author: Kimson
 categories: [react]
 image: /assets/images/post/covers/TIL-react.png
 tags: [react, basic, til]
-description: 'JSX와 특징 이 글은 리액트 홈페이지의 내용을 토대로 작성되었습니다. React 시작하기 01 에 이어서 작성 중입니다. 버전이 `v18.x`로 업데이트된 시점에서 변경된 부분과 자세한 내용을 적기 위해서 이전 포스팅과 겹치는 이야기가 있지만 양해바랍니다. `JSX`와 `Root`의 지정, `어트리뷰트` 사용, `JSX자식 요소` 정의에 대해 정리해보려합니다.'
+description: "JSX와 특징 이 글은 리액트 홈페이지의 내용을 토대로 작성되었습니다. React 시작하기 01 에 이어서 작성 중입니다. 버전이 `v18.x`로 업데이트된 시점에서 변경된 부분과 자세한 내용을 적기 위해서 이전 포스팅과 겹치는 이야기가 있지만 양해바랍니다. `JSX`와 `Root`의 지정, `어트리뷰트` 사용, `JSX자식 요소` 정의에 대해 정리해보려합니다."
 featured: true
-hidden: false
 rating: 4
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ''
 published: true
 ---
 
@@ -46,15 +40,15 @@ const template = <div>hello kimson!, {element}</div>;
 ```html
 <!DOCTYPE html>
 <html lang="ko">
-    <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>JSX Test</title>
-    </head>
-    <body>
-        <div id="root"></div>
-    </body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JSX Test</title>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
 </html>
 ```
 
@@ -116,18 +110,18 @@ const elementWithAttrs = <div {...attrs}>Lorem ipsum dolor sit amet.</div>;
 
 ```jsx
 // 빈 태그는 "/"로 항상 닫습니다.
-const element = <img src="/assets/path" alt="name" />;
+const element = <img src='/assets/path' alt='name' />;
 ```
 
 태그 내 자식요소가 포함되어 있다면 소괄호로 감싸 정의해야합니다.
 
 ```jsx
 const element = (
-    <div>
-        <span>children 1</span>
-        <span>children 2</span>
-        <span>children 3</span>
-    </div>
+  <div>
+    <span>children 1</span>
+    <span>children 2</span>
+    <span>children 3</span>
+  </div>
 );
 ```
 

@@ -1,8 +1,7 @@
 ---
 slug: "/javascript-base-calendar03/"
-layout: post
-modified: 2022-03-14 00:09:35 +0000
 date: 2021-01-20 21:25:04 +0000
+modified: 2022-03-14 00:09:35 +0000
 title: "[JAVASCRIPT] 달력 만들기 (달력 기본 틀)"
 author: Kimson
 categories: [javascript]
@@ -10,13 +9,8 @@ image: /assets/images/post/covers/TIL-javascript.png
 tags: [calendar, backup, til]
 description: "달력 만들기 날짜 관련 변수 선언 저번 글에서 var today = new Date();로 현재 날짜를 전역변수로 저장했었습니다."
 featured: false
-hidden: false
 rating: 3
-toc: true
 profile: true
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -24,7 +18,7 @@ published: true
 
 ## 날짜 관련 변수 선언
 
-```javascript
+```javascript showLineNumbers
 // 달력, 날짜 관련 변수 선언
 var calendar = document.querySelector("#calendar");
 var select_ym = document.querySelector("#select_ym");
@@ -49,7 +43,7 @@ var v_month = today.getMonth(); // 이번 달 (변함)
 
 ## 달력을 만들자
 
-```javascript
+```javascript showLineNumbers
 function calendar_make(a, b) {
   if (a != undefined && b != undefined) {
     // 인수를 전달 받을 시 (달력 넘기기)
@@ -102,7 +96,7 @@ last_date에서 v_month+1을 한 이유는 입력한 달의 0은 입력한 달�
 
 즉, 내가 2월의 마지막 일인 28일을 반환 받고 싶다면 아래처럼 불러올수 있다.
 
-```javascript
+```javascript showLineNumbers
 var newdate = new Date(2021, 2 + 1, 0).getDate(); // 2월의 마지막 일수를 반환 (28일)
 ```
 
@@ -112,7 +106,7 @@ var newdate = new Date(2021, 2 + 1, 0).getDate(); // 2월의 마지막 일수를
 
 간략히 하자면 getDate는 일 수를, getDay는 요일을 나타냅니다. (0=>일, 1=>월, 2=>화 ... 6=>토)
 
-```javascript
+```javascript showLineNumbers
 var firstday = new Date(2021, 2, 1).getDate(); // 2월의 1일이 반환
 
 var firstday = new Date(2021, 2, 1).getDay(); // 2021년 2월의 시작 요일 => "5" (금요일)
@@ -132,14 +126,9 @@ for문으로 줄바꿈한 곳에서 insertCell로 시작요일까지의 빈칸�
 
 아래 예시를 보시면 무슨 말인지 이해 되실겁니다.
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img src='/assets/images/post/back/back03.png' alt='sample' title='sample' />
-    <figcaption>kimson</figcaption>
-  </span>
-</figure>
+![kimson](/assets/images/post/back/back03.png)
 
-```html
+```html showLineNumbers
 <!DOCTYPE html>
 <html lang="ko">
   <head>

@@ -1,8 +1,7 @@
 ---
 slug: "/django-model-form02/"
-layout: post
-modified: 2023-04-08 16:57:33 +0000
 date:   2022-03-23 13:27:18 +0000
+modified: 2023-09-05 13:16:01 +0000
 title:  "[DJANGO] ModelForm 02. 회원 기존 정보 덮어쓰기"
 author: Kimson
 categories: [ django ]
@@ -14,13 +13,8 @@ description: "기존 정보에 수정된 정보를 덮어쓰기
 
 위의 형식이 꽤 번거로웠습니다. 스프링에서는 form data를 전송하면 request를 보낼 때 알아서 객체에 담아줬습니다. 분명 장고에도 있을 거라는 예감은 틀리지 않았습니다."
 featured: true
-hidden: false
 rating: 4.5
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -170,7 +164,7 @@ def update(request):
     # 생략
     user = User.objects.filter(num=num).get(num=num)
     origin_password = user.password         # +
-    
+
     if request.method == 'GET':
         # 생략
 
@@ -190,7 +184,7 @@ def update(request):
 
 찾아보면 분명히 간결하고 편리한 방법이 있을 것이라 생각합니다. 포스팅에 포함된 추측성 내용은 추후에 알게되면 정정해서 다시 게재할 예정입니다.
 
------
+---
 
 📚 함께 보면 좋은 내용
 
@@ -198,6 +192,6 @@ def update(request):
 
 [sosin님 :: Django Validator / 장고 유효성 검증 / Form에서 유효성 검증하기](https://programmers-sosin.tistory.com/entry/Django-Validator-%EC%9E%A5%EA%B3%A0-%EC%9C%A0%ED%9A%A8%EC%84%B1-%EA%B2%80%EC%A6%9D-Form%EC%97%90%EC%84%9C-%EC%9C%A0%ED%9A%A8%EC%84%B1-%EA%B2%80%EC%A6%9D%ED%95%98%EA%B8%B0)
 
-[반원_SemiCircle님 :: django - 로그인 처리 (세션 이용)](https://gosmcom.tistory.com/143)
+[반원\_SemiCircle님 :: django - 로그인 처리 (세션 이용)](https://gosmcom.tistory.com/143)
 
 [Stackoverflow :: django - Show initial value for FileField in django-template](https://stackoverflow.com/questions/37475302/show-initial-value-for-filefield-in-django-template)

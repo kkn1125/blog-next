@@ -1,8 +1,7 @@
 ---
 slug: "/spring-tiles-error01/"
-layout: post
-modified: 2022-03-14 00:09:35 +0000
 date:   2021-12-13 17:16:37 +0000
+modified: 2023-09-05 12:43:55 +0000
 title:  "[SPRING] Tiles 설정 시 경로에 있는 파일을 못 찾을 때"
 author: Kimson
 categories: [ spring ]
@@ -16,13 +15,8 @@ description: "Tiles 파일 못 찾을 때
 
 분명히 `inc`폴더에 헤더나 푸터 파일을 생성하고 불러오면 안되는 현상이 발생했습니다."
 featured: false
-hidden: false
 rating: 4
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -43,7 +37,7 @@ published: true
     <definition name="baseTemp" template="/WEB-INF/views/inc/layout.jsp">
     	<put-attribute name="title" value="Home" />
     </definition>
-    
+
     <definition name="root.*" extends="baseTemp">
     	<put-attribute name="title" value="Home" />
         <put-attribute name="body" value="/WEB-INF/views/{1}.jsp" />

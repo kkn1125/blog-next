@@ -1,8 +1,7 @@
 ---
 slug: "/spring-hierarchical-board01/"
-layout: post
-modified: 2022-03-14 00:09:35 +0000
 date:   2021-08-09 13:19:05 +0000
+modified: 2023-09-05 12:36:27 +0000
 title:  "[SPRING] 계층형 게시판 만들기"
 author: Kimson
 categories: [ spring ]
@@ -23,16 +22,8 @@ Layer의 개념
 `bid`는 `primary key`인 `id`와 동일해야합니다.
 `ordered`와 `layer`는 새 글일 경우 0으로 기본값을 가집니다."
 featured: false
-hidden: false
 rating: 4.5
-toc: true
 profile: false
-istop: true
-keysum: true
-keywords: '
-SQL max(name) : name칼럼의 최대 값을 반환하는 함수.
-_SQL ifnull(value, falseValue) : value의 값이 null이면 0을, 아니면 value를 반환하는 함수.
-'
 published: true
 ---
 
@@ -49,7 +40,7 @@ published: true
 ## 순서와 위계의 변화
 
 > `bid`는 `primary key`인 `id`와 동일해야합니다.
-> 
+>
 > `ordered`와 `layer`는 새 글일 경우 0으로 기본값을 가집니다.
 
 ### 테이블 설정
@@ -72,13 +63,12 @@ CREATE TABLE IF NOT EXISTS board(
 
 ### 원글 추가
 
-
-|Col|Value|Info|
-|---|---|---|
-|id|1|원글|
-|bid|1|^|
-|ordered|0|^|
-|layer|0|^|
+| Col     | Value | Info |
+| ------- | ----- | ---- |
+| id      | 1     | 원글 |
+| bid     | 1     | ^    |
+| ordered | 0     | ^    |
+| layer   | 0     | ^    |
 
 ```sql
 INSERT INTO board (bid, title, contents, author)
@@ -95,7 +85,6 @@ bid와 나머지 정보를 적게되는데, board테이블에서 `ordered`와 `l
 
 auto_increment가 1개만 지정되기 때문에 bid는 select 문으로 자신 테이블의 `id`칼럼을 참조하여 자동 증가하도록 하였습니다.
 
-
 ![계층형게시판](/assets/images/post/hierarchical/hierarchical04.png)
 
 ![계층형게시판](/assets/images/post/hierarchical/hierarchical05.png)
@@ -104,13 +93,12 @@ auto_increment가 1개만 지정되기 때문에 bid는 select 문으로 자신 
 
 ### 하위 글 추가
 
-
-|Col|Value|Info|
-|---|---|---|
-|id|2|auto_increment|
-|bid|1|(**origin**) bid|
-|ordered|1|(**origin**) ordered+1|
-|layer|1|(**origin**) layer+1|
+| Col     | Value | Info                   |
+| ------- | ----- | ---------------------- |
+| id      | 2     | auto_increment         |
+| bid     | 1     | (**origin**) bid       |
+| ordered | 1     | (**origin**) ordered+1 |
+| layer   | 1     | (**origin**) layer+1   |
 
 매우 단순합니다. 원글의 ordered와 layer의 1 증가한 값을 가집니다.
 
@@ -185,7 +173,7 @@ SELECT * FROM board ORDER BY bid DESC, ordered;
 ![계층형게시판](/assets/images/post/hierarchical/hierarchical13.png)
 ![계층형게시판](/assets/images/post/hierarchical/hierarchical14.png)
 
------
+---
 
 처음 계층형에 대한 내용을 접했을 때 굉장히 혼란스러웠습니다. 막상 따라해보고 익히면 아무것도 아닌데 경험이 없을 때는 계속 피하고 주저하게 됩니다.
 

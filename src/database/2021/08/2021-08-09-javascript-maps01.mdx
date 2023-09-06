@@ -1,8 +1,7 @@
 ---
 slug: "/javascript-maps01/"
-layout: post
-modified: 2022-03-14 00:09:35 +0000
 date:   2021-08-09 13:19:05 +0000
+modified: 2023-09-05 12:36:27 +0000
 title:  "[JAVASCRIPT] Map 객체 사용"
 author: Kimson
 categories: [ javascript ]
@@ -13,13 +12,8 @@ description: "키 기반의 컬렉션
 Set과 비슷하지만 Set은 중복값을 허용하지 않는다는 차이점이 있습니다.  
 Set은 이번 주제가 아니니 다음에 다루도록 하고, Map 객체의 특징과 메서드에 대해 알아보겠습니다."
 featured: false
-hidden: false
 rating: 4
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ''
 published: true
 ---
 
@@ -30,100 +24,94 @@ Set은 이번 주제가 아니니 다음에 다루도록 하고, Map 객체의 �
 
 ## Map 객체
 
-> [Map][MDN]은 ECMAScript 6에서 소개하는 새로운 데이터 구조 중 하나입니다. key-value쌍으로 저장하며, 저장 순서대로 접근가능합니다. 
+> [Map][MDN]은 ECMAScript 6에서 소개하는 새로운 데이터 구조 중 하나입니다. key-value쌍으로 저장하며, 저장 순서대로 접근가능합니다.
 
-[MDN]: https://developer.mozilla.org/ko/docs/Web/JavaScript/Guide/Keyed_collections 'MDN 참조'
+[MDN]: https://developer.mozilla.org/ko/docs/Web/JavaScript/Guide/Keyed_collections "MDN 참조"
 
 ### Map의 메서드
 
 #### `set(key, value)`
 
-
-|Method|Params|Return|
-|---|---|---|
-|set|key, value|Map|
-|**action**|:**key**와 **value**를 추가||
+| Method     | Params                      | Return |
+| ---------- | --------------------------- | ------ |
+| set        | key, value                  | Map    |
+| **action** | :**key**와 **value**를 추가 |        |
 
 ```javascript
 let map = new Map();
 
-map.set('name','kimson'); // value = kimson >> return Map
-map.set('age'); // value = undefined >> return Map
+map.set("name", "kimson"); // value = kimson >> return Map
+map.set("age"); // value = undefined >> return Map
 ```
 
 `set(key, value)`는 `key`만 들어왔을때 `value`가 `undefined`로 지정됩니다.
 
 #### `get(key)`
 
-
-|Method|Params|Return|
-|---|---|---|
-|get|key|string|
-|**action**|:**key**의 **value**를 얻음||
+| Method     | Params                      | Return |
+| ---------- | --------------------------- | ------ |
+| get        | key                         | string |
+| **action** | :**key**의 **value**를 얻음 |        |
 
 ```javascript
-map.get('name'); // return kimson
-map.get('age'); // return undefined
+map.get("name"); // return kimson
+map.get("age"); // return undefined
 ```
 
 #### `delete(key)`
 
-
-|method|Params|Return|
-|---|---|---|
-|delete|key|boolean|
-|**action**|:**key**를 삭제||
+| method     | Params          | Return  |
+| ---------- | --------------- | ------- |
+| delete     | key             | boolean |
+| **action** | :**key**를 삭제 |         |
 
 ```javascript
-map.delete('age'); // return true
-map.delete('nation'); // return false
+map.delete("age"); // return true
+map.delete("nation"); // return false
 ```
 
 #### `has(key)`
 
-
-|method|Params|Return|
-|---|---|---|
-|has|key|boolean|
-|**action**|:**key**가 있는지 여부||
+| method     | Params                 | Return  |
+| ---------- | ---------------------- | ------- |
+| has        | key                    | boolean |
+| **action** | :**key**가 있는지 여부 |         |
 
 ```javascript
-map.has('name'); // return true
-map.has('age'); // return false
+map.has("name"); // return true
+map.has("age"); // return false
 ```
 
 #### `clear()`
 
-
-|method|Params|Return|
-|---|---|---|
-|clear|-|void|
-|**action**|:**Map**객체의 내용 모두 삭제||
+| method     | Params                        | Return |
+| ---------- | ----------------------------- | ------ |
+| clear      | -                             | void   |
+| **action** | :**Map**객체의 내용 모두 삭제 |        |
 
 ```javascript
-map.clear('name'); // return true
-map.clear('age'); // return false
+map.clear("name"); // return true
+map.clear("age"); // return false
 ```
 
 #### `forEach(callback)`
 
-
-|method|Params|Return|
-|---|---|---|
-|forEach|callback(val,key,map)|void|
-|**action**|:**Map** 객체 순회||
+| method     | Params                | Return |
+| ---------- | --------------------- | ------ |
+| forEach    | callback(val,key,map) | void   |
+| **action** | :**Map** 객체 순회    |        |
 
 ```javascript
-map.set('name','kimson');
-map.set('age', 15);
+map.set("name", "kimson");
+map.set("age", 15);
 
-map.forEach((value,key,map)=>{ // value, key, map 순서로 인자를 받음
-    console.log(value); // kimson 15
-    console.log(key); // name age
-    console.log(map); // Map(2) {"name" => "kimson", "age" => 15}
+map.forEach((value, key, map) => {
+  // value, key, map 순서로 인자를 받음
+  console.log(value); // kimson 15
+  console.log(key); // name age
+  console.log(map); // Map(2) {"name" => "kimson", "age" => 15}
 });
 ```
-
 
 ### 그 외 메서드
 

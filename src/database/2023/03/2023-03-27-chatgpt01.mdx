@@ -1,8 +1,7 @@
 ---
 slug: "/chatgpt01/"
-layout: post
-modified: 2023-04-08 16:57:33 +0000
 date: 2023-03-27 01:12:33 +0000
+modified: 2023-09-05 13:22:09 +0000
 title: "[GPT] ChatGPT로 블로그 챗봇을 만들어보자"
 author: Kimson
 categories: [javascript]
@@ -25,13 +24,8 @@ HMAC SHA256 사용
 
 설명 기준은 제가 현재 사용하는 javascript가 될 것 입니다. 아래는 개발 환경에 대한 정보입니다. fastify로 api서버를 구축했다는 가정 하에 진행하겠습니다. (무엇을 사용하던 별 상관은 없습니다.)"
 featured: true
-hidden: false
 rating: 4.5
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -57,21 +51,11 @@ published: true
 
 현재 GPT로 블로그 우측 하단에 버튼을 만들어 테스트용 대화형 인공지능 챗봇을 만들어 둔 상태입니다. 답하는 내용은 GPT 홈페이지에서 제공해주는 무료버전과 동일한 스펙입니다. 하지만 제공되는 GPT와 조금 다른 점은 필자의 블로그만의 정보를 주입해서 서비스 할 수 있다는 차이를 가집니다. 현재 블로그에서 제공하는 챗봇은 "자비스"라는 이름을 가지고 있고, devkimson이 주인이며, 블로그 일정을 알고 있습니다. 블로그 일정은 GPT가 제공하는 무료버전의 token제한으로 많이 가지고 있지는 않습니다. 작년 2월부터 이번 달인 2023년 3월까지의 일정은 모두 챗봇이 가지고 있습니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/227789066-8ccdcfc2-deb0-4322-b29e-39c3288182ba.png" alt="sample" title="sample" />
-   <figcaption>챗봇 결과</figcaption>
-</span>
-</figure>
+![챗봇 결과](https://user-images.githubusercontent.com/71887242/227789066-8ccdcfc2-deb0-4322-b29e-39c3288182ba.png)
 
 챗봇이 자기소개를 하는 모습이 GPT가 제공하는 모습과 다르지요?
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/227789231-90f9ee56-1436-4fc9-b076-4062a50913cb.png" alt="sample" title="sample" />
-   <figcaption>블로그 일정 조회</figcaption>
-</span>
-</figure>
+![블로그 일정 조회](https://user-images.githubusercontent.com/71887242/227789231-90f9ee56-1436-4fc9-b076-4062a50913cb.png)
 
 블로그 일정 또한 제대로 출력을 해 줍니다. 등록일자 또한 정확합니다. 태그가 check가 아닌 일정 또한 읽어주지만, 글을 보고 계신 분들의 시점에 따라 결과는 다를 수 있습니다. 주기적으로 제가 캘린더가 업데이트 하기 때문이지요.
 
@@ -128,7 +112,6 @@ system역할로 content를 넣으면 해당 내용을 기억하고, messages에 
 위 소스코드 예시는 예시일 뿐이고, 위 내용을 토대로 만들어보시기 바랍니다. secret-key는 가급적 환경변수로 사용하시고, 저는 개인적으로 암호화 하여 올려둔 상태입니다. 배포 후 노출여부를 검사하여 openai에서 자동으로 secret key를 갱신하기 때문에 배포 시 노출되지 않았는지 검사하시기 바랍니다.
 
 어떻게보면 학습이지만 굳이 따지자면 저는 주입이라고 말하고 싶네요. 예약사이트 정보를 주입해서 예약가능한 패키지를 검색하는 테스트를 하는 중이지만 잘 되지 않아서 다음에는 fine-tunes에 대해 기회가 된다면 포스팅을 하고 싶습니다.
-
 
 ## 정리하면서
 

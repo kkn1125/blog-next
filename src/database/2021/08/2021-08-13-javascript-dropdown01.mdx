@@ -1,8 +1,7 @@
 ---
 slug: "/javascript-dropdown01/"
-layout: post
-modified: 2022-04-12 15:49:25 +0000
 date:   2021-08-13 13:50:20 +0000
+modified: 2023-09-05 12:36:27 +0000
 title:  "[JAVASCRIPT] 드롭다운 메뉴 구현"
 author: Kimson
 categories: [ javascript ]
@@ -18,13 +17,8 @@ css-tricks 사이트의 Philip Walton의 포스트의 내용을 보고 만들어
 
 포스팅에서 말하고자하는 드롭다운 메뉴는 bootstrap에서 지원하는 드롭다운과 같은 형태를 말합니다. bootstrap에서 지원하는 드롭다운을 모르신다면 boostrap 홈페이지의 컴포넌트를 참고하시길 바랍니다."
 featured: false
-hidden: false
 rating: 4
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ''
 published: true
 ---
 
@@ -63,8 +57,8 @@ published: true
 
 ```javascript
 // 외부 클릭 시 메뉴를 닫는 행위를 작성할 때
-dropdown.addEventListener('click', e => {
-    // hide the menus
+dropdown.addEventListener("click", (e) => {
+  // hide the menus
 });
 ```
 
@@ -72,47 +66,40 @@ dropdown.addEventListener('click', e => {
 
 ```html
 <div id="app">
-    <ul class="dropdown">
-        <li class="toggle">📘</li>
-        <ul class="menu hide">
-            <li class="item">1</li>
-            <li class="item">2</li>
-            <li class="item">3</li>
-        </ul>
+  <ul class="dropdown">
+    <li class="toggle">📘</li>
+    <ul class="menu hide">
+      <li class="item">1</li>
+      <li class="item">2</li>
+      <li class="item">3</li>
     </ul>
+  </ul>
 </div>
 ```
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="/assets/images/post/dropdown/dropdown01.png" alt="sample" title="sample" />
-   <figcaption>kimson</figcaption>
-</span>
-</figure>
+![kimson](/assets/images/post/dropdown/dropdown01.png)
 
 책모양이 있는 `toggle`을 통해 메뉴를 접고, 펼치는 것을 목표로 한다고 가정하겠습니다.
 
 ```javascript
-const $ = e =>
-    document.querySelectorAll(e).length > 1 ?
-    [...document.querySelectorAll(e)]:
-    document.querySelector(e),
+const $ = (e) =>
+    document.querySelectorAll(e).length > 1
+      ? [...document.querySelectorAll(e)]
+      : document.querySelector(e),
+  app = $("#app"),
+  dropdown = $(".dropdown"),
+  toggle = $(".toggle"),
+  menu = $(".menu"),
+  item = $(".item"),
+  isHide = () => menu.classList.contains("hide"),
+  classNameMirror = (toggler) => {
+    toggle.textContent = toggler ? "📖" : "📘";
+    menu.classList.add(toggler ? "show" : "hide");
+    menu.classList.remove(!toggler ? "show" : "hide");
+  },
+  handleDropdownToggle = (e) => classNameMirror(isHide());
 
-    app = $('#app'),
-    dropdown = $('.dropdown'),
-    toggle = $('.toggle'),
-    menu = $('.menu'),
-    item = $('.item'),
-
-    isHide = () => menu.classList.contains('hide'),
-    classNameMirror = toggler => {
-        toggle.textContent = toggler ? '📖' : '📘';
-        menu.classList.add(toggler ? 'show' : 'hide');
-        menu.classList.remove(!toggler ? 'show' : 'hide');
-    },
-    handleDropdownToggle = e => classNameMirror(isHide());
-
-toggle.addEventListener('click', handleDropdownToggle);
+toggle.addEventListener("click", handleDropdownToggle);
 ```
 
 위 코드에서 보면 `handleDropdownToggle`이 제어하는 것을 볼 수 있습니다. 하지만 외부를 클릭하면 대부분의 드롭다운은 접히도록 하는데 아무리 외부를 클릭해도 접히지 않습니다.
@@ -140,12 +127,7 @@ toggle.addEventListener('click', handleDropdownToggle);
 
 버블링은 이벤트 전파가 상위로 전달되는 형태이기 때문에 `toggle`이벤트가 먼저 실행되고 `window`이벤트가 나중에 실행됩니다. 콘솔 트레이스를 찍어보면 쉽게 알 수 있습니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="/assets/images/post/dropdown/dropdown02.png" alt="sample" title="sample" />
-   <figcaption>kimson</figcaption>
-</span>
-</figure>
+![kimson](/assets/images/post/dropdown/dropdown02.png)
 
 이제 버블링에 대한 이야기도 했으니 전파되는 것을 막기만 하면 해결이 됩니다. 이 내용을 [stackoverflow](https://stackoverflow.com/questions/152975/how-do-i-detect-a-click-outside-an-element)에서 하고 있습니다.
 
@@ -157,18 +139,13 @@ const /* ... */,
     };
 ```
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="/assets/images/post/dropdown/dropdown03.png" alt="sample" title="sample" />
-   <figcaption>kimson</figcaption>
-</span>
-</figure>
+![kimson](/assets/images/post/dropdown/dropdown03.png)
 
 > 마무리로 `stopPropagation`과 `preventDefault`의 차이는 단순히 말하자면 전자는 이벤트 전파를 막는 것이고, 후자는 고유한 동작을 중단하는 것입니다.
 
 내용 수정하면서 계속해서 검토하고 읽기 좋은 글을 쓰기위해 노력하고 있습니다. 내용이 알찬 글은 아니지만 이러한 방법을 기록에 남기고, 외부 클릭 감지를 찾으시는 분들에게 조그마한 도움이 되었으면 합니다.
 
------
+---
 
 📚 함께 보면 좋은 내용
 

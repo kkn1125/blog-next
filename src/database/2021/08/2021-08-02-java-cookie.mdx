@@ -1,8 +1,7 @@
 ---
 slug: "/java-cookie/"
-layout: post
-modified: 2022-03-14 00:09:35 +0000
 date:   2021-08-02 17:06:27 +0000
+modified: 2022-03-14 00:09:35 +0000
 title:  "[JAVA] Cookie에 관한 고찰"
 author: Kimson
 categories: [ java ]
@@ -11,9 +10,7 @@ image: /assets/images/post/cookie/cookie.PNG
 description: "Cookie 사용
 쿠키의 특징을 간단하게 알아보면서 내용을 정리하였습니다. 주로 웹 서버에 의해 만들어지고, 서버가 HTTP 응답헤더의 Set-Cookie에 내용을 넣어 전달하면, 이 내용을 브라우저에 저장합니다."
 featured: false
-hidden: false
 rating: 4.5
-toc: true
 published: true
 ---
 
@@ -24,7 +21,7 @@ published: true
 ## Cookie란
 
 > 주로 웹 서버에 의해 만들어지고, 서버가 HTTP 응답헤더의 Set-Cookie에 내용을 넣어 전달하면, 이 내용을 브라우저에 저장합니다.
->식별이나 인증 등에 사용되고 브라우저에서도 document.cookie로 접근 가능합니다.
+> 식별이나 인증 등에 사용되고 브라우저에서도 document.cookie로 접근 가능합니다.
 
 ## Cookie 생성
 
@@ -84,7 +81,7 @@ for(Cookie cookie : cookies) {
 
 # Javascript와 Java에서의 쿠키 읽기 특징
 
->HttpOnly는 특히 브라우저와 서버측에서 가져올수 있는지의 여부가 쟁정이 되지 않나 싶습니다. 즉, 가져오는 주체의 허용 범위라고 이해하였습니다.
+> HttpOnly는 특히 브라우저와 서버측에서 가져올수 있는지의 여부가 쟁정이 되지 않나 싶습니다. 즉, 가져오는 주체의 허용 범위라고 이해하였습니다.
 
 아무리 찾아도 쉽게 설명 된 사이트가 없어 정리하려합니다. 먼저, 자바 코드 입니다.
 
@@ -105,7 +102,7 @@ document.cookie;
 // "" 빈 값
 ```
 
------
+---
 
 크롬기준으로 설명드리겠습니다.
 
@@ -115,6 +112,6 @@ f12 개발자도구를 열었을때 application 탭에서 쿠키를 보면 다�
 
 httponly속성이 true이거나 domain이 다르다면 document.cookie로 값을 가져오지 못하는 것을 알게 되었습니다.
 
------
+---
 
 [Python2 - HttpOnly 속성 참고](https://www.python2.net/questions-200084.htm)

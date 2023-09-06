@@ -1,8 +1,7 @@
 ---
 slug: "/django-model-form01/"
-layout: post
-modified: 2023-04-08 16:57:33 +0000
 date:   2022-03-15 21:17:09 +0000
+modified: 2023-09-05 13:15:51 +0000
 title:  "[DJANGO] ModelForm 01. form valid를 제어 해보자"
 author: Kimson
 categories: [ django ]
@@ -13,13 +12,8 @@ description: "form valid
 form valid 제어
 처음 `ModelForm`을 접했을 때는 무슨 개념인지조차 몰랐는데 현재는 `ModelForm`이 아니면 끔찍하다는 생각이 듭니다. 경우에 따라 form에서 field를 따로 떼어 에러처리 하는 등의 작업이 필요하겠지만 지금은 연습 단계이니 field 별 제어하는 내용은 다음에 다루어 볼 예정입니다."
 featured: true
-hidden: false
 rating: 4.5
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -55,7 +49,7 @@ if form.is_valid():
 
 ##### ModelForm
 
-``` python
+```python
 # ModelForm
 if form.is_valid():
     form.save()
@@ -136,7 +130,7 @@ def signin(request):
             return redirect('/signin?error=1')
     else:
         sign_form = SignForm()
-        
+
     context = {
         'signForm': sign_form
     }
@@ -144,46 +138,30 @@ def signin(request):
     return render(request, 'todo/signin.html', context)
 ```
 
-
 > 잘 안되신다면 이것만 주의하면 될 것 같습니다. `sign_form`을 `if .. else`문 밖에서 `context`로 받아 `render`로 보내고 있습니다.  
 > 위의 코드에서 위치를 보시면 아시겠지만 `sign_form`을 `is_valid`한 이후에 다시 `sign_form`을 재정의하면 당연히 **유효성 검사한 결과를 제대로 전달하지 못합니다**.
 
 그 다음 `template`을 작성해보면 아래와 같습니다.
 
-
-
 ```html
-{% extends './layout.html' %}
-{% load bootstrap5 %}
-{% block content %}
+{% extends './layout.html' %} {% load bootstrap5 %} {% block content %}
 <h1>Sign in</h1>
 <div>
-    <form action="{% url 'signin' %}" method="post" novalidate>
-        {% if request.GET.error %}
-            <div class="alert alert-danger">
-                아이디와 비밀번호를 확인해주세요
-            </div>
-        {% endif %}
-        {% if signForm.errors %}
-        <div class="alert alert-danger">
-            {% for field in signForm %}
-            {% if field.errors %}
-            {{field.label}}
-            {{field.errors}}
-            {% endif %}
-            {% endfor %}
-        </div>
-        {% endif %}
-        <div>
-            {{ signForm.as_p }}
-        </div>
-        <button type="submit" class="btn btn-info">sign in</button>
-    </form>
+  <form action="{% url 'signin' %}" method="post" novalidate>
+    {% if request.GET.error %}
+    <div class="alert alert-danger">아이디와 비밀번호를 확인해주세요</div>
+    {% endif %} {% if signForm.errors %}
+    <div class="alert alert-danger">
+      {% for field in signForm %} {% if field.errors %} {{field.label}}
+      {{field.errors}} {% endif %} {% endfor %}
+    </div>
+    {% endif %}
+    <div>{{ signForm.as_p }}</div>
+    <button type="submit" class="btn btn-info">sign in</button>
+  </form>
 </div>
 {% endblock %}
 ```
-
-
 
 `request.GET.error`는 유효성검사가 아닌 db의 데이터와 매치가 되지 않고 `error`값을 파라미터로 받았을 때 나타나게하는 문구입니다.
 
@@ -193,30 +171,15 @@ def signin(request):
 
 이메일 형식이 틀릴 때
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="/assets/images/post/django/modelform01.png" alt="sample" title="sample" />
-   <figcaption>유효성 검사</figcaption>
-</span>
-</figure>
+![유효성 검사](/assets/images/post/django/modelform01.png)
 
 필드가 비었을 때
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="/assets/images/post/django/modelform03.png" alt="sample" title="sample" />
-   <figcaption>빈 필드</figcaption>
-</span>
-</figure>
+![빈 필드](/assets/images/post/django/modelform03.png)
 
 일치하는 데이터가 없을 때
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="/assets/images/post/django/modelform02.png" alt="sample" title="sample" />
-   <figcaption>미스매치</figcaption>
-</span>
-</figure>
+![미스매치](/assets/images/post/django/modelform02.png)
 
 ## bootstrap valid로 변경
 
@@ -224,14 +187,9 @@ def signin(request):
 
 설치는 [여기](https://pypi.org/project/django-bootstrap-v5/)를 참고하세요.
 
-
-
 ```html
-{% load bootstrap5 %}
-{% bootstrap_form signForm %}
+{% load bootstrap5 %} {% bootstrap_form signForm %}
 ```
-
-
 
 기본 form에서와 마찬가지로 에러는 form의 field마다 자동으로 붙습니다. field별로 따로 작업 가능하며, error또한 별도로 제어 가능합니다.
 
@@ -260,10 +218,9 @@ if sign_form.is_valid():
 
 분기문을 통해 기존에 있는 `is_valid`의 기준만이 아닌 사용자의 목적에 따라 `if`문으로 유효성 검사 목록을 더 추가 가능한 것으로 보입니다. 이러한 맥락으로 봤을 때 `add_error`한 시점부터 `form`의 에러 항목이 추가되고 `valid`되는 것 같습니다.
 
-
 > 이는 짐작이고 추측이니 더 자세한 것은 해당 함수의 내용을 더 알아보고 해당 포스팅을 수정할 예정입니다.
 
------
+---
 
 📚 함께 보면 좋은 내용
 

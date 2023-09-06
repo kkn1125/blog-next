@@ -1,8 +1,7 @@
 ---
 slug: "/cache01/"
-layout: post
-modified: 2023-04-09 14:40:14 +0000
 date: 2023-04-09 14:40:14 +0000
+modified: 2023-09-05 13:22:16 +0000
 title: "[JAVASCRIPT] 캐시 구현과 적용"
 author: Kimson
 categories: [javascript]
@@ -22,13 +21,8 @@ description: "Cache (캐시)
 
 이 포스팅을 작성하는 목적은 우연히 캐시를 구현하고 API서버에 적용한 경험을 기록하고 후기를 공유하기 위함입니다."
 featured: true
-hidden: false
 rating: 4.5
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -82,11 +76,11 @@ published: true
 
 기능 구현에 앞서 간단하게 개발 환경은 다음과 같습니다.
 
-1. *node* - 18.11.0
-2. *npm* - 9.6.1
-3. *fastify* - 4.15.0
-4. *node-schedule* - 2.1.1
-5. *pino-pretty* - 10.0.0 (선택사항)
+1. _node_ - 18.11.0
+2. _npm_ - 9.6.1
+3. _fastify_ - 4.15.0
+4. _node-schedule_ - 2.1.1
+5. _pino-pretty_ - 10.0.0 (선택사항)
 
 fastify를 사용하고 DB는 사용하지 않고 Map객체로 대체하겠습니다. `pino-pretty`는 로그를 보기 쉽게하기 위함으로 선택사항입니다.
 
@@ -254,7 +248,7 @@ server.delete("/api/user/:id", async (req, res) => {
   const { params } = req;
   try {
     cacheManager.initialize("user");
-    
+
     await userRepository.delete(params.id);
     return { ok: true };
   } catch (e) {
@@ -321,7 +315,9 @@ export default class CacheManager {
   initialize(key) {
     Object.entries(this.store).forEach(([k, v]) => {
       if (k.match(key)) {
-        console.log(`[❌ initialize match store]: cache in ${key} => delete ${k}`);
+        console.log(
+          `[❌ initialize match store]: cache in ${key} => delete ${k}`
+        );
         delete this.store[k];
       }
     });
@@ -535,7 +531,7 @@ export default class User {
   hobby;
   gender;
 
-  constructor({id, name, age, gender, hobby}) {
+  constructor({ id, name, age, gender, hobby }) {
     this.id = id;
     this.name = name;
     this.age = age;
@@ -555,95 +551,45 @@ LFU 정책을 추가하고 데이터베이스에서 받아오는 데이터와 �
 
 캐시 데이터가 쌓이기 전에는 데이터베이스를 조회해서 응답을 하게 됩니다. 첫 데이터가 출력되는데 걸리는 시간은 당연히 500ms가 넘을 것 입니다. 의도적으로 delayResponse메서드를 거치게 했기 때문이죠.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/113876485/230785226-c8990fc0-1462-41e0-86e3-023b9e0c701f.png" alt="sample" title="sample" />
-   <figcaption>크론시간으로 정책 실행</figcaption>
-</span>
-</figure>
+![크론시간으로 정책 실행](https://user-images.githubusercontent.com/113876485/230785226-c8990fc0-1462-41e0-86e3-023b9e0c701f.png)
 
 크론시간으로 5초마다 정책을 실행하는 모습입니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/113876485/230784796-815400dd-602d-4fc8-95f8-38aaaf7b68a5.png" alt="sample" title="sample" />
-   <figcaption>첫 번째 요청에 대한 응답 딜레이</figcaption>
-</span>
-</figure>
+![첫 번째 요청에 대한 응답 딜레이](https://user-images.githubusercontent.com/113876485/230784796-815400dd-602d-4fc8-95f8-38aaaf7b68a5.png)
 
 처음 요청하게 되면 500ms이상의 지연시간이 생깁니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/113876485/230785570-793d2b40-f91d-440a-9338-748fb6fcad29.png" alt="sample" title="sample" />
-   <figcaption>첫 요청 후 min, max 비교 (LFU 정책)</figcaption>
-</span>
-</figure>
+![첫 요청 후 min, max 비교 (LFU 정책)](https://user-images.githubusercontent.com/113876485/230785570-793d2b40-f91d-440a-9338-748fb6fcad29.png)
 
 첫 번째 요청에 대한 로그 확인입니다. 첫 요청이기 때문에 min, max 캐시 모두 동일합니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/113876485/230785303-a7a0a05d-8a81-401d-8750-7119fdffb02c.png" alt="sample" title="sample" />
-   <figcaption>두 번째 요청에 대한 응답 딜레이</figcaption>
-</span>
-</figure>
+![두 번째 요청에 대한 응답 딜레이](https://user-images.githubusercontent.com/113876485/230785303-a7a0a05d-8a81-401d-8750-7119fdffb02c.png)
 
 다시 요청하게 되면 캐시데이터가 저장되어 있기 때문에 데이터베이스를 조회하지 않고 저장된 캐시 데이터를 바로 응답합니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/113876485/230785265-b995345f-09e1-407b-a175-a76c0a286b3c.png" alt="sample" title="sample" />
-   <figcaption>사용자 데이터 추가</figcaption>
-</span>
-</figure>
+![사용자 데이터 추가](https://user-images.githubusercontent.com/113876485/230785265-b995345f-09e1-407b-a175-a76c0a286b3c.png)
 
 이때 사용자 데이터가 추가/수정/삭제 된다면 조회하는 데이터를 업데이트 되야하므로 초기화 작업을 거쳐 사용자 API 캐시 데이터 모두 교체 준비를 합니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/113876485/230785339-4b8310d1-57e1-4542-b671-d4a1910f9b38.png" alt="sample" title="sample" />
-   <figcaption>사용자 추가로 인해 캐시 데이터 초기화</figcaption>
-</span>
-</figure>
+![사용자 추가로 인해 캐시 데이터 초기화](https://user-images.githubusercontent.com/113876485/230785339-4b8310d1-57e1-4542-b671-d4a1910f9b38.png)
 
 사용자가 추가되었기 떄문에 사용자 조회하게 되면 응답 시간이 다시 길어집니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/113876485/230785389-4b79099c-bed8-4cb2-9ff1-246f85e3bd6c.png" alt="sample" title="sample" />
-   <figcaption>다시 사용자 조회</figcaption>
-</span>
-</figure>
+![다시 사용자 조회](https://user-images.githubusercontent.com/113876485/230785389-4b79099c-bed8-4cb2-9ff1-246f85e3bd6c.png)
 
 이후 다시 요청하면 캐시에 저장된 사용자 데이터를 곧바로 응답하게 됩니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/113876485/230786078-da8e6732-a4cf-4342-ad78-2ef5cea701ad.png" alt="sample" title="sample" />
-   <figcaption>전제조회 4, 단일 조회 2</figcaption>
-</span>
-</figure>
+![전제조회 4, 단일 조회 2](https://user-images.githubusercontent.com/113876485/230786078-da8e6732-a4cf-4342-ad78-2ef5cea701ad.png)
 
 그렇게 요청하다보니 요청한 횟수가 늘었습니다. 이 중에서 가장 적게 요청된 캐시를 삭제해야합니다. 삭제 기준이 되는 횟수 차이는 3회로 설정해두었습니다.
 
 좀 더 요청해서 3회 차이가 발생하도록 하였더니 다음과 같이 캐시를 삭제합니다. 삭제된 로그 부분은 `[Over limit used count]`입니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/113876485/230786181-017f70bc-d8f6-4c52-b7e7-a4fcf5ab1df0.png" alt="sample" title="sample" />
-   <figcaption>LFU 정책으로 적은 요청 횟수의 캐시 삭제</figcaption>
-</span>
-</figure>
+![LFU 정책으로 적은 요청 횟수의 캐시 삭제](https://user-images.githubusercontent.com/113876485/230786181-017f70bc-d8f6-4c52-b7e7-a4fcf5ab1df0.png)
 
 이후 정책에 의해 해당 캐시 데이터가 삭제 되었기 때문에 전체 사용자 조회 데이터만 남습니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/113876485/230786299-fa69283a-4fd8-4d7c-b9e0-923a6d760988.png" alt="sample" title="sample" />
-   <figcaption>마지막 남은 캐시 데이터</figcaption>
-</span>
-</figure>
+![마지막 남은 캐시 데이터](https://user-images.githubusercontent.com/113876485/230786299-fa69283a-4fd8-4d7c-b9e0-923a6d760988.png)
 
 ## 마무리
 

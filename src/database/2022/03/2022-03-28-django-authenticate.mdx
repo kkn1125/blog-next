@@ -1,8 +1,7 @@
 ---
 slug: "/django-authenticate/"
-layout: post
-modified: 2023-04-08 16:57:33 +0000
 date:   2022-03-28 17:07:32 +0000
+modified: 2023-09-05 13:16:08 +0000
 title:  "[DJANGO] User Authentication 사용하기 01"
 author: Kimson
 categories: [ django ]
@@ -17,13 +16,8 @@ Used
 
 저는 `mysql`을 사용할 때도 `mysqlbench`를 자주 사용한터라 `pgadmin`을 사용했습니다."
 featured: true
-hidden: false
 rating: 4.5
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -37,16 +31,7 @@ published: true
 
 `UI`로 보는 것을 선호해서 `pgadmin`을 사용했습니다.
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='/assets/images/post/django/authentication/auth01.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>pgAdmin 속성</figcaption>
-  </span>
-</figure>
+![pgAdmin 속성](/assets/images/post/django/authentication/auth01.png)
 
 표로 정리해서 보면 아래와 같습니다.
 
@@ -381,55 +366,19 @@ def unsign(request):
 
 작성된 내용으로 서버를 실행시켜 보자면 아래와 같습니다.
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='/assets/images/post/django/authentication/auth02.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>메인</figcaption>
-  </span>
-</figure>
+![메인](/assets/images/post/django/authentication/auth02.png)
 
 로그인과 회원가입이 있습니다. 로그인 되면 로그아웃과 사용자 명이 나타나게 됩니다.
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='/assets/images/post/django/authentication/auth03.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>회원가입 폼</figcaption>
-  </span>
-</figure>
+![회원가입 폼](/assets/images/post/django/authentication/auth03.png)
 
 지저분하지만 필요에 따라 다듬으면 됩니다. `AbstractUser`로 확장할 때 다듬어 보려합니다!
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='/assets/images/post/django/authentication/auth05.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>로그인 폼</figcaption>
-  </span>
-</figure>
+![로그인 폼](/assets/images/post/django/authentication/auth05.png)
 
 로그인하게 되면 메인으로 이동하고,
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='/assets/images/post/django/authentication/auth06.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>로그인</figcaption>
-  </span>
-</figure>
+![로그인](/assets/images/post/django/authentication/auth06.png)
 
 현재 로그인 한 유저의 이름을 가져와 표시합니다.
 

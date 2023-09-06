@@ -1,8 +1,7 @@
 ---
 slug: "/vue-async-data01/"
-layout: post
-modified: 2022-03-14 00:09:35 +0000
 date:   2022-01-24 11:50:37 +0000
+modified: 2023-09-05 13:07:18 +0000
 title:  "[VUE] 비동기 데이터 프로퍼티 null값 처리하기"
 author: Kimson
 categories: [ vue ]
@@ -16,13 +15,8 @@ description: "비동기 데이터
 
 배열에 담긴 객체를 사용한다하면 for문으로 처리해서 에러구문 없이 출력하기란 쉽습니다."
 featured: true
-hidden: false
 rating: 4
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -114,17 +108,7 @@ Vue.component("module-test", {
 });
 ```
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      class='w-100'
-      src='/assets/images/post/vue/async/async01.png'
-      alt='async01'
-      title='async01'
-    />
-    <figcaption>오류 트레이스1</figcaption>
-  </span>
-</figure>
+![오류 트레이스1](/assets/images/post/vue/async/async01.png)
 
 에러를 뱉어내면서 결과적으로는 데이터를 받아 출력해줍니다. 단일 데이터를 가져올 때 `axios`로 데이터를 꺼내오는 시점과 렌더링되는 시점이 다르기 때문에, 아직 데이터가 없는 시점에서 에러를 먼저 표시하고, 데이터를 받아온 시점에서 다시 갱신하므로 화면에는 결과가 출력이 됩니다.
 

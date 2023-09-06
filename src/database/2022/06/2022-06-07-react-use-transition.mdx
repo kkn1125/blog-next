@@ -1,8 +1,7 @@
 ---
 slug: "/react-use-transition/"
-layout: post
-modified: 2023-04-08 16:57:33 +0000
 date: 2022-06-07 23:51:29 +0000
+modified: 2023-09-05 13:17:27 +0000
 title: "[REACT] useTransition 사용"
 author: Kimson
 categories: [react]
@@ -20,13 +19,8 @@ useTransition은 왜 나왔나
 
 사용방법은 아래와 같습니다."
 featured: true
-hidden: false
 rating: 4.5
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -42,7 +36,7 @@ published: true
 
 사용방법은 아래와 같습니다.
 
-```jsx
+```jsx showLineNumbers
 import React, { useTransition } from "react";
 
 function App() {
@@ -79,30 +73,15 @@ export default App;
 
 rangeBar는 한도가 10000입니다. 이때 10000은 useState 변수를 사용한 태그를 10000개 생성해서 텍스트를 변경하거나 rangeBar를 이동할 때 성능을 체크합니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/172615547-09a2114a-349b-4b4f-a9b8-80c0ec1bcfe0.png" alt="sample" title="sample" />
-   <figcaption>성능 샘플 - setState</figcaption>
-</span>
-</figure>
+![성능 샘플 - setState](https://user-images.githubusercontent.com/71887242/172615547-09a2114a-349b-4b4f-a9b8-80c0ec1bcfe0.png)
 
 setState만 사용했을 때는 굉장히 버벅거리고 화면에 렌더되는데 걸리는 시간이 많습니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/172615778-68d5d60c-db3a-4f9c-8b74-70b5e8c9d002.png" alt="sample" title="sample" />
-   <figcaption>성능 샘플 - useCallback</figcaption>
-</span>
-</figure>
+![성능 샘플 - useCallback](https://user-images.githubusercontent.com/71887242/172615778-68d5d60c-db3a-4f9c-8b74-70b5e8c9d002.png)
 
 useCallback을 사용했을 때는 큰 차이를 보이지는 못합니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/172616260-4ebc668a-02d6-4515-b5f8-b261e6b9fd80.png" alt="sample" title="sample" />
-   <figcaption>성능 샘플 - useTransition의 startTransition</figcaption>
-</span>
-</figure>
+![성능 샘플 - useTransition의 startTransition](https://user-images.githubusercontent.com/71887242/172616260-4ebc668a-02d6-4515-b5f8-b261e6b9fd80.png)
 
 `useTransition`을 사용해서 `startTransition`를 사용하면 조금 다른 형태의 성능그래프를 볼 수 있습니다. 하지만 이벤트가 실행되는데 매우 길게 지연되는 것을 볼 수 있습니다. 실제로 rangeBar를 조작해보면 이전 샘플과 달리 버벅거림은 줄었지만 여전히 화면이 렌더되는데 지연되는 것을 확인했습니다.
 
@@ -110,12 +89,7 @@ useCallback을 사용했을 때는 큰 차이를 보이지는 못합니다.
 
 바로 `import` 해서 사용하는 방법은 아래 함께 보면 좋은 내용에 참고한 링크를 첨부해뒀습니다. 이름은 `"Real world example"`입니다.
 
-<figure className="text-center">
-<span className="w-inline-block">
-   <img src="https://user-images.githubusercontent.com/71887242/172617675-4becbe76-add9-428a-9048-5962fec027c2.png" alt="sample" title="sample" />
-   <figcaption>성능 샘플 - startTransition</figcaption>
-</span>
-</figure>
+![성능 샘플 - startTransition](https://user-images.githubusercontent.com/71887242/172617675-4becbe76-add9-428a-9048-5962fec027c2.png)
 
 위 이미지는 `startTransition`을 적용했을 때의 성능 분석입니다. 굉장히 촘촘한 단위로 함수를 번갈아가며 호출하는 모습이 보입니다. 실제로 `rangeBar`를 움직이고, 텍스트를 작성하고, 다시 움직여보면 이전 샘플들과 달리 조금 부드러워 진 것을 볼 수 있습니다.
 

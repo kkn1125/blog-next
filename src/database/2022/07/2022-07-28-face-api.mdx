@@ -1,8 +1,7 @@
 ---
 slug: "/face-api01/"
-layout: post
-modified: 2023-04-08 16:57:33 +0000
 date: 2022-07-28 13:41:54 +0000
+modified: 2023-09-05 13:18:28 +0000
 title: "[JAVASCRIPT] face-api.js 기본 사용법을 알아보자"
 author: Kimson
 categories: [library]
@@ -20,13 +19,8 @@ face-api는 tensorflow.js를 기반으로 개발되었으며 canvas에 안면 �
 
 대게 node환경에서 작성된 예제가 많이 있습니다. 그래서 react + typescript 기반의 프로젝트에서 사용하기 위해 참고했던 여러 블로그나 사이트 등의 링크를 포스팅 하단에 첨부하였으니 필요하시다면 참고바랍니다."
 featured: true
-hidden: false
 rating: 4.5
-toc: true
 profile: false
-istop: true
-keysum: false
-keywords: ""
 published: true
 ---
 
@@ -52,22 +46,13 @@ published: true
 
 `face-api`를 사용하는데 있어 모델 파일이 필요합니다. 없으면 작동을 안하니 꼭 파일을 받아 사용할 모델파일을 적용(load)해야하니 주의 하시길 바랍니다. model load 하지 않고 작업해서 영영 작동 안되는 줄 알았습니다...
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='https://user-images.githubusercontent.com/71887242/181424910-0fab93f5-5d50-43f1-b412-3c822481c387.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>모델 소스 파일들</figcaption>
-  </span>
-</figure>
+![모델 소스 파일들](https://user-images.githubusercontent.com/71887242/181424910-0fab93f5-5d50-43f1-b412-3c822481c387.png)
 
 모델 파일은 [justadudewhohacks](https://github.com/justadudewhohacks/face-api.js)의 `weight` 디렉토리에 `shard`라는 파일과 `*manifest.json` 파일이 있는 것을 볼 수 있습니다. 저장소를 다운받아 이 모델 파일들을 꼭 받아야 합니다. 이 모델 파일들이 없으면 `face-api`는 기본적으로 아예 사용 못 합니다.
 
 그리고 css를 조금 설정해두어야 합니다. 저는 글로벌 스타일로 설정하였습니다.
 
-```css
+```css showLineNumbers
 div#wrap {
   position: relative;
 }
@@ -102,16 +87,7 @@ div#wrap canvas {
 
 모델을 불러오는 것은 간단합니다. 모델 소스파일은 아래 이미지의 파일구조를 참고하여 받아오시면 됩니다.
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='https://user-images.githubusercontent.com/71887242/181429611-819ccea1-18e0-4a75-bc25-002da7a1bb6a.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>파일구조 참고</figcaption>
-  </span>
-</figure>
+![파일구조 참고](https://user-images.githubusercontent.com/71887242/181429611-819ccea1-18e0-4a75-bc25-002da7a1bb6a.png)
 
 모델을 받아오고 detection을 설정하는 예제를 보겠습니다.
 
@@ -253,49 +229,13 @@ export default App;
 
 실행과정을 미리보기 식으로 보여드리면 아래와 같습니다.
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='https://user-images.githubusercontent.com/71887242/181443770-c4e6279d-4a80-4245-8519-a7252f674d59.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>모델 로드 전</figcaption>
-  </span>
-</figure>
+![모델 로드 전](https://user-images.githubusercontent.com/71887242/181443770-c4e6279d-4a80-4245-8519-a7252f674d59.png)
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='https://user-images.githubusercontent.com/71887242/181443987-5031707f-8238-479b-b5fe-88a76f223d31.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>모델 로드 후</figcaption>
-  </span>
-</figure>
+![모델 로드 후](https://user-images.githubusercontent.com/71887242/181443987-5031707f-8238-479b-b5fe-88a76f223d31.png)
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='https://user-images.githubusercontent.com/71887242/181444121-dc5d02d1-298e-4913-94b0-e33168a06e27.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>이미지 가져오기</figcaption>
-  </span>
-</figure>
+![이미지 가져오기](https://user-images.githubusercontent.com/71887242/181444121-dc5d02d1-298e-4913-94b0-e33168a06e27.png)
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='https://user-images.githubusercontent.com/71887242/181444213-d52ec982-c562-4364-8305-6266f821a1f9.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>인식 결과 표시</figcaption>
-  </span>
-</figure>
+![인식 결과 표시](https://user-images.githubusercontent.com/71887242/181444213-d52ec982-c562-4364-8305-6266f821a1f9.png)
 
 그 결과는 아래와 같습니다. 사진은 연예인 중에 가장 좋아하고 존경하는 분인 유재석님 입니다. happy가 백분율로 1이라니 밝게 웃는 모습이 잘 인식되어서 좋네요 😁
 
@@ -303,16 +243,7 @@ export default App;
 
 이미지의 파일 위치는 아래와 같습니다.
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='https://user-images.githubusercontent.com/71887242/181453886-43390d2e-1825-49fe-9668-2e5aa577ad97.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>이미지 파일 구조</figcaption>
-  </span>
-</figure>
+![이미지 파일 구조](https://user-images.githubusercontent.com/71887242/181453886-43390d2e-1825-49fe-9668-2e5aa577ad97.png)
 
 ```tsx
 import React from "react";
@@ -594,27 +525,9 @@ export default App;
 
 실행과정을 미리보기 식으로 보여드리면 아래와 같습니다.
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='https://user-images.githubusercontent.com/71887242/181463575-97e540fd-35c1-4e1a-82a3-cd7f03f6bcb4.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>모델 로드 전</figcaption>
-  </span>
-</figure>
+![모델 로드 전](https://user-images.githubusercontent.com/71887242/181463575-97e540fd-35c1-4e1a-82a3-cd7f03f6bcb4.png)
 
-<figure className='text-center'>
-  <span className='w-inline-block'>
-    <img
-      src='https://user-images.githubusercontent.com/71887242/181464330-5993dfbd-81f5-4cae-b020-226522680136.png'
-      alt='sample'
-      title='sample'
-    />
-    <figcaption>모델 + 영상 표시 + 실시간 분석</figcaption>
-  </span>
-</figure>
+![모델 + 영상 표시 + 실시간 분석](https://user-images.githubusercontent.com/71887242/181464330-5993dfbd-81f5-4cae-b020-226522680136.png)
 
 `react`에서 `face-api.js`를 적용하는 예시를 정리 해 보았습니다. 영상 테스트는 저를 사용할 수 밖에 없어서 양해바랍니다 😅
 
