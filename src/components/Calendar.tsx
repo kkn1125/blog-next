@@ -10,7 +10,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { memo, useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
-import { format, getWeek, orderByRepeat, removeDuplicates } from "@/util/tool";
+import { duration, format, getWeek, orderByRepeat, removeDuplicates } from "@/util/tool";
 import StackBadge from "./StackBadge";
 
 const tagIcon: any = {
@@ -68,8 +68,11 @@ function ServerDay(
   const year = props.day.year();
   const month = props.day.month();
   const date = props.day.date();
-
+  // console.log(flatLists)
   const repeatDays = flatLists.filter((item: any) => item.repeat);
+  const dueDays = flatLists.filter(
+    (item: any) => "due" in item && (item.due || 1) > 1
+  );
 
   const pickTodo = highlightedDays[year]?.[month]?.[date];
   const isSelected = !props.outsideCurrentMonth && Boolean(pickTodo);
@@ -108,10 +111,26 @@ function ServerDay(
         return item;
       }
     }
-
     return false;
   });
-
+  // console.log("dueDays", dueDays[0].dueStart, date);
+  const isDue = dueDays.find((item: any) => {
+    const baseTime = new Date(item.dueStart as string);
+    // console.log(baseTime.getMonth());
+    // console.log(baseTime.getDate());
+    // console.log(baseTime.getDate() + item.due);
+    if (
+      baseTime.getFullYear() === year &&
+      baseTime.getMonth() === month &&
+      (baseTime.getDate() === date ||
+        baseTime.getDate() + item.due - 1 === date ||
+        (baseTime.getDate() + item.due < date && baseTime.getDate() >= date))
+    ) {
+      return item;
+    }
+    return false;
+  });
+  // console.log("isDue", isDue, year, month, date);
   const relevantTodos = [];
 
   !props.outsideCurrentMonth &&
@@ -119,6 +138,8 @@ function ServerDay(
     pickTodo &&
     relevantTodos.push(...pickTodo);
   isRepeat && relevantTodos.push(isRepeat);
+
+  isDue && relevantTodos.push(isDue);
 
   const tags = removeDuplicates(
     orderByRepeat(relevantTodos).map(
@@ -131,7 +152,7 @@ function ServerDay(
       key={props.day.toString()}
       overlap='circular'
       badgeContent={
-        isRepeat || isSelected ? <StackBadge list={tags} /> : undefined
+        isDue || isRepeat || isSelected ? <StackBadge list={tags} /> : undefined
       }
       sx={{
         ".MuiBadge-badge": {
@@ -163,6 +184,9 @@ const flatLists = Object.values(todoStorage)
   )
   .flat(2);
 const repeatDays = flatLists.filter((item: any) => item.repeat);
+const dueDays = flatLists.filter(
+  (item: any) => "due" in item && (item.due || 1) > 1
+);
 
 function Calendar() {
   const [date, setDate] = useState<string | dayjs.Dayjs | null>(null);
@@ -229,17 +253,36 @@ function Calendar() {
           return true;
         }
       }
-      if ((item.due || 1) > 1) {
-      }
       return false;
     });
+
     const isEmptyCommon = (commonTodos?.length || 0) === 0;
     const isEmptyRepeat = (repeatTodos?.length || 0) === 0;
 
+    const dueTodos = dueDays.filter((item: any) => {
+      const baseTime = new Date(item.dueStart as string);
+      const clickTime = new Date(
+        Number(calInfo.y),
+        Number(calInfo.m),
+        Number(calInfo.d)
+      );
+      if ((item.due || 1) > 1) {
+        // console.log(baseTime.getDate(), item.due, clickTime.getDate());
+        if (
+          baseTime.getDate() + item.due > clickTime.getDate() &&
+          baseTime.getDate() < clickTime.getDate()
+        ) {
+          return true;
+        }
+      }
+      return false;
+    });
+    // console.log(commonTodos, repeatTodos, dueTodos);
+
     if (isEmptyCommon) {
-      return repeatTodos;
+      return [...repeatTodos, ...dueTodos];
     } else {
-      return commonTodos.concat(...repeatTodos);
+      return commonTodos.concat(...repeatTodos).concat(...dueTodos);
     }
   };
 
@@ -408,7 +451,10 @@ function Calendar() {
                         whiteSpace: "pre-wrap",
                       }}>
                       {tagIcon[item.tag]} {item.todo}
-                      {item.repeat ? `(♻️ 반복일정) ` : ""}
+                      {item.repeat ? ` (♻️ 반복일정)` : ""}
+                      {item.due > 1
+                        ? `${duration(item.dueStart, item.due)} (🔗 연속 일정)`
+                        : ""}
                       <br />
                       <Box
                         component='span'

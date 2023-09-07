@@ -330,3 +330,11 @@ export const convertIdString = (str: string) =>
     .replace(/[\s]+/gm, "-")
     .replace(/[.?/]+/g, "")
     .toLowerCase();
+
+export const duration = (date: string, due: number) => {
+  const start = new Date(date);
+  const temp = new Date(date);
+  const end = new Date(temp.setDate(temp.getDate() + due - 1));
+
+  return ` [${format(start, "YYYY-MM-dd")} ~ ${format(end, "YYYY-MM-dd")}]`;
+};

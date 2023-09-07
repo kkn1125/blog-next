@@ -3,7 +3,7 @@
     "8": {
       "6": [
         {
-          "todo": "IndexedDB 포스팅 예정",
+          "todo": "테스트 일정",
           "tag": "check",
           "time": "2023-09-04 16:07:53",
           "repeat": false,
@@ -11,7 +11,7 @@
           "repeatDayOfYear": false,
           "repeatDayOfMonth": false,
           "repeatDayOfWeek": [],
-          "start": "2023-09-06",
+          "dueStart": "2023-09-06",
           "due": 2
         }
       ],
