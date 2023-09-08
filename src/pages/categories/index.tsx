@@ -2,7 +2,11 @@ import Animated from "@/components/Animated";
 import GenerateHead from "@/components/GenerateHead";
 import { getAllArticles, getArticlesByCategory } from "@/libs/service";
 import { BRAND_NAME, BRAND_DESC, BRAND_LOGO } from "@/util/global";
-import { changeHipenToWhiteSpace } from "@/util/tool";
+import {
+  changeHipenToWhiteSpace,
+  changeWhiteSpaceToHipen,
+  duplicateRemoveArrayFromCategory,
+} from "@/util/tool";
 import { Container } from "@mui/material";
 import { Toolbar } from "@mui/material";
 import { Stack, Typography, Chip } from "@mui/material";
@@ -18,10 +22,6 @@ const metadatas = {
 };
 
 function Index({ categories }: any) {
-  const handleRedirectToCategory = (to: string) => {
-    router.push(location.origin + "/categories/" + (to ? to + "/" : ""));
-  };
-
   return (
     <Stack
       component={Container}
@@ -78,16 +78,20 @@ function Index({ categories }: any) {
 }
 
 export const getStaticProps = async () => {
-  const posts = await getAllArticles();
-
+  const articles = await getAllArticles();
+  const categories = duplicateRemoveArrayFromCategory(articles);
+  const hipens = categories
+    .filter((category: string) => category.toLowerCase().match(/[\s]+/g))
+    .map((category: string) => changeWhiteSpaceToHipen(category));
   return {
     props: {
       categories: [
         ...new Set(
-          posts.map((post: any) => post.frontmatter.categories).flat(2)
+          categories
+            .map((category: any) => category.toLowerCase())
+            .concat(hipens.map((category: string) => category.toLowerCase()))
         ),
-      ],
-      // totalCount: posts.length,
+      ].sort(),
     },
   };
 };

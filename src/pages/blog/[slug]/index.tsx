@@ -1,7 +1,5 @@
-import AddToAny from "@/components/AddToAny";
 import GenerateHead from "@/components/GenerateHead";
 import GoTop from "@/components/GoTop";
-import KakaoShare from "@/components/Kakao.Share";
 import PostMDXComponent from "@/components/PostMDXComponent";
 import PostNavigator from "@/components/PostNavigator";
 import SideBar from "@/components/SideBar";
@@ -12,7 +10,7 @@ import {
   getSlugs,
   serializeMdx,
 } from "@/libs/service";
-import { AUTHOR, BRAND_NAME } from "@/util/global";
+import { BRAND_NAME } from "@/util/global";
 import { format, getReponsiveImageUrl, parseHeading } from "@/util/tool";
 import { MergeComponents } from "@mdx-js/react/lib";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
@@ -342,6 +340,10 @@ function Index({
     }, 3000);
   };
 
+  const isUpdated =
+    responsivePost &&
+    responsivePost.frontmatter.modified > responsivePost.frontmatter.date;
+
   return (
     <StrictMode>
       <Stack
@@ -409,8 +411,11 @@ function Index({
                   fontFamily={`"IBM Plex Sans KR", sans-serif`}
                   align='center'
                   gutterBottom>
+                  {isUpdated && "Update."}
                   {format(
-                    responsivePost.frontmatter.date || "",
+                    (isUpdated
+                      ? responsivePost.frontmatter.modified
+                      : responsivePost.frontmatter.date) || "",
                     "YYYY-MM-dd HH:mm",
                     false
                   )}

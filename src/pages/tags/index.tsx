@@ -88,18 +88,10 @@ export const getStaticProps = async () => {
       tags: [
         ...new Set(
           tags
-            .map((tag: any) => ({
-              params: {
-                tag: tag.toLowerCase(),
-              },
-            }))
-            .concat(
-              hipens.map((tag: string) => ({
-                params: { tag: tag.toLowerCase() },
-              }))
-            )
+            .map((tag: any) => tag.toLowerCase())
+            .concat(hipens.map((tag: string) => tag.toLowerCase()))
         ),
-      ],
+      ].sort(),
     },
   };
 };
