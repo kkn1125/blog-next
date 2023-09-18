@@ -47,6 +47,10 @@ const pages = [
     name: "about",
     path: "/about/",
   },
+  {
+    name: "games",
+    path: "/games/",
+  },
 ];
 
 function ResponsiveAppBar() {
@@ -135,7 +139,7 @@ function ResponsiveAppBar() {
         )}`
       )
         .then((res) => {
-          console.log("visit!");
+          // console.log("visit!");
         })
         .catch((e) => {
           // dev.log(e);

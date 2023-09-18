@@ -1,6 +1,20 @@
 {
   "2023": {
     "8": {
+      "18": [
+        {
+          "todo": "게임 추가",
+          "tag": "check",
+          "time": "2023-09-18 18:19:52",
+          "repeat": false,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": [],
+          "dueStart": null,
+          "due": 0
+        }
+      ],
       "6": [
         {
           "todo": "테스트 일정",
