@@ -136,7 +136,7 @@ const Pre = ({ children }: any) => <div>{children}</div>;
 const Paragraph = ({ children }: any) => (
   <Box
     sx={{
-      // lineHeight: (theme) => theme.typography.pxToRem(1.5 * 16),
+      lineHeight: `calc(1em * 1.65)`,
     }}>
     {children}
   </Box>

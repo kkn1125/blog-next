@@ -355,13 +355,14 @@ function Index({
           position: "relative",
         }}>
         {responsivePost && (
-          <Box>
+          <Box id='side-bar-wrap'>
             <SideBar list={parseHeading(content)} />
           </Box>
         )}
 
         {responsivePost && (
           <Stack
+            id='post'
             direction={{ xs: "column", md: "row" }}
             justifyContent={"center"}
             alignItems={"center"}
@@ -383,7 +384,10 @@ function Index({
                   m: "auto",
                 }}>
                 <PostNavigator before={before} next={next} />
-                <Box>
+                <Box
+                  sx={{
+                    mb: 2,
+                  }}>
                   <Box
                     sx={{
                       backgroundImage: `url(${getReponsiveImageUrl(

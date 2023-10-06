@@ -103,6 +103,15 @@ export default function MyApp(props: MyAppProps) {
                     font-family: "IBM Plex Sans KR", sans-serif;
                   }
 
+                  #post {
+                    :is(ol, ul) {
+                      line-height: 1;
+                      :is(ol, ul) {
+                        line-height: calc(1em * 1.5);
+                      }
+                    }
+                  }
+
                   ::-webkit-scrollbar {
                     width: 8px;
                     height: 8px;
@@ -124,7 +133,7 @@ export default function MyApp(props: MyAppProps) {
                     height: 100%;
                     margin: 0;
 
-                    line-height: 1.5;
+                    line-height: 1;
 
                     #__next {
                       height: 100%;

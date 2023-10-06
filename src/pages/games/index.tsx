@@ -56,22 +56,24 @@ function Index() {
       }}>
       <GenerateHead metadatas={metadatas} />
       <Toolbar />
+
       <Animated order={0} animate='fadeInUp'>
         <Typography fontSize={24} fontWeight={700} gutterBottom align='center'>
-          Games
+          Play Games
         </Typography>
       </Animated>
       <Animated order={1} animate='fadeInUp'>
         <Typography fontSize={18} fontWeight={200} gutterBottom align='center'>
-          재미로 만든 게임입니다. 버그가 있을 수 있습니다 😁
+          재미로 만든 게임입니다. 광고 없이 즐기세요 😁
         </Typography>
       </Animated>
-      <Animated order={2} animate='fadeInUp'>
-        <Stack direction='row' gap={3} justifyContent='center'>
+
+      <Stack direction='row' flexWrap={"wrap"} gap={3} justifyContent='center'>
+        <Animated order={2} animate='fadeInUp'>
           <Stack
             direction='column'
             alignItems='stretch'
-            sx={{ textAlign: "center" }}>
+            sx={{ textAlign: "center", maxWidth: 250 }}>
             <Typography fontWeight={700}>Animal Match Game</Typography>
             <Box
               sx={{
@@ -90,10 +92,12 @@ function Index() {
               Start Game
             </Button>
           </Stack>
+        </Animated>
+        <Animated order={3} animate='fadeInUp'>
           <Stack
             direction='column'
             alignItems='stretch'
-            sx={{ textAlign: "center" }}>
+            sx={{ textAlign: "center", maxWidth: 250 }}>
             <Typography fontWeight={700}>Solitaire</Typography>
             <Box
               sx={{
@@ -112,8 +116,9 @@ function Index() {
               Start Game
             </Button>
           </Stack>
-        </Stack>
-      </Animated>
+        </Animated>
+      </Stack>
+      <Toolbar />
     </Stack>
   );
 }

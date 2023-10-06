@@ -4,7 +4,13 @@ import Card from "@/components/Card";
 import GenerateHead from "@/components/GenerateHead";
 import MainCard from "@/components/MainCard";
 import { getAllArticles } from "@/libs/service";
-import { AUTHOR, BRAND_DESC, BRAND_LOGO, BRAND_NAME } from "@/util/global";
+import {
+  AUTHOR,
+  BRAND_DESC,
+  BRAND_LOGO,
+  BRAND_NAME,
+  MAIN_SUBSCRIPTION,
+} from "@/util/global";
 import { slicedBundle } from "@/util/tool";
 import {
   Box,
@@ -49,8 +55,7 @@ export default function Home({ posts }: any) {
               fontWeight={200}
               align='center'
               fontFamily={`"IBM Plex Sans KR", sans-serif`}>
-              서버 분산 아키텍쳐와 보안에 관심이 많은 노드 백엔드 개발자의 기술
-              블로그입니다.
+              {MAIN_SUBSCRIPTION}
             </Typography>
           </Animated>
         </Box>
