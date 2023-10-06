@@ -290,7 +290,6 @@ function ResponsiveAppBar() {
                 height={40}
                 alt='logo'
                 sx={{ display: { xs: "none", md: "flex" } }}
-                loading={"lazy"}
               />
             </Box>
             <Typography

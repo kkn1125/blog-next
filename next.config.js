@@ -29,6 +29,13 @@ const nextConfig = {
   trailingSlash: true,
   transpilePackages: ["react-syntax-highlighter"],
   images: {
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    deviceSizes: [640, 720, 828, 1080, 1200, 1920, 2048, 3840],
+    domains: [
+      "avatars.githubusercontent.com",
+      "picsum.photos",
+      "fastly.picsum.photos",
+    ],
     unoptimized: true,
     remotePatterns: [
       {

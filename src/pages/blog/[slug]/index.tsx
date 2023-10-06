@@ -345,169 +345,167 @@ function Index({
     responsivePost.frontmatter.modified > responsivePost.frontmatter.date;
 
   return (
-    <StrictMode>
-      <Stack
-        id='post-wrap'
-        direction={{ xs: "column", md: "row" }}
-        sx={{
-          width: { lg: "100%", xl: "80%" },
-          height: "fit-content",
-          position: "relative",
-        }}>
-        {responsivePost && (
-          <Box id='side-bar-wrap'>
-            <SideBar list={parseHeading(content)} />
-          </Box>
-        )}
+    <Stack
+      id='post-wrap'
+      direction={{ xs: "column", md: "row" }}
+      sx={{
+        width: { lg: "100%", xl: "80%" },
+        height: "fit-content",
+        position: "relative",
+      }}>
+      {responsivePost && (
+        <Box id='side-bar-wrap'>
+          <SideBar list={parseHeading(content)} />
+        </Box>
+      )}
 
-        {responsivePost && (
+      {responsivePost && (
+        <Stack
+          id='post'
+          direction={{ xs: "column", md: "row" }}
+          justifyContent={"center"}
+          alignItems={"center"}
+          sx={{
+            flex: 1,
+            width: "100%",
+            wordBreak: "break-word",
+            whiteSpace: "break-spaces",
+          }}>
+          <GenerateHead metadatas={metadatas(responsivePost.frontmatter)} />
+
           <Stack
-            id='post'
-            direction={{ xs: "column", md: "row" }}
-            justifyContent={"center"}
-            alignItems={"center"}
             sx={{
-              flex: 1,
-              width: "100%",
-              wordBreak: "break-word",
-              whiteSpace: "break-spaces",
+              width: { xs: "90vw", md: "60vw", lg: "60vw" },
             }}>
-            <GenerateHead metadatas={metadatas(responsivePost.frontmatter)} />
-
-            <Stack
+            <Box
               sx={{
-                width: { xs: "90vw", md: "60vw", lg: "60vw" },
+                maxWidth: "80%",
+                m: "auto",
               }}>
+              <PostNavigator before={before} next={next} />
               <Box
                 sx={{
-                  maxWidth: "80%",
-                  m: "auto",
+                  mb: 2,
                 }}>
-                <PostNavigator before={before} next={next} />
                 <Box
                   sx={{
-                    mb: 2,
-                  }}>
-                  <Box
-                    sx={{
-                      backgroundImage: `url(${getReponsiveImageUrl(
-                        responsivePost.frontmatter.image
-                      )})`,
-                      backgroundSize: { xs: "contain", md: "cover" },
-                      backgroundPosition: "center center",
-                      backgroundRepeat: "no-repeat",
-                      width: { xs: "auto", md: "100%" },
-                      height: { xs: 300, md: 700 },
-                    }}
-                  />
-                </Box>
-                <Typography
-                  fontSize={(theme) => theme.typography.pxToRem(32)}
-                  fontWeight={700}
-                  fontFamily={`"IBM Plex Sans KR", sans-serif`}
-                  align='center'
-                  gutterBottom>
-                  {responsivePost.frontmatter.title || ""}
-                </Typography>
-                <Typography
-                  fontSize={(theme) => theme.typography.pxToRem(16)}
-                  fontWeight={200}
-                  fontFamily={`"IBM Plex Sans KR", sans-serif`}
-                  align='center'
-                  gutterBottom>
-                  {isUpdated && "Update."}
-                  {format(
-                    (isUpdated
-                      ? responsivePost.frontmatter.modified
-                      : responsivePost.frontmatter.date) || "",
-                    "YYYY-MM-dd HH:mm",
-                    false
-                  )}
-                </Typography>
-                <Typography
-                  fontSize={(theme) => theme.typography.pxToRem(16)}
-                  fontWeight={500}
-                  fontFamily={`"IBM Plex Sans KR", sans-serif`}
-                  align='center'
-                  gutterBottom>
-                  {responsivePost.frontmatter.author || ""}
-                </Typography>
-                <Typography
-                  fontSize={(theme) => theme.typography.pxToRem(14)}
-                  fontWeight={200}
-                  fontFamily={`"IBM Plex Sans KR", sans-serif`}
-                  align='center'
-                  gutterBottom>
-                  {responsivePost.frontmatter.readingTime || ""}
-                </Typography>
-                <Stack direction='row' justifyContent='center' gap={1}>
-                  <Tooltip title={`카카오톡 공유`} placement='bottom'>
-                    <IconButton id='kakaotalk-sharing-btn' color={"inherit"}>
-                      <img
-                        width='24'
-                        height='24'
-                        src='https://developers.kakao.com/assets/img/about/logos/kakaotalksharing/kakaotalk_sharing_btn_medium.png'
-                        alt='카카오톡 공유 보내기 버튼'
-                      />
-                    </IconButton>
-                  </Tooltip>
-
-                  <Tooltip
-                    title={`링크 복사${copied ? " 완료" : ""}`}
-                    placement='bottom'>
-                    <IconButton
-                      onClick={handleCopyLink}
-                      color={copied ? "success" : "inherit"}>
-                      {copied ? <CheckCircleOutlineIcon /> : <LinkIcon />}
-                    </IconButton>
-                  </Tooltip>
-
-                  <Tooltip title={`준비 중입니다.`} placement='bottom'>
-                    <IconButton color={"inherit"}>
-                      <QuestionMarkIcon />
-                    </IconButton>
-                  </Tooltip>
-                </Stack>
-                <Divider sx={{ my: 3, width: "100%" }} flexItem />
-                <MDXRemote
-                  {...responsivePost}
-                  components={components as MDXComponents | MergeComponents}
+                    backgroundImage: `url(${getReponsiveImageUrl(
+                      responsivePost.frontmatter.image
+                    )})`,
+                    backgroundSize: { xs: "contain", md: "cover" },
+                    backgroundPosition: "center center",
+                    backgroundRepeat: "no-repeat",
+                    width: { xs: "auto", md: "100%" },
+                    height: { xs: 300, md: 700 },
+                  }}
                 />
-                <PostNavigator before={before} next={next} />
+              </Box>
+              <Typography
+                fontSize={(theme) => theme.typography.pxToRem(32)}
+                fontWeight={700}
+                fontFamily={`"IBM Plex Sans KR", sans-serif`}
+                align='center'
+                gutterBottom>
+                {responsivePost.frontmatter.title || ""}
+              </Typography>
+              <Typography
+                fontSize={(theme) => theme.typography.pxToRem(16)}
+                fontWeight={200}
+                fontFamily={`"IBM Plex Sans KR", sans-serif`}
+                align='center'
+                gutterBottom>
+                {isUpdated && "Update."}
+                {format(
+                  (isUpdated
+                    ? responsivePost.frontmatter.modified
+                    : responsivePost.frontmatter.date) || "",
+                  "YYYY-MM-dd HH:mm",
+                  false
+                )}
+              </Typography>
+              <Typography
+                fontSize={(theme) => theme.typography.pxToRem(16)}
+                fontWeight={500}
+                fontFamily={`"IBM Plex Sans KR", sans-serif`}
+                align='center'
+                gutterBottom>
+                {responsivePost.frontmatter.author || ""}
+              </Typography>
+              <Typography
+                fontSize={(theme) => theme.typography.pxToRem(14)}
+                fontWeight={200}
+                fontFamily={`"IBM Plex Sans KR", sans-serif`}
+                align='center'
+                gutterBottom>
+                {responsivePost.frontmatter.readingTime || ""}
+              </Typography>
+              <Stack direction='row' justifyContent='center' gap={1}>
+                <Tooltip title={`카카오톡 공유`} placement='bottom'>
+                  <IconButton id='kakaotalk-sharing-btn' color={"inherit"}>
+                    <img
+                      width='24'
+                      height='24'
+                      src='https://developers.kakao.com/assets/img/about/logos/kakaotalksharing/kakaotalk_sharing_btn_medium.png'
+                      alt='카카오톡 공유 보내기 버튼'
+                    />
+                  </IconButton>
+                </Tooltip>
+
+                <Tooltip
+                  title={`링크 복사${copied ? " 완료" : ""}`}
+                  placement='bottom'>
+                  <IconButton
+                    onClick={handleCopyLink}
+                    color={copied ? "success" : "inherit"}>
+                    {copied ? <CheckCircleOutlineIcon /> : <LinkIcon />}
+                  </IconButton>
+                </Tooltip>
+
+                <Tooltip title={`준비 중입니다.`} placement='bottom'>
+                  <IconButton color={"inherit"}>
+                    <QuestionMarkIcon />
+                  </IconButton>
+                </Tooltip>
+              </Stack>
+              <Divider sx={{ my: 3, width: "100%" }} flexItem />
+              <MDXRemote
+                {...responsivePost}
+                components={components as MDXComponents | MergeComponents}
+              />
+              <PostNavigator before={before} next={next} />
+              <Box
+                sx={{
+                  minHeight: 50,
+                }}>
+                {mode && (
+                  <Stack
+                    direction='row'
+                    justifyContent='center'
+                    sx={{
+                      my: 5,
+                      minHeight: 230,
+                    }}>
+                    <CircularProgress color='success' />
+                  </Stack>
+                )}
                 <Box
                   sx={{
-                    minHeight: 50,
-                  }}>
-                  {mode && (
-                    <Stack
-                      direction='row'
-                      justifyContent='center'
-                      sx={{
-                        my: 5,
-                        minHeight: 230,
-                      }}>
-                      <CircularProgress color='success' />
-                    </Stack>
-                  )}
-                  <Box
-                    sx={{
-                      display: mode ? "hidden" : "block",
-                      "& .utterances": {
-                        maxWidth: "90%",
-                      },
-                    }}
-                    ref={commentEl}
-                  />
-                </Box>
+                    display: mode ? "hidden" : "block",
+                    "& .utterances": {
+                      maxWidth: "90%",
+                    },
+                  }}
+                  ref={commentEl}
+                />
               </Box>
+            </Box>
 
-              <Toolbar />
-            </Stack>
+            <Toolbar />
           </Stack>
-        )}
-        <GoTop />
-      </Stack>
-    </StrictMode>
+        </Stack>
+      )}
+      <GoTop />
+    </Stack>
   );
 }
 

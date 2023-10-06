@@ -29,7 +29,7 @@ function Index() {
         `fullscreen=on,location=no,toolbar=no,status=no,menubar=no,scrollbars=no,resizable=no,left=${
           innerWidth / 2 - 414 / 2
         },top=${
-          innerHeight / 2 - 750 / 2 / 2
+          innerHeight / 2 - 750 / 4
         },menubar=no,width=${414},height=${750},titlebar=no`
       );
     }
@@ -40,7 +40,7 @@ function Index() {
         `fullscreen=on,location=no,toolbar=no,status=no,menubar=no,scrollbars=no,resizable=no,left=${
           innerWidth / 2 - 800 / 2
         },top=${
-          innerHeight / 2 - 800 / 2 / 2
+          innerHeight / 2 - 800 / 4 - 50
         },menubar=no,width=${800},height=${800},titlebar=no`
       );
     }
