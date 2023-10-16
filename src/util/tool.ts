@@ -328,7 +328,7 @@ export const convertIdString = (str: string) =>
     .replace(/#+/gm, "")
     .trim()
     .replace(/[\s]+/gm, "-")
-    .replace(/[.?/]+/g, "")
+    .replace(/[.?/,]+/g, "")
     .toLowerCase();
 
 export const duration = (date: string, due: number) => {

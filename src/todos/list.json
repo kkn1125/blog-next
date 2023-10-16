@@ -1,6 +1,20 @@
 {
   "2023": {
     "9": {
+      "16": [
+        {
+          "todo": "블로그 각 페이지별 canonical url 설정",
+          "tag": "check",
+          "time": "2023-10-16 13:47:11",
+          "repeat": false,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": [],
+          "dueStart": null,
+          "due": 0
+        }
+      ],
       "6": [
         {
           "todo": "게임 제작 포스팅",

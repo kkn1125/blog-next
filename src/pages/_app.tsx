@@ -2,6 +2,7 @@ import { PostProvider } from "@/context/PostProvider";
 import ThemeModeProvider from "@/context/ThemeModeProvider";
 import { VisitorProvider } from "@/context/VisitorProvider";
 import BaseLayout from "@/layouts/BaseLayout";
+import { getAllArticles } from "@/libs/service";
 import { AUTHOR, BRAND_NAME } from "@/util/global";
 import { CacheProvider, css, EmotionCache } from "@emotion/react";
 import { GlobalStyles } from "@mui/material";

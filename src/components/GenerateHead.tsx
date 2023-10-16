@@ -1,5 +1,5 @@
 import Head from "next/head";
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 
 type Metadata = {
   [k: string]: string;
@@ -20,7 +20,16 @@ function convertToMetadata(metadatas: Metadata) {
         <meta name={k} content={(v as unknown as any[]).join(",")} />
       );
       dataSet.push(
-        <meta property={`og:${k}`} content={(v as unknown as any[]).join(",")} />
+        <meta
+          property={`og:${k}`}
+          content={(v as unknown as any[]).join(",")}
+        />
+      );
+      dataSet.push(
+        <meta
+          property={`og:${k}`}
+          content={(v as unknown as any[]).join(",")}
+        />
       );
       // });
     } else if (k === "image") {
@@ -41,12 +50,30 @@ function convertToMetadata(metadatas: Metadata) {
   return dataSet;
 }
 
-function GenerateHead({ metadatas }: { metadatas: Metadata }) {
+function GenerateHead({
+  metadatas,
+  url = "",
+}: {
+  metadatas: Metadata;
+  url?: string;
+}) {
+  const [parent, setParent] = useState<{
+    origin?: Window["location"]["origin"];
+    pathname?: Window["location"]["pathname"];
+  }>({});
+  useEffect(() => {
+    setParent(window.location);
+  });
+
   return (
     <Head>
       {convertToMetadata(metadatas).map((meta, i) => {
         return <Fragment key={i}>{meta}</Fragment>;
       })}
+      <link
+        rel='canonical'
+        href={url || (parent?.origin || "") + (parent?.pathname || "")}
+      />
     </Head>
   );
 }

@@ -16,7 +16,7 @@ const withMDX = require("@next/mdx")({
 const nextConfig = {
   pageExtensions: ["ts", "tsx", "js", "jsx", "md", "mdx"],
   output: "export",
-  distDir: "out",
+  distDir: "build",
   // reactStrictMode: true,
   webpack: (config, { isServer }) => {
     if (!isServer) {

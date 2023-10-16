@@ -11,7 +11,7 @@ import {
   BRAND_NAME,
   MAIN_SUBSCRIPTION,
 } from "@/util/global";
-import { slicedBundle } from "@/util/tool";
+import { slicedBundle, uuidv4 } from "@/util/tool";
 import {
   Box,
   Container,
@@ -21,6 +21,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+import { useEffect } from "react";
 
 const metadatas = {
   title: BRAND_NAME.toUpperCase(),
@@ -32,6 +33,76 @@ const metadatas = {
 export default function Home({ posts }: any) {
   const theme = useTheme();
   const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
+
+  useEffect(() => {
+    if (
+      localStorage.getItem("ChannelIO.UserName") === null ||
+      localStorage.getItem("ChannelIO.UserName") === ""
+    ) {
+      localStorage.setItem(
+        "ChannelIO.UserName",
+        "devkimson-blog-user-" + uuidv4()
+      );
+    }
+    (function () {
+      var w = window;
+      //@ts-ignore
+      if (w.ChannelIO) {
+        return w.console.error("ChannelIO script included twice.");
+      }
+      //@ts-ignore
+      var ch = function () {
+        //@ts-ignore
+        ch.c(arguments);
+      };
+      //@ts-ignore
+      ch.q = [];
+      //@ts-ignore
+      ch.c = function (args) {
+        //@ts-ignore
+        ch.q.push(args);
+      };
+      //@ts-ignore
+      w.ChannelIO = ch;
+      function l() {
+        //@ts-ignore
+        if (w.ChannelIOInitialized) {
+          return;
+        }
+        //@ts-ignore
+        w.ChannelIOInitialized = true;
+        var s = document.createElement("script");
+        s.type = "text/javascript";
+        s.async = true;
+        s.src = "https://cdn.channel.io/plugin/ch-plugin-web.js";
+        var x = document.getElementsByTagName("script")[0];
+        if (x.parentNode) {
+          x.parentNode.insertBefore(s, x);
+        }
+      }
+      if (document.readyState === "complete") {
+        l();
+      } else {
+        w.addEventListener("DOMContentLoaded", l);
+        w.addEventListener("load", l);
+      }
+    })();
+
+    //@ts-ignore
+    ChannelIO("boot", {
+      pluginKey: "2557dd40-c219-4bbb-9ab2-fc9748a31726",
+      //@ts-ignore
+      memberId: localStorage.getItem("Channel.ch-veil-id")?.replace(/"+/g, ""),
+      //@ts-ignore
+      profile: {
+        name: localStorage.getItem("ChannelIO.UserName"),
+        mobileNumber: "",
+        landlineNumber: "",
+        CUSTOM_VALUE_1: "",
+        CUSTOM_VALUE_2: "",
+      },
+    });
+  }, []);
 
   return (
     <Container maxWidth='lg'>

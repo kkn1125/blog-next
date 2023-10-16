@@ -14,6 +14,54 @@ const basePath = "src/database/**/*.mdx";
 
 const blogMdxDirs = ["src/database/**/*.md", "src/database/**/*.mdx"];
 
+/* initialize for metapost file : refresh */
+
+if (process.env.RUN_MODE === "refresh") {
+  setTimeout(async () => {
+    const posts = await getAllArticles();
+    const metaPostLocate = path.join(
+      path.resolve(),
+      "src/database/metapost/posts.json"
+    );
+    const saveCurrent = JSON.stringify(posts, null, 2);
+    try {
+      const metapost = fs.readFileSync(metaPostLocate);
+      const metapostJSON = JSON.stringify(
+        JSON.parse(metapost.toString() || "[]"),
+        null,
+        2
+      );
+      if (saveCurrent !== metapostJSON) {
+        fs.rmSync(metaPostLocate);
+        fs.writeFileSync(metaPostLocate, saveCurrent);
+        console.log("start refresh metapost.json");
+      }
+    } catch (error) {
+      fs.writeFileSync(metaPostLocate, saveCurrent);
+      console.log("replace metapost.json");
+    } finally {
+      console.log("success refresh metapost.json !");
+    }
+  }, 1000);
+}
+
+const SLICE_FOR_TEST_RUN_AMOUNT = Number(process.env.RUN_LIMIT) || 20;
+if (process.env.RUN_MODE === "refresh") {
+  console.log("🌟 no use this option: SLICE_FOR_TEST_RUN");
+  console.log("SLICE_FOR_TEST_RUN_AMOUNT", SLICE_FOR_TEST_RUN_AMOUNT);
+}
+
+const SLICE_FOR_TEST_RUN = (array: any[], limitSize: number) => {
+  return array.slice(
+    0,
+    process.env.RUN_MODE === "test" ? limitSize : undefined
+  );
+};
+
+const customGlob = (globCondition: string | string[]) => {
+  return SLICE_FOR_TEST_RUN(globSync(globCondition), SLICE_FOR_TEST_RUN_AMOUNT);
+};
+
 export const serializeMdx = (source: string) => {
   // const fixMetaPlugin = (options: any = {}) => {
   //   return (tree: any) => {
@@ -57,17 +105,17 @@ export const serializeMdx = (source: string) => {
 const articlesPath = path.join(process.cwd(), basePath);
 
 export async function getAllSlugNames() {
-  const paths = globSync(`${articlesPath}/*.mdx`).map((path) =>
+  const paths = customGlob(`${articlesPath}/*.mdx`).map((path) =>
     path
       .split(/\\+|\/+/)
       .pop()
       ?.replace(/\.mdx/, "")
   );
-  return paths;
+  SLICE_FOR_TEST_RUN(paths, SLICE_FOR_TEST_RUN_AMOUNT);
 }
 
 export async function getSlugs() {
-  const articles = globSync(blogMdxDirs);
+  const articles = customGlob(blogMdxDirs);
 
   let convert: any = [];
 
@@ -96,7 +144,7 @@ export async function getSlugs() {
     .filter((article: any) => article.frontmatter.published)
     .map((a: any) => a.frontmatter.slug.replace(/(\/|\\)+/g, "").trim());
 
-  return slugs;
+  return SLICE_FOR_TEST_RUN(slugs, SLICE_FOR_TEST_RUN_AMOUNT);
 }
 
 export async function getNextArticleFromSlug(slug: string) {
@@ -181,7 +229,7 @@ export async function getArticleFromSlug(slug: string) {
 }
 
 export async function getPaginationArticles(start: number, end: number) {
-  const articles = globSync(blogMdxDirs);
+  const articles = customGlob(blogMdxDirs);
   let convert: any = [];
 
   for (let i = 0; i < articles.length; i++) {
@@ -215,7 +263,7 @@ export async function getPaginationArticles(start: number, end: number) {
 }
 
 export async function getAllArticles(limit?: number) {
-  const articles = globSync(blogMdxDirs);
+  const articles = customGlob(blogMdxDirs);
   let convert: any = [];
 
   for (let i = 0; i < articles.length; i++) {
@@ -250,7 +298,7 @@ export async function getAllArticles(limit?: number) {
 }
 
 export async function getArticlesByCategory(category: string) {
-  const articles = globSync(blogMdxDirs);
+  const articles = customGlob(blogMdxDirs);
   let convert: any = [];
 
   for (let i = 0; i < articles.length; i++) {
@@ -287,7 +335,7 @@ export async function getArticlesByCategory(category: string) {
 }
 
 export async function getArticlesByTag(tag: string) {
-  const articles = globSync(blogMdxDirs);
+  const articles = customGlob(blogMdxDirs);
   let convert: any = [];
 
   for (let i = 0; i < articles.length; i++) {

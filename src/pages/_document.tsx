@@ -23,13 +23,63 @@ export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
     <Html lang='ko'>
       <Head>
         <script
-          src='https://t1.kakaocdn.net/kakao_js_sdk/2.3.0/kakao.min.js'
+          src='/assets/kakao/min/t1.kakaocdn.net_kakao_js_sdk_2.3.0_kakao.min.js'
           integrity='sha384-70k0rrouSYPWJt7q9rSTKpiTfX6USlMYjZUtr1Du+9o4cGvhPAWxngdtVZDdErlh'
           crossOrigin='anonymous'></script>
         <script
           dangerouslySetInnerHTML={{
             __html: `window.Kakao.init("${K_APP_KEY}"); // 사용하려는 앱의 JavaScript 키 입력`,
           }}></script>
+
+        {/* <script
+          dangerouslySetInnerHTML={{
+            __html: `(function () {
+            var w = window;
+            if (w.ChannelIO) {
+              return w.console.error("ChannelIO script included twice.");
+            }
+            var ch = function () {
+              ch.c(arguments);
+            };
+            ch.q = [];
+            ch.c = function (args) {
+              ch.q.push(args);
+            };
+            w.ChannelIO = ch;
+            function l() {
+              if (w.ChannelIOInitialized) {
+                return;
+              }
+              w.ChannelIOInitialized = true;
+              var s = document.createElement("script");
+              s.type = "text/javascript";
+              s.async = true;
+              s.src = "https://cdn.channel.io/plugin/ch-plugin-web.js";
+              var x = document.getElementsByTagName("script")[0];
+              if (x.parentNode) {
+                x.parentNode.insertBefore(s, x);
+              }
+            }
+            if (document.readyState === "complete") {
+              l();
+            } else {
+              w.addEventListener("DOMContentLoaded", l);
+              w.addEventListener("load", l);
+            }
+          })();
+
+          ChannelIO("boot", {
+            pluginKey: "2557dd40-c219-4bbb-9ab2-fc9748a31726",
+            memberId: ${localStorage.getItem("Channel.ch-veil-id")},
+            profile: {
+              name: "name",
+              mobileNumber: "",
+              landlineNumber: "",
+              CUSTOM_VALUE_1: "",
+              CUSTOM_VALUE_2: "",
+            }
+          });`,
+          }}></script> */}
 
         <link
           href='https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@100;200;300;400;500;600;700&display=swap'

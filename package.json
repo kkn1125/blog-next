@@ -3,15 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "set404": "mv out/404/index.html out/404.html && rm -rf out/404/",
+    "dev": "cross-env RUN_MODE=test RUN_LIMIT=${LIMIT:-20} next dev",
+    "set404": "mv build/404/index.html build/404.html && rm -rf build/404/",
     "build": "next build && npm run set404",
-    "postbuild": "next-sitemap --config next-sitemap.config.js && touch out/.nojekyll",
+    "postbuild": "next-sitemap --config next-sitemap.config.js && touch build/.nojekyll",
     "build-log": "next build >> build-log.txt",
     "postbuild-log": "next-sitemap --config next-sitemap.config.js >> postbuild-log.txt",
     "start": "next start",
     "lint": "next lint",
-    "deploy": "npm run build && cd out/ && git init && git add -A && git commit -m \"add post and fixbugs\" && git push -f https://github.com/kkn1125/kkn1125.github.io.git master:gh-pages"
+    "deploy": "npm run build && cd build/ && git init && git add -A && git commit -m \"add post and fixbugs\" && git push -f https://github.com/kkn1125/kkn1125.github.io.git master:gh-pages",
+    "refresh:post": "cross-env RUN_MODE=refresh next dev"
   },
   "dependencies": {
     "@emotion/react": "^11.11.0",

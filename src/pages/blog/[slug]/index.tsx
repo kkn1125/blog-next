@@ -29,7 +29,7 @@ import {
 } from "@mui/material";
 import { MDXComponents } from "mdx/types";
 import { MDXRemote } from "next-mdx-remote";
-import { StrictMode, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const components: MDXComponents | MergeComponents = {
   code: PostMDXComponent.CodeBlock,
@@ -371,7 +371,10 @@ function Index({
             wordBreak: "break-word",
             whiteSpace: "break-spaces",
           }}>
-          <GenerateHead metadatas={metadatas(responsivePost.frontmatter)} />
+          <GenerateHead
+            metadatas={metadatas(responsivePost.frontmatter)}
+            url={location.origin + "/blog" + responsivePost.frontmatter.slug}
+          />
 
           <Stack
             sx={{
@@ -379,8 +382,14 @@ function Index({
             }}>
             <Box
               sx={{
-                maxWidth: "80%",
-                m: "auto",
+                maxWidth: {
+                  sm: "100",
+                  lg: "80%",
+                },
+                m: {
+                  sx: 0,
+                  md: "auto",
+                },
               }}>
               <PostNavigator before={before} next={next} />
               <Box
