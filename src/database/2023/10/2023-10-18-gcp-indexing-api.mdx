@@ -1,0 +1,187 @@
+---
+slug: "/gcp-indexing-api/"
+date: 2023-10-18 15:54:33 +0000
+modified: 2023-10-18 15:54:33 +0000
+title: "[GCP] 구글 클라우드 indexing API 사용 기록"
+author: Kimson
+categories: [cordova]
+image: /assets/images/post/covers/TIL.png
+tags: [gcp, google-cloud, indexing, oauth2, til]
+description: "구글 클라우드 플랫폼 indexing API 사용하기
+
+블로그 포스팅을 하다보면 추가한 포스팅마다 색인을 수동 요청하는 번거로움이 있었습니다. 현재 빌드하고 깃허브에 배포하면 생성되는 페이지가 500개가 넘어가고 있는 상황인데요. 200개까지는 수작업으로 색인 생성 요청하다가 이후부터는 현업으로 인해 시간도 안 날뿐더러 불필요한 작업을 하게 되어 색인 등록하지 않았습니다.
+
+때문에 일괄처리 가능한 indexing API를 사용하여 사이트맵에 생성된 url들을 모두 처리하는 작업을 시도했습니다.
+
+indexing API 등록
+
+먼저 GCP(google cloud platform)에 접속해서 프로젝트를 생성합니다."
+featured: true
+rating: 4.5
+profile: false
+published: true
+---
+
+# 구글 클라우드 플랫폼 indexing API 사용하기
+
+블로그 포스팅을 하다보면 추가한 포스팅마다 색인을 수동 요청하는 번거로움이 있었습니다. 현재 빌드하고 깃허브에 배포하면 생성되는 페이지가 500개가 넘어가고 있는 상황인데요. 200개까지는 수작업으로 색인 생성 요청하다가 이후부터는 현업으로 인해 시간도 안 날뿐더러 불필요한 작업을 하게 되어 색인 등록하지 않았습니다.
+
+때문에 일괄처리 가능한 indexing API를 사용하여 사이트맵에 생성된 url들을 모두 처리하는 작업을 시도했습니다.
+
+## indexing API 등록
+
+먼저 GCP(google cloud platform)에 접속해서 프로젝트를 생성합니다.
+
+![프로젝트 생성](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/df8ab7e9-04bc-4928-b53c-2d7fcb1f6372)
+
+조직은 굳이 기재하지 않아도 됩니다.
+
+![프로젝트 생성 후](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/82f4aaf1-1327-48b2-a670-9e6a6749e897)
+
+indexing api를 검색해줍니다. 그리고 필터부분에서 "Marketplace 및 API"를 선택하시면 "Web Search Indexing API"가 보일겁니다.
+
+![indexing api 검색](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/bf3498d7-7db8-4be4-a668-ef4e78555c5a)
+
+선택해서 "사용" 버튼을 눌러 줍니다. 필자의 경우는 이미 "사용"을 눌렀기 때문에 "관리"로 변경되어 보입니다.
+
+![사용 클릭 후](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/413e2ae2-4df6-48c0-9c5e-9f794d642c0c)
+
+OAuth2 등록을 위해 사용자 인증 정보를 등록해야합니다. 아래와 같이 이동합니다.
+
+![사용자 인증 정보 이동](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/eed4d46a-b6c0-4ae6-ba52-7e2c8374ec03)
+
+![사용자 인증 정보 만들기](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/0bc0cae0-d70b-4da3-bee2-236fb845bf30)
+
+아래와 같이 "OAuth2 클라이언트 ID"를 클릭합니다.
+
+![OAuth2 클라이언트 ID](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/9138c3b0-40ac-42f3-9801-c5d2700dacc5)
+
+다음 이미지처럼 내용을 채워줍니다. redirect uri는 사용하지 않는 포트를 잡아 설정해줍니다.
+
+![OAuth2 클라이언트 ID](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/13a04a6d-acc7-4df5-bb86-d81fb409185e)
+
+만들기를 누르고 난 후 "OAuth 동의 화면"으로 넘어가 테스트 사용자에서 "ADD USERS"를 클릭하여 사용자를 등록합니다. 여기서 사용자 추가 시 입력하는 내용은 "이메일"이어야 합니다.
+
+여기까지 하고나면 OAuth2 토큰을 얻기 위한 초기 세팅이 완료됩니다.
+
+## IAM 서비스 계정 생성
+
+다음으로 상단 햄버거 메뉴를 눌러 "IAM 및 관리자" 탭에 "서비스 계정"으로 들어가 서비스 계정을 만듭니다.
+
+생성 페이지에서는 다음과 같이 작성합니다.
+
+![계정 설정](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/854c6916-2f16-4453-8cb2-bdfb5d42c697)
+
+그러면 아래와 같이 로우가 하나 추가 됩니다. 여기서 이메일 부분은 이후 사용되니 어딘가에 복사해두시면 되겠습니다.
+
+![서비스 계정 만들기](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/081e23e6-6876-46cd-bf02-a36991c8d0c0)
+
+생성하고 난 후 키를 생성합니다.
+
+![새 키 만들기](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/d2768bf9-f938-4394-81df-5bc7ec9545a8)
+
+![새 키 만들기 - JSON 저장](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/18eb865f-badb-4bc7-8bba-409517bb06bd)
+
+생성하고 난 후 JSON형식의 파일을 받습니다. 파일에도 있고, 대시보드 패널에도 있지만 클라이언트 id를 복사해둡니다. 이후에 oauth2 토큰을 얻기 위해 필요합니다.
+
+## google search console에 사용자 등록
+
+> 구글 서치 콘솔에 접속해야합니다. 이때 자신의 사이트가 등록되어 있지 않다면 등록부터 한 후에 진행하시기 바랍니다.
+
+![서치 콘솔 사용자 추가-1](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/032d99f7-3c4c-45df-b128-a5822ba7c555)
+
+![서치 콘솔 사용자 추가-2](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/e5a1c441-06d3-49b9-a44a-9e7bc9d88d68)
+
+![서치 콘솔 사용자 추가-3](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/27d73ffd-8203-4fcb-ad98-066327493bc1)
+
+위 이미지에서 이메일 주소를 적는 부분에 아까 복사해두었던 서비스 계정 이메일을 붙여넣습니다. 권한은 "소유자"권한으로 설정합니다. 그리고 "추가"를 누르면 완료입니다.
+
+## OAUTH2 액세스 토큰 얻기
+
+여기서 조금 번거로운 작업이 필요합니다. indexing publish를 하기 위해 액세스 토큰을 얻어야하기 때문입니다.
+
+아래 방법으로 진행하시면 어렵지 않게 액세스 토큰을 얻을 수 있습니다.
+
+```bash
+https://accounts.google.com/o/oauth2/v2/auth?client_id=<클라이언트ID>&response_type=token&redirect_uri=<리디렉트URI>&scope=https://www.googleapis.com/auth/indexing
+```
+
+여기서 파라미터를 하나씩 소개하자면 다음과 같습니다.
+
+`response_type`은 응답 타입을 설정하는 것이고 토큰으로 받겠다는 의미입니다. `redirect_uri`는 동의 화면 설정에서 입력했던 `redirect uri`와 동일하게 작성해야합니다. `client id`는 `IAM`생성 시 받았던 `클라이언트 ID`를 사용하며, `scope`는 "GCP"에서 제공하는 서비스의 `api url`이 됩니다. 메일에 한정하여 토큰을 받기 위해서는 mail서비스의 url을 사용해야합니다.
+
+> 각 서비스마다 사용하는 url이 지정되어 있으니 다른 서비스의 토큰을 얻으려면 scope를 변경하시면 됩니다.
+
+해당 url이 완성되었다면 복사해서 브라우저를 열어 입력합니다. 처음 연결시에는 이것저것 물어보는 페이지가 나오는데 "계속"을 눌러 "사이트에 연결할 수 없음"이라는 페이지가 나올 것입니다.
+
+이 사이트를 그대로 두고 url을 보면 access_token이 있는 것을 볼 수 있습니다. 쉽게 따오시려면 아래 스크립트를 복사하여 활용하시기 바랍니다.
+
+```javascript
+new URL("<생성된 URL 전체 붙여넣기>".replace(/#/, "?")).searchParams.get(
+  "access_token"
+);
+```
+
+개발자 콘솔을 열어 위 코드를 입력하고나면 `access_token`을 복사하기 쉽게 출력 받을 수 있습니다.
+
+이제 토큰을 복사하여 `indexing API`를 사용할 때 "Authorization" 헤더에 추가하여 사용하면 됩니다.
+
+단건으로 인덱싱하려면 다음과 같습니다.
+
+```bash
+POST https://indexing.googleapis.com/v3/urlNotifications:publish
+
+header: {Content-Type: application/json}
+body : { "url": "https://kkn1125.github.io/", "type": "URL_UPDATED" }
+```
+
+바디에 들어가는 필드 설명은 `indexing API` 페이지의 설명을 참조하시기 바랍니다. 필자의 경우 `postman`으로 대량의 `url`을 한번에 등록해야했기 때문에 `postman`의 `pre-request`를 이용했습니다.
+
+### 추가로 Postman pre-request로 대량 인덱싱하기
+
+인덱싱 한도는 200이 한도이기 때문에 200개를 한정하여 보내겠습니다. `pre-request`에는 다음과 같이 작성합니다. 본 요청으로는 네이버 페이지 URL을 잡았습니다 😁
+
+```javascript showLineNumbers
+const urls = [
+  /* {url: "", type: "URL_UPDATED"} ... */
+];
+const indexingUrl =
+  "https://indexing.googleapis.com/v3/urlNotifications:publish";
+
+for (let i = 0; i < 200; i++) {
+  const rawData = urls[i];
+  pm.sendRequest(
+    {
+      url: indexingUrl,
+      method: "POST",
+      header: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer <access_token>",
+      },
+      body: {
+        mode: "raw",
+        raw: JSON.stringify(rawData),
+      },
+    },
+    function (err, response) {
+      console.log(response.json());
+    }
+  );
+}
+```
+
+하루 한도량을 채운 후 다음 날 나머지를 돌리는 식으로 사용하기 위해 위와 같이 작성했습니다.
+
+## 마무리
+
+포스팅 때마다 수동으로 색인 등록하다가 `Indexing API`를 통해 일괄 처리해보니 매우 편합니다. 초기 설정에 손이 많이 가지만 한 번 설정해두면 시간이 많이 절약되니 안 할 수 없네요 😁
+
+이후에는 깃허브 웹훅을 이용해서 블로그 업데이트 때마다 자동으로 추가된 URL을 일괄 색인 등록하는 방법도 생각하는 중입니다. 기회가 된다면 추가로 포스팅하도록 하겠습니다. 여기까지 봐주셔서 감사합니다. 🙇‍♂️
+
+📚 함께 보면 좋은 내용
+
+[Indexing API 사용 참조](https://developers.google.com/search/apis/indexing-api/v3/using-api?hl=ko)
+
+[구글 클라우드 OAuth2.0 토큰 가져오기](https://cloud.google.com/apigee/docs/api-platform/security/oauth/access-tokens?hl=ko)
+
+[Indexing API 오류 참조](https://developers.google.com/search/apis/indexing-api/v3/core-errors?hl=ko#UNAUTHORIZED)

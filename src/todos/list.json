@@ -1,7 +1,33 @@
 {
   "2023": {
     "9": {
+      "18": [
+        {
+          "todo": "GCP Indexing API 포스팅",
+          "tag": "check",
+          "time": "2023-10-18 17:27:51",
+          "repeat": false,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": [],
+          "dueStart": null,
+          "due": 0
+        }
+      ],
       "16": [
+        {
+          "todo": "채널톡 기능 추가",
+          "tag": "check",
+          "time": "2023-10-16 15:21:53",
+          "repeat": false,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": [],
+          "dueStart": null,
+          "due": 0
+        },
         {
           "todo": "블로그 각 페이지별 canonical url 설정",
           "tag": "check",
