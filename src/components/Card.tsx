@@ -10,12 +10,17 @@ import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import TagIcon from "@mui/icons-material/Tag";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { Comment } from "@/context/CommentProvider";
 
 interface CardInfo {
   post: any;
+  comment?: Comment;
 }
 
-function Card({ post }: CardInfo) {
+function Card({
+  post,
+  comment = { title: post.frontmatter.slug, comments: 0 },
+}: CardInfo) {
   const router = useRouter();
   const theme = useTheme();
 
@@ -71,6 +76,17 @@ function Card({ post }: CardInfo) {
             textDecoration: "none",
           }}>
           {post.frontmatter.title}
+        </Typography>
+        <Typography
+          fontFamily={`"IBM Plex Sans KR", sans-serif`}
+          fontWeight={500}
+          fontSize={(theme) => theme.typography.pxToRem(12)}
+          title='댓글'
+          sx={{
+            display: "inline-block",
+            color: (theme) => `${theme.palette.text.primary} !important`,
+          }}>
+          💬 Comments ({comment.comments})
         </Typography>
         <Typography
           fontFamily={`"IBM Plex Sans KR", sans-serif`}

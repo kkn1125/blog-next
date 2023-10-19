@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "cross-env RUN_MODE=test RUN_LIMIT=${LIMIT:-20} next dev",
+    "dev:confirm": "cross-env next dev",
     "set404": "mv build/404/index.html build/404.html && rm -rf build/404/",
     "build": "next build && npm run set404",
     "postbuild": "next-sitemap --config next-sitemap.config.js && touch build/.nojekyll",

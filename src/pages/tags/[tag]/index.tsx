@@ -2,6 +2,7 @@ import Animated from "@/components/Animated";
 import Card from "@/components/Card";
 import GenerateHead from "@/components/GenerateHead";
 import { getAllArticles, getArticlesByTag } from "@/libs/service";
+import { CommentContext, findComment } from "@/context/CommentProvider";
 import { AUTHOR, BRAND_DESC, BRAND_LOGO, BRAND_NAME } from "@/util/global";
 import {
   capitalize,
@@ -20,7 +21,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 const PAGINATION_AMOUNT = 6;
 
@@ -52,6 +53,7 @@ function Index({ posts, totalCount }: any) {
       Math.ceil(totalCount / PAGINATION_AMOUNT)
     );
   }, [router.query, posts]);
+  const { comments: commentList } = useContext(CommentContext);
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     router.push(`/tags/${router.query.tag}/?page=${value}/`);
@@ -100,7 +102,10 @@ function Index({ posts, totalCount }: any) {
                   key={q}
                   order={i * o.length + q + 1}
                   animate='fadeInUp'>
-                  <Card post={post} />
+                  <Card
+                    post={post}
+                    comment={findComment(commentList, post.frontmatter.slug)}
+                  />
                 </Animated>
               ) : (
                 <div key={q} style={{ flex: "1 1 100%" }}></div>

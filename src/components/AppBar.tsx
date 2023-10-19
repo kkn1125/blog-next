@@ -1,7 +1,23 @@
 import { ColorModeContext } from "@/context/ThemeModeProvider";
-import { BRAND_BW_LOGO, BRAND_LOGO, BRAND_NAME, PROFILE } from "@/util/global";
 import {
+  CommentContext,
+  CommentDispatchContext,
+  CommentType,
+} from "@/context/CommentProvider";
+import {
+  BRAND_BW_LOGO,
+  BRAND_LOGO,
+  BRAND_NAME,
+  COMMENT_BASE_URL,
+  COMMENT_OWNER,
+  COMMENT_REPO,
+  PROFILE,
+  TOKEN,
+} from "@/util/global";
+import {
+  Base64,
   compareWithOrigin,
+  getComments,
   resConvertData,
   uuidv4,
   validTime,
@@ -55,6 +71,10 @@ const pages = [
 
 function ResponsiveAppBar() {
   const theme = useTheme();
+
+  const commentList = useContext(CommentContext);
+  const commentDispatch = useContext(CommentDispatchContext);
+
   const colorMode = useContext(ColorModeContext) as any;
   const router = useRouter();
   const navigate = useNavigate();
@@ -229,10 +249,28 @@ function ResponsiveAppBar() {
         .catch((e) => {
           // dev.log(e);
         });
+
+      // 댓글 갱신
+      getComments().then((comments) => {
+        commentDispatch({
+          type: CommentType.LOAD,
+          comments,
+        });
+      });
     }, 1000 * 30);
+
+    // 댓글 초기화
+    getComments().then((comments) => {
+      commentDispatch({
+        type: CommentType.LOAD,
+        comments,
+      });
+    });
 
     return () => clearInterval(refreshVisitant);
   }, []);
+
+  // console.log(commentList);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);

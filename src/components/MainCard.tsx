@@ -7,14 +7,19 @@ import anime from "animejs";
 import Link from "next/link";
 import { ThemeContext } from "@emotion/react";
 import { ColorModeContext } from "@/context/ThemeModeProvider";
+import { Comment } from "@/context/CommentProvider";
 
 const DESC_LIMIT = 70;
 
 interface CardInfo {
   post: any;
+  comment?: Comment;
 }
 
-function MainCard({ post }: CardInfo) {
+function MainCard({
+  post,
+  comment = { title: post.frontmatter.slug, comments: 0 },
+}: CardInfo) {
   useEffect(() => {
     setTimeout(() => {
       anime({
@@ -129,6 +134,20 @@ function MainCard({ post }: CardInfo) {
             textDecoration: "none",
           }}>
           {post.frontmatter.title}
+        </Typography>
+        <Typography
+          component={Link}
+          href={slugToBlogTrailingSlash(post.frontmatter.slug)}
+          fontFamily={`"IBM Plex Sans KR", sans-serif`}
+          fontWeight={200}
+          fontSize={(theme) => theme.typography.pxToRem(16)}
+          title='댓글'
+          sx={{
+            display: "inline-block",
+            color: "inherit",
+            textDecoration: "none",
+          }}>
+          💬 Comments ({comment.comments})
         </Typography>
         <Typography
           component={Link}

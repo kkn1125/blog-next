@@ -1,9 +1,10 @@
+import CommentProvider, { CommentState } from "@/context/CommentProvider";
 import { PostProvider } from "@/context/PostProvider";
 import ThemeModeProvider from "@/context/ThemeModeProvider";
 import { VisitorProvider } from "@/context/VisitorProvider";
 import BaseLayout from "@/layouts/BaseLayout";
-import { getAllArticles } from "@/libs/service";
 import { AUTHOR, BRAND_NAME } from "@/util/global";
+import { uuidv4 } from "@/util/tool";
 import { CacheProvider, css, EmotionCache } from "@emotion/react";
 import { GlobalStyles } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -11,6 +12,7 @@ import "animate.css";
 import { AppProps } from "next/app";
 import Head from "next/head";
 import Script from "next/script";
+import { useEffect } from "react";
 import createEmotionCache from "../libs/createEmotionCache";
 import "./theme/prism-dracular.css";
 // Client-side cache, shared for the whole session of the user in the browser.
@@ -19,6 +21,7 @@ const clientSideEmotionCache = createEmotionCache();
 
 export interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache;
+  comments?: CommentState;
 }
 
 export default function MyApp(props: MyAppProps) {
@@ -47,6 +50,75 @@ export default function MyApp(props: MyAppProps) {
   //     }
   //   })();
   // }, []);
+
+  useEffect(() => {
+    if (
+      localStorage.getItem("ChannelIO.UserName") === null ||
+      localStorage.getItem("ChannelIO.UserName") === ""
+    ) {
+      localStorage.setItem(
+        "ChannelIO.UserName",
+        "devkimson-blog-user-" + uuidv4()
+      );
+    }
+    (function () {
+      var w = window;
+      //@ts-ignore
+      if (w.ChannelIO) {
+        return w.console.error("ChannelIO script included twice.");
+      }
+      //@ts-ignore
+      var ch = function () {
+        //@ts-ignore
+        ch.c(arguments);
+      };
+      //@ts-ignore
+      ch.q = [];
+      //@ts-ignore
+      ch.c = function (args) {
+        //@ts-ignore
+        ch.q.push(args);
+      };
+      //@ts-ignore
+      w.ChannelIO = ch;
+      function l() {
+        //@ts-ignore
+        if (w.ChannelIOInitialized) {
+          return;
+        }
+        //@ts-ignore
+        w.ChannelIOInitialized = true;
+        var s = document.createElement("script");
+        s.type = "text/javascript";
+        s.async = true;
+        s.src = "https://cdn.channel.io/plugin/ch-plugin-web.js";
+        var x = document.getElementsByTagName("script")[0];
+        if (x.parentNode) {
+          x.parentNode.insertBefore(s, x);
+        }
+      }
+      if (document.readyState === "complete") {
+        l();
+      } else {
+        w.addEventListener("DOMContentLoaded", l);
+        w.addEventListener("load", l);
+      }
+    })();
+    //@ts-ignore
+    ChannelIO("boot", {
+      pluginKey: "2557dd40-c219-4bbb-9ab2-fc9748a31726",
+      //@ts-ignore
+      memberId: localStorage.getItem("Channel.ch-veil-id")?.replace(/"+/g, ""),
+      //@ts-ignore
+      profile: {
+        name: localStorage.getItem("ChannelIO.UserName"),
+        mobileNumber: "",
+        landlineNumber: "",
+        CUSTOM_VALUE_1: "",
+        CUSTOM_VALUE_2: "",
+      },
+    });
+  }, []);
 
   return (
     <CacheProvider value={emotionCache}>
@@ -97,80 +169,82 @@ export default function MyApp(props: MyAppProps) {
       <VisitorProvider>
         <ThemeModeProvider>
           <PostProvider>
-            <>
-              <GlobalStyles
-                styles={(theme) => css`
-                  :root {
-                    font-family: "IBM Plex Sans KR", sans-serif;
-                  }
-
-                  #post {
-                    :is(ol, ul) {
-                      line-height: 1;
-                      :is(ol, ul) {
-                        line-height: calc(1em * 1.5);
-                      }
-                    }
-                  }
-
-                  ::-webkit-scrollbar {
-                    width: 8px;
-                    height: 8px;
-                    background-color: #373c0056;
-                  }
-                  ::-webkit-scrollbar-thumb {
-                    width: 8px;
-                    height: 8px;
-                    background-color: #373c00;
-                  }
-                  ::selection {
-                    color: inherit;
-                    background: ${theme.palette.secondary.dark}56;
-                  }
-
-                  html,
-                  body {
-                    overflow: hidden;
-                    height: 100%;
-                    margin: 0;
-
-                    line-height: 1;
-
-                    #__next {
-                      height: 100%;
+            <CommentProvider>
+              <>
+                <GlobalStyles
+                  styles={(theme) => css`
+                    :root {
                       font-family: "IBM Plex Sans KR", sans-serif;
                     }
 
-                    .w-inline-block {
-                      position: relative;
-                      display: flex;
-                      flex-direction: column;
-                      img {
-                        width: 100%;
-                      }
-                      figcaption {
-                        font-family: "IBM Plex Sans KR", sans-serif;
-                        font-size: 14px;
-                        padding-top: 0.3rem;
-                        padding-bottom: 0.3rem;
-                        text-align: center;
-                        background-color: #000000a6;
-                        color: #ffffff;
+                    #post {
+                      :is(ol, ul) {
+                        line-height: 1;
+                        :is(ol, ul) {
+                          line-height: calc(1em * 1.5);
+                        }
                       }
                     }
-                  }
 
-                  .MuiChip-root {
-                    font-family: "IBM Plex Sans KR", sans-serif !important;
-                  }
-                `}
-              />
-              {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-              <CssBaseline />
-              <BaseLayout>
-                <Component {...pageProps} />
-              </BaseLayout>
-            </>
+                    ::-webkit-scrollbar {
+                      width: 8px;
+                      height: 8px;
+                      background-color: #373c0056;
+                    }
+                    ::-webkit-scrollbar-thumb {
+                      width: 8px;
+                      height: 8px;
+                      background-color: #373c00;
+                    }
+                    ::selection {
+                      color: inherit;
+                      background: ${theme.palette.secondary.dark}56;
+                    }
+
+                    html,
+                    body {
+                      overflow: hidden;
+                      height: 100%;
+                      margin: 0;
+
+                      line-height: 1;
+
+                      #__next {
+                        height: 100%;
+                        font-family: "IBM Plex Sans KR", sans-serif;
+                      }
+
+                      .w-inline-block {
+                        position: relative;
+                        display: flex;
+                        flex-direction: column;
+                        img {
+                          width: 100%;
+                        }
+                        figcaption {
+                          font-family: "IBM Plex Sans KR", sans-serif;
+                          font-size: 14px;
+                          padding-top: 0.3rem;
+                          padding-bottom: 0.3rem;
+                          text-align: center;
+                          background-color: #000000a6;
+                          color: #ffffff;
+                        }
+                      }
+                    }
+
+                    .MuiChip-root {
+                      font-family: "IBM Plex Sans KR", sans-serif !important;
+                    }
+                  `}
+                />
+                {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+                <CssBaseline />
+                <BaseLayout>
+                  <Component {...pageProps} />
+                </BaseLayout>
+              </>
+            </CommentProvider>
           </PostProvider>
         </ThemeModeProvider>
       </VisitorProvider>

@@ -1,5 +1,7 @@
+import axios from "axios";
 import markdown from "markdown-it";
 import { SetStateAction } from "react";
+import { COMMENT_BASE_URL, TOKEN, COMMENT_OWNER, COMMENT_REPO } from "./global";
 
 export const convertDate = (date: string) => new Date(date.slice(0, -6));
 
@@ -337,4 +339,40 @@ export const duration = (date: string, due: number) => {
   const end = new Date(temp.setDate(temp.getDate() + due - 1));
 
   return ` [${format(start, "YYYY-MM-dd")} ~ ${format(end, "YYYY-MM-dd")}]`;
+};
+
+const EMPTY_VALUE = "";
+const removeRegExp = /[^A-Za-z0-9_]+/g;
+const token = Base64.decode(TOKEN)
+  .split(/[\|]/g)
+  .reduce((acc, cur, i) => {
+    if (i !== 1) {
+      acc += cur;
+    }
+    return acc;
+  }, EMPTY_VALUE)
+  .replace(removeRegExp, EMPTY_VALUE);
+export const issueAxios = axios.create({
+  baseURL: COMMENT_BASE_URL,
+  headers: {
+    Authorization: `Bearer ${Base64.decode(token).replace(
+      removeRegExp,
+      EMPTY_VALUE
+    )}`,
+    "X-GitHub-Api-Version": "2022-11-28",
+    Accept: "application/vnd.github+json",
+  },
+});
+export async function getComments() {
+  const { data } = await issueAxios.get(COMMENT_OWNER + COMMENT_REPO);
+  return data.map(
+    ({ title, comments }: { title: string; comments: string }) => ({
+      title,
+      comments,
+    })
+  );
+}
+
+export const getRandomItemInArray = (array: any[]) => {
+  return array.at(Math.floor(Math.random() * array.length));
 };

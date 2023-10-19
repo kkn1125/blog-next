@@ -4,14 +4,14 @@ import Card from "@/components/Card";
 import GenerateHead from "@/components/GenerateHead";
 import MainCard from "@/components/MainCard";
 import { getAllArticles } from "@/libs/service";
+import { CommentContext, findComment } from "@/context/CommentProvider";
 import {
-  AUTHOR,
   BRAND_DESC,
   BRAND_LOGO,
   BRAND_NAME,
   MAIN_SUBSCRIPTION,
 } from "@/util/global";
-import { slicedBundle, uuidv4 } from "@/util/tool";
+import { slicedBundle } from "@/util/tool";
 import {
   Box,
   Container,
@@ -21,7 +21,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { useEffect } from "react";
+import { useContext } from "react";
 
 const metadatas = {
   title: BRAND_NAME.toUpperCase(),
@@ -34,75 +34,11 @@ export default function Home({ posts }: any) {
   const theme = useTheme();
   const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
 
-  useEffect(() => {
-    if (
-      localStorage.getItem("ChannelIO.UserName") === null ||
-      localStorage.getItem("ChannelIO.UserName") === ""
-    ) {
-      localStorage.setItem(
-        "ChannelIO.UserName",
-        "devkimson-blog-user-" + uuidv4()
-      );
-    }
-    (function () {
-      var w = window;
-      //@ts-ignore
-      if (w.ChannelIO) {
-        return w.console.error("ChannelIO script included twice.");
-      }
-      //@ts-ignore
-      var ch = function () {
-        //@ts-ignore
-        ch.c(arguments);
-      };
-      //@ts-ignore
-      ch.q = [];
-      //@ts-ignore
-      ch.c = function (args) {
-        //@ts-ignore
-        ch.q.push(args);
-      };
-      //@ts-ignore
-      w.ChannelIO = ch;
-      function l() {
-        //@ts-ignore
-        if (w.ChannelIOInitialized) {
-          return;
-        }
-        //@ts-ignore
-        w.ChannelIOInitialized = true;
-        var s = document.createElement("script");
-        s.type = "text/javascript";
-        s.async = true;
-        s.src = "https://cdn.channel.io/plugin/ch-plugin-web.js";
-        var x = document.getElementsByTagName("script")[0];
-        if (x.parentNode) {
-          x.parentNode.insertBefore(s, x);
-        }
-      }
-      if (document.readyState === "complete") {
-        l();
-      } else {
-        w.addEventListener("DOMContentLoaded", l);
-        w.addEventListener("load", l);
-      }
-    })();
+  // const router = useRouter();
+  // console.log(router);
 
-    //@ts-ignore
-    ChannelIO("boot", {
-      pluginKey: "2557dd40-c219-4bbb-9ab2-fc9748a31726",
-      //@ts-ignore
-      memberId: localStorage.getItem("Channel.ch-veil-id")?.replace(/"+/g, ""),
-      //@ts-ignore
-      profile: {
-        name: localStorage.getItem("ChannelIO.UserName"),
-        mobileNumber: "",
-        landlineNumber: "",
-        CUSTOM_VALUE_1: "",
-        CUSTOM_VALUE_2: "",
-      },
-    });
-  }, []);
+  // useEffect(() => {}, [router.asPath]);
+  const { comments } = useContext(CommentContext);
 
   return (
     <Container maxWidth='lg'>
@@ -148,7 +84,10 @@ export default function Home({ posts }: any) {
                 }}>
                 {row.map((post, q) => (
                   <Animated card key={q} order={q + 3} animate='fadeInUp'>
-                    <Card post={post} />
+                    <Card
+                      post={post}
+                      comment={findComment(comments, post.frontmatter.slug)}
+                    />
                   </Animated>
                 ))}
               </Stack>

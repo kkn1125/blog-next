@@ -9,6 +9,14 @@ import rehypePrism from "rehype-prism-plus";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
+import axios from "axios";
+import {
+  COMMENT_BASE_URL,
+  COMMENT_OWNER,
+  COMMENT_REPO,
+  TOKEN,
+} from "@/util/global";
+import { Base64 } from "@/util/tool";
 
 const basePath = "src/database/**/*.mdx";
 

@@ -1,14 +1,28 @@
 import {
+  Comment,
+  CommentContext,
+  findComment,
+} from "@/context/CommentProvider";
+import {
   PostContext,
   PostDispatchContext,
   POST_INIT,
 } from "@/context/PostProvider";
 import metapost from "@/database/metapost/posts.json";
-import { getAllArticles } from "@/libs/service";
-import { format, slugToBlogTrailingSlash } from "@/util/tool";
+import {
+  format,
+  getRandomItemInArray,
+  slugToBlogTrailingSlash,
+} from "@/util/tool";
 import { Box, Chip, Paper, Stack, TextField, Typography } from "@mui/material";
 import Link from "next/link";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 function SearchBar({
   open,
@@ -21,6 +35,7 @@ function SearchBar({
   const { posts } = useContext(PostContext);
   const postDispatch = useContext(PostDispatchContext);
   const [searchList, setSearchList] = useState([]);
+  const { comments } = useContext(CommentContext);
 
   useEffect(() => {
     postDispatch({
@@ -62,7 +77,8 @@ function SearchBar({
       const searchedList = posts.filter(
         (post: any) =>
           value &&
-          (post.frontmatter.title?.match(value) ||
+          (post.frontmatter.slug?.match(value) ||
+            post.frontmatter.title?.match(value) ||
             post.frontmatter.description?.match(value) ||
             post.frontmatter.category?.match(value) ||
             post.frontmatter.tag?.match(value))
@@ -70,6 +86,19 @@ function SearchBar({
       setSearchList(searchedList);
     }
   }
+
+  const findCommentOrDefault = useCallback(
+    (commentList: Comment[], item: any) => {
+      const comment = findComment(commentList, item.frontmatter.slug);
+      return comment
+        ? { title: comment.title, comments: comment.comments }
+        : {
+            title: item.frontmatter.slug,
+            comments: 0,
+          };
+    },
+    [inputRef.current?.value]
+  );
 
   return open ? (
     <Box
@@ -92,14 +121,20 @@ function SearchBar({
           left: "50vw",
           transform: "translate(-50%, -50%)",
           p: 5,
-          minWidth: "50vw",
+          minWidth: {
+            xs: "80vw",
+            lg: "50vw",
+          },
           zIndex: 1000,
         }}>
-        <Typography>Search</Typography>
+        <Typography gutterBottom>✨ Search</Typography>
         <TextField
           fullWidth
           size='small'
-          placeholder='✨ 준비 중입니다! 😊'
+          placeholder={
+            "예시) " +
+            getRandomItemInArray(getRandomItemInArray(posts).frontmatter.tags)
+          }
           inputRef={inputRef}
           // disabled
           onKeyUp={handleSearch}
@@ -150,6 +185,9 @@ function SearchBar({
                   </Typography>
                   <Chip label={item.frontmatter.author} size='small' />
                 </Stack>
+                <Typography fontSize={14} fontWeight={200}>
+                  💬 Comments ({findCommentOrDefault(comments, item).comments})
+                </Typography>
                 <Typography fontSize={14} fontWeight={200}>
                   {item.readingTime}
                 </Typography>

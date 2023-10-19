@@ -1,4 +1,7 @@
 /* use server */
+
+import { Base64 } from "./tool";
+
 /* post file directory */
 export const BLOG_PATH = process.env.BLOG_PATH as string;
 
@@ -43,3 +46,19 @@ export const BRAND_W_LOGO = `${BRAND_LOGO_PATH}/logo_white.png`;
 /* blog brand logo */
 export const BRAND_LOGO = BRAND_COLOR_LOGO;
 export const MAIN_POST_LIMIT = 4;
+
+export const COMMENT_BASE_URL =
+  process.env.NEXT_PUBLIC_BLOG_COMMENT_BASE_URL || "https://api.github.com";
+export const COMMENT_OWNER =
+  process.env.NEXT_PUBLIC_BLOG_COMMENT_OWNER || "/repos/kkn1125";
+export const COMMENT_REPO =
+  process.env.NEXT_PUBLIC_BLOG_COMMENT_REPO || "/blog-comments/issues";
+export const TOKEN = ((process.env.NEXT_PUBLIC_TOKEN as string) || "").slice(5);
+// console.log(
+//   Base64.decode(
+//     (() => {
+//       const [_, __, ___] = Base64.decode(TOKEN).split(/[\|]/g);
+//       return _ + ___;
+//     })()
+//   )
+// );

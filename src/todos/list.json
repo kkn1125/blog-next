@@ -1,6 +1,44 @@
 {
   "2023": {
     "9": {
+      "19": [
+        {
+          "todo": "댓글 조회 및 포스팅별 개수 표시",
+          "tag": "check",
+          "time": "2023-10-19 18:42:28",
+          "repeat": false,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": [],
+          "dueStart": null,
+          "due": 0
+        },
+        {
+          "todo": "검색 범위 slug 포함하여 확장 ",
+          "tag": "check",
+          "time": "2023-10-19 18:42:28",
+          "repeat": false,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": [],
+          "dueStart": null,
+          "due": 0
+        },
+        {
+          "todo": "채널톡 초기화 시점 변경",
+          "tag": "check",
+          "time": "2023-10-19 18:42:28",
+          "repeat": false,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": [],
+          "dueStart": null,
+          "due": 0
+        }
+      ],
       "18": [
         {
           "todo": "GCP Indexing API 포스팅",
