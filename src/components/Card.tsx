@@ -78,6 +78,10 @@ function Card({
           {post.frontmatter.title}
         </Typography>
         <Typography
+          component={Link}
+          href={
+            slugToBlogTrailingSlash(post.frontmatter.slug) + "#comment-wrap"
+          }
           fontFamily={`"IBM Plex Sans KR", sans-serif`}
           fontWeight={500}
           fontSize={(theme) => theme.typography.pxToRem(12)}

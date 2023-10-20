@@ -1,23 +1,14 @@
-import { ColorModeContext } from "@/context/ThemeModeProvider";
 import {
   CommentContext,
   CommentDispatchContext,
   CommentType,
 } from "@/context/CommentProvider";
+import { ColorModeContext } from "@/context/ThemeModeProvider";
+import { BRAND_BW_LOGO, BRAND_LOGO, BRAND_NAME, PROFILE } from "@/util/global";
 import {
-  BRAND_BW_LOGO,
-  BRAND_LOGO,
-  BRAND_NAME,
-  COMMENT_BASE_URL,
-  COMMENT_OWNER,
-  COMMENT_REPO,
-  PROFILE,
-  TOKEN,
-} from "@/util/global";
-import {
-  Base64,
   compareWithOrigin,
   getComments,
+  getVisitantHtml,
   resConvertData,
   uuidv4,
   validTime,
@@ -153,11 +144,7 @@ function ResponsiveAppBar() {
     }
 
     function checkVisite() {
-      axios(
-        `https://api.allorigins.win/get?url=${encodeURIComponent(
-          "https://url.kr/6po2f9"
-        )}`
-      )
+      getVisitantHtml()
         .then((res) => {
           // console.log("visit!");
         })
@@ -199,12 +186,9 @@ function ResponsiveAppBar() {
       sid: navigator.userAgent.replace(/[\s]*/gm, "") + uuidv4(),
       maxTime: Date.now() + 1000 * 60 * 60 * 24,
     });
+
     setTimeout(() => {
-      axios(
-        `https://api.allorigins.win/get?url=${encodeURIComponent(
-          "https://url.kr/6po2f9*"
-        )}`
-      )
+      getVisitantHtml()
         .then((res) => {
           const tableObj = resConvertData(res);
 
@@ -212,7 +196,7 @@ function ResponsiveAppBar() {
             today: tableObj["오늘 방문자수"].split(" ").shift(),
             stack: tableObj["누적 방문자수"],
           };
-
+          
           if (compareWithOrigin(getData, visitor)) {
             setVisitor({
               ...visitor,
@@ -226,11 +210,7 @@ function ResponsiveAppBar() {
     }, 100);
 
     let refreshVisitant = setInterval(() => {
-      axios(
-        `https://api.allorigins.win/get?url=${encodeURIComponent(
-          "https://url.kr/6po2f9*"
-        )}`
-      )
+      getVisitantHtml()
         .then((res) => {
           const tableObj = resConvertData(res);
 
@@ -240,10 +220,10 @@ function ResponsiveAppBar() {
           };
 
           if (compareWithOrigin(getData, visitor)) {
-            setVisitor({
+            setVisitor(() => ({
               ...visitor,
               ...getData,
-            });
+            }));
           }
         })
         .catch((e) => {
@@ -251,13 +231,13 @@ function ResponsiveAppBar() {
         });
 
       // 댓글 갱신
-      getComments().then((comments) => {
-        commentDispatch({
-          type: CommentType.LOAD,
-          comments,
-        });
-      });
-    }, 1000 * 30);
+      // getComments().then((comments) => {
+      //   commentDispatch({
+      //     type: CommentType.LOAD,
+      //     comments,
+      //   });
+      // });
+    }, 1000 * 60 * 5);
 
     // 댓글 초기화
     getComments().then((comments) => {

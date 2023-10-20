@@ -1,6 +1,32 @@
 {
   "2023": {
     "9": {
+      "20": [
+        {
+          "todo": "방문자 조회 api cors문제로 별도 api서버로 우회하는 방법으로 변경",
+          "tag": "check",
+          "time": "2023-10-20 15:02:18",
+          "repeat": false,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": [],
+          "dueStart": null,
+          "due": 0
+        },
+        {
+          "todo": "댓글 조회 githup api 사용 시 토큰 노출 문제 해결",
+          "tag": "check",
+          "time": "2023-10-20 15:02:18",
+          "repeat": false,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": [],
+          "dueStart": null,
+          "due": 0
+        }
+      ],
       "19": [
         {
           "todo": "댓글 조회 및 포스팅별 개수 표시",

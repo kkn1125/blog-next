@@ -26,7 +26,7 @@ type CommentAction = {
 };
 
 export function findComment(comments: Comment[], slug: string) {
-  return comments.find((comment) => comment.title.slice(4) === slug);
+  return comments.find((comment) => comment.title === slug);
 }
 
 const reducer = (state: CommentState, action: CommentAction) => {

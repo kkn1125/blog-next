@@ -483,6 +483,7 @@ function Index({
               />
               <PostNavigator before={before} next={next} />
               <Box
+                id='comment-wrap'
                 sx={{
                   minHeight: 50,
                 }}>
