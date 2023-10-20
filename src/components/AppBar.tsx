@@ -12,6 +12,7 @@ import {
   resConvertData,
   uuidv4,
   validTime,
+  visitCount,
 } from "@/util/tool";
 import MenuIcon from "@mui/icons-material/Menu";
 import NightsStayIcon from "@mui/icons-material/NightsStay";
@@ -144,7 +145,7 @@ function ResponsiveAppBar() {
     }
 
     function checkVisite() {
-      getVisitantHtml()
+      visitCount()
         .then((res) => {
           // console.log("visit!");
         })
@@ -196,7 +197,7 @@ function ResponsiveAppBar() {
             today: tableObj["오늘 방문자수"].split(" ").shift(),
             stack: tableObj["누적 방문자수"],
           };
-          
+
           if (compareWithOrigin(getData, visitor)) {
             setVisitor({
               ...visitor,

@@ -350,6 +350,11 @@ export async function getComments() {
   return data;
 }
 
+export async function visitCount() {
+  const { data } = await axios.post(COMMENT_BASE_URL + VISITANT_PATH);
+  return data;
+}
+
 export async function getVisitantHtml() {
   const { data } = await axios.get(COMMENT_BASE_URL + VISITANT_PATH);
   return data;
