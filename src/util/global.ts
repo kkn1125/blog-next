@@ -48,7 +48,7 @@ export const BRAND_LOGO = BRAND_COLOR_LOGO;
 export const MAIN_POST_LIMIT = 4;
 
 export const COMMENT_BASE_URL =
-  process.env.NEXT_PUBLIC_BLOG_COMMENT_BASE_URL || "http://devkimson.kro.kr";
+  process.env.NEXT_PUBLIC_BLOG_COMMENT_BASE_URL || "https://devkimson.kro.kr";
 export const COMMENT_PATH =
   process.env.NEXT_PUBLIC_BLOG_COMMENT_PATH || "/comments";
 export const VISITANT_PATH =
