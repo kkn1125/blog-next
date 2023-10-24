@@ -608,7 +608,6 @@ export const getStaticProps = async ({ params }: any) => {
   });
 
   const mdxSource = (await serializeMdx(post.content || "")) || {};
-
   mdxSource.frontmatter = post.frontmatter;
 
   return {

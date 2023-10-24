@@ -1,13 +1,21 @@
 ---
 slug: "/nestjs01/"
-date: 2023-10-23 18:37:15 +0000
-modified: 2023-10-23 18:37:15 +0000
+date: 2023-10-24 19:12:45 +0000
+modified: 2023-10-24 19:12:45 +0000
 title: "[NESTJS] Nest.js 프로젝트 초기 설정하기"
 author: Kimson
 categories: [nestjs]
 image: /assets/images/post/covers/TIL-nest2.png
 tags: [node, nest, framework, basic, til]
-description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officiis quia saepe ullam assumenda perferendis aliquid ratione? Inventore aperiam optio soluta, iste temporibus dolor dicta! Amet earum doloribus illo reprehenderit magni."
+description: "Nest.js 프로젝트 다루기
+
+Nest.js(이하 네스트)는 Spring boot(이하 스프링)와 아주 유사한 구조를 가지고 있다. 스프링의 어노테이션과 대응하는 데코레이터와 `IoC(제어의 역전)`와 `DI(의존성 주입)` 개념이 사용된다.
+
+설치와 실행
+
+네스트를 사용하면서 `fastify`나 `express`와 달리 좋았던 부분은 각 개발 단위의 폼(form)을 생성해주는 `CLI`의 기능을 꼽을 수 있다. 프로젝트를 구성하는데 필요한 모든 기능을 `CLI`가 떠먹여준다고 해도 과언이 아니다.
+
+스프링으로 굳이 비교해보자면 `initializr`가 초기 프로젝트 세팅만 해주는 반면, 네스트는 초기 세팅은 물론 확장되는 앱과 서브앱, 모듈 등을 자동으로 디렉토리 생성 및 파일 내용을 작성하고 임포트해준다. 얼마나 효율적인가? 😮"
 featured: true
 rating: 4.5
 profile: false
@@ -530,15 +538,332 @@ export class AuthModule {}
 
 프로젝트를 만들면서 테스팅은 빠질 수 없다고 생각한다. 단위테스트부터 종단 테스트 까지 설정해보자.
 
-### Unit Test
+### Serevice Test
+
+서비스 테스트 설정은 아래와 같다.
+
+```typescript showLineNumbers filename="src/board/board.service.spec.ts"
+import { Test, TestingModule } from "@nestjs/testing";
+import { getRepositoryToken } from "@nestjs/typeorm";
+import { ApiResponseModule } from "@src/api.response/api.response.module";
+import { LoggerModule } from "@src/logger/logger.module";
+import { User } from "@src/user/entities/user.entity";
+import { Repository } from "typeorm";
+import { BoardService } from "./board.service";
+import { CreateBoardDto } from "./dto/create-board.dto";
+import { Board } from "./entities/board.entity";
+
+const boards = [
+  {
+    id: 1,
+    title: "test1",
+    content: "test content",
+    author: 1,
+    deleted_at: null,
+    created_at: "2023-10-23 12:53",
+    updated_at: "2023-10-23 12:53",
+  },
+  {
+    id: 2,
+    title: "test2",
+    content: "test2 content",
+    author: 1,
+    deleted_at: null,
+    created_at: "2023-10-23 12:53",
+    updated_at: "2023-10-23 12:53",
+  },
+];
+
+const createdData = {
+  title: "test3",
+  content: "test3 content",
+  user: { id: 2 } as User,
+};
+
+const mockBoardRepository = () => ({
+  insert: jest.fn().mockImplementation((dto: CreateBoardDto) =>
+    Promise.resolve(
+      boards.push({
+        id: 3,
+        title: dto.title,
+        content: dto.content,
+        author: 2,
+        deleted_at: null,
+        created_at: "2023-10-23 12:53",
+        updated_at: "2023-10-23 12:53",
+      })
+    )
+  ),
+  save: jest.fn(),
+  find: jest.fn().mockResolvedValue(boards),
+  findOne: jest
+    .fn()
+    .mockImplementation((id: { where: { id: number } }) =>
+      Promise.resolve(boards.find((board) => board.id === id.where.id))
+    ),
+  softDelete: jest.fn(),
+});
+
+type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
+
+describe("BoardService", () => {
+  let service: BoardService;
+  let boardRepository: MockRepository<Board>;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      imports: [ApiResponseModule, LoggerModule],
+      providers: [
+        BoardService,
+        {
+          provide: getRepositoryToken(Board),
+          useValue: mockBoardRepository(),
+        },
+      ],
+    }).compile();
+
+    service = module.get<BoardService>(BoardService);
+    boardRepository = module.get<MockRepository<Board>>(
+      getRepositoryToken(Board)
+    );
+  });
+
+  afterAll(() => {});
+
+  it("should be defined", () => {
+    expect(service).toBeDefined();
+    expect(boardRepository).toBeDefined();
+  });
+
+  it("test find", async () => {
+    const boards = await service.findAll({ page: 1 });
+    expect(boards.data.length).toStrictEqual(2);
+  });
+
+  it("test findOne", async () => {
+    const board = await service.findOne(2);
+    expect(board.title).toStrictEqual("test2");
+  });
+
+  it("test create", async () => {
+    /* const board =  */ await service.create(createdData);
+    const boards = await service.findAll({ page: 1 });
+    const found = boards.data.find(
+      (board) => board.title === createdData.title
+    );
+    expect(found.id).toStrictEqual(3);
+  });
+});
+```
+
+### Controller Test
+
+다음은 컨트롤러 테스트 설정이다.
+
+```typescript showLineNumbers filename="src/board/board.controller.spec.ts"
+import { Test, TestingModule } from "@nestjs/testing";
+import { getRepositoryToken } from "@nestjs/typeorm";
+import { ApiResponseModule } from "@src/api.response/api.response.module";
+import { LoggerModule } from "@src/logger/logger.module";
+import { Repository } from "typeorm";
+import { BoardController } from "./board.controller";
+import { BoardService } from "./board.service";
+import { CreateBoardDto } from "./dto/create-board.dto";
+import { Board } from "./entities/board.entity";
+// import { ApiResponseModule } from '@/api.response/api.response.module';
+
+const boards = [
+  {
+    id: 1,
+    title: "test1",
+    content: "test content",
+    author: 1,
+    deleted_at: null,
+    created_at: "2023-10-23 12:53",
+    updated_at: "2023-10-23 12:53",
+  },
+  {
+    id: 2,
+    title: "test2",
+    content: "test2 content",
+    author: 1,
+    deleted_at: null,
+    created_at: "2023-10-23 12:53",
+    updated_at: "2023-10-23 12:53",
+  },
+];
+
+const createdData = {
+  title: "test3",
+  content: "test3 content",
+  author: 2,
+};
+
+const boardProvideValues = () => ({
+  insert: jest.fn().mockImplementation((dto: CreateBoardDto) =>
+    Promise.resolve(
+      boards.push({
+        id: 3,
+        title: dto.title,
+        content: dto.content,
+        author: dto.user.id,
+        deleted_at: null,
+        created_at: "2023-10-23 12:53",
+        updated_at: "2023-10-23 12:53",
+      })
+    )
+  ),
+  save: jest.fn(),
+  find: jest.fn().mockResolvedValue(boards),
+  findOne: jest
+    .fn()
+    .mockImplementation((id: { where: { id: number } }) =>
+      Promise.resolve(boards.find((board) => board.id === id.where.id))
+    ),
+  softDelete: jest.fn(),
+});
+
+type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
+
+describe("BoardController", () => {
+  let controller: BoardController;
+  let service: BoardService;
+  let boardRepository: MockRepository<Board>;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      imports: [ApiResponseModule, LoggerModule],
+      controllers: [BoardController],
+      providers: [
+        BoardService,
+        {
+          provide: getRepositoryToken(Board),
+          useValue: boardProvideValues(),
+        },
+      ],
+    }).compile();
+
+    controller = module.get<BoardController>(BoardController);
+    service = module.get<BoardService>(BoardService);
+    boardRepository = module.get<MockRepository<Board>>(
+      getRepositoryToken(Board)
+    );
+    // app = module.createNestApplication();
+    // const connection = app.get(Connection);
+  });
+
+  afterEach(async () => {});
+
+  it("should be defined", () => {
+    expect(controller).toBeDefined();
+    expect(service).toBeDefined();
+    expect(boardRepository).toBeDefined();
+  });
+
+  it("findAll", async () => {
+    const response = await controller.findAll(1);
+    expect(await controller.findAll(1)).toStrictEqual(response);
+  });
+});
+```
+
+서비스와 컨트롤러의 경우 `RepositoryToken`을 사용해서 `Repository`를 별도로 작성해주고 데이터를 미리 정의해서 테스트한다. 만일 테스트할 모듈에 다른 모듈이 `import`된 상태라면 필요한 모듈을 추가해준다. 안그러면 에러가 발생한다. 혹시 추가해도 에러가 난다면 순서를 맞추어 같은 인덱스 위치에 등록한다.
 
 ### E2E Test
 
+종단 테스트는 다음과 같이 설정한다.
+
+```typescript showLineNumbers filename="test/app.e2e-spec.ts"
+import { Test, TestingModule } from "@nestjs/testing";
+import { INestApplication } from "@nestjs/common";
+import * as request from "supertest";
+import { AppModule } from "@src/app.module";
+import { DataSource } from "typeorm";
+import { ApiResponseModule } from "@src/api.response/api.response.module";
+import { LoggerModule } from "@src/logger/logger.module";
+
+describe("AppController (e2e)", () => {
+  let app: INestApplication;
+  let dataSource: DataSource;
+
+  beforeEach(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [ApiResponseModule, LoggerModule, AppModule],
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+    dataSource = moduleFixture.get<DataSource>(DataSource); /* 추가된 코드 */
+
+    await app.init();
+  });
+
+  afterEach(async () => {
+    await app.close();
+  });
+
+  describe("/board (GET)", () => {
+    it("resonse status", () => {
+      return request(app.getHttpServer())
+        .get("/board")
+        .expect(200)
+        .timeout(3000);
+    });
+    it("resonse data length", () => {
+      return request(app.getHttpServer())
+        .get("/board")
+        .expect(200)
+        .expect((res) => {
+          return res.body.data.length === 3;
+        });
+    });
+  });
+});
+```
+
+여기서 `alias`로 설정한 모듈이 제대로 `import`되지 않는다면 `jest-e2e.json`의 설정에서 다음을 추가한다.
+
+```json highlight={9-11} showLineNumbers filename="test/jest-e2e.json"
+{
+  "moduleFileExtensions": ["js", "json", "ts"],
+  "rootDir": ".",
+  "testEnvironment": "node",
+  "testRegex": ".e2e-spec.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "^@src/(.*)$": "<rootDir>/../src/$1"
+  }
+}
+```
+
+`<rootDir>`이 "."이 아니라 "src"라면 `<rootDir>/$1`로 설정하면 된다.
+
 ## 마무리
+
+이번 포스팅은 평서체를 사용해서 평소 경어체를 사용하던 포스팅과 느낌이 다를 수 있습니다 😀
+
+최근 구직 활동 중에 네스트의 수요가 많아지는 것을 고려해서 리딩했던 내용과 예시를 기록했습니다. 삽질했던 내용을 담기엔 내용이 너무 길어질 것 같아 대부분의 해결 방법을 아래 링크에 위임했습니다.
+
+네스트를 사용하면서 의존성 주입이며, 제어의 역전과 같은 개념 등 스프링부트와 많은 유사점이 있어서 생각이 났습니다. 스프링부트를 사용했던 경험 덕분에 네스트를 익히는데 많은 도움이 되었습니다.
+
+나아가 이번 공부를 발판삼아 CQRS와 통합 인증을 위한 passport, 스웨거를 사용한 프로젝트를 구축하는 내용으로 포스팅하려합니다. 새로운 기술을 익힐 때마다 공부해야할 부분이 조금씩 보이니 일석이조인 것 같습니다. 😁
+
+여기까지 봐주셔서 감사합니다. 🙇‍♂️
+
+---
 
 📚 함께 보면 좋은 내용
 
+[Bruno Koga - mocking test vs real database test참조](https://medium.com/@bhkfazano/testing-your-api-services-with-nestjs-mocking-vs-real-database-bbfe689ed745)
+
+[Nest.js::router global prefix 설정 참조](https://docs.nestjs.com/faq/global-prefix)
+
+[jakekwak님 GitBook::HTTP module](https://jakekwak.gitbook.io/nestjs/techniques/http-module)
+
 [Nest.js AuthGuard 설정 에러::ExceptionHandler metatype is not a constructor](https://velog.io/@wanzekim/ERROR-ExceptionHandler-metatype-is-not-a-constructor)
+
+[Nest.js::Guards](https://docs.nestjs.com/guards)
 
 [Nest.js::configuration 설정 참조 - 1](https://www.daleseo.com/nestjs-configuration/)
 
@@ -559,3 +884,17 @@ export class AuthModule {}
 [Nest.js::TypeOrm getConnection 버전 업데이트에 따른 deprecated 대체 방법 참조](https://jhyeok.com/typeorm-0.3/)
 
 [1youngs님 블로그::유닛, 종단 테스트 예시 참조](https://velog.io/@1yongs_/NestJS-Testing-Jest)
+
+[푸르고님 블로그::[NestJS] e2e테스트 Jest 테스트 시 DB 초기화하는 법](https://puleugo.tistory.com/114)
+
+[차가운에스프레소님 블로그::Carryduo | Jest를 이용한 Unit/E2E 테스트 (NestJS)](https://coldpresso.tistory.com/13)
+
+[Devkly님 블로그::간단한 API를 TDD로 만들어보기 (with Nest.js)](https://devkly.com/nodejs/simple-tdd-with-nestjs/)
+
+[Parkjuida님 블로그::Nest.js 의 유닛 테스트(Unit test)](https://dailybook-with.tistory.com/entry/Nestjs-%EC%9D%98-%EC%9C%A0%EB%8B%9B-%ED%85%8C%EC%8A%A4%ED%8A%B8Unit-test)
+
+[dzone::TDD 관련 기사 참조](https://dzone.com/articles/tdd-typescript-nestjs-api-layers-with-jest-part1-controller)
+
+[jujube0님 블로그::NestJS로 REST API 만들기](https://velog.io/@jujube0/NestJS%EB%A1%9C-REST-API-%EB%A7%8C%EB%93%A4%EA%B8%B0#introducing-the-config-module)
+
+[코드기어님 블로그::NestJS - 18. 설정 파일 & 환경 변수 관리](https://codegear.tistory.com/82)
