@@ -9,6 +9,7 @@ import rehypePrism from "rehype-prism-plus";
 import rehypeSlug from "rehype-slug";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
+import rehypeMdxCodeProps from "rehype-mdx-code-props";
 
 const basePath = "src/database/**/*.mdx";
 
@@ -62,25 +63,26 @@ const customGlob = (globCondition: string | string[]) => {
   return SLICE_FOR_TEST_RUN(globSync(globCondition), SLICE_FOR_TEST_RUN_AMOUNT);
 };
 
-export const serializeMdx = (source: string) => {
-  // const fixMetaPlugin = (options: any = {}) => {
-  //   return (tree: any) => {
-  //     visit(tree, "element", visit);
-  //   };
+export const serializeMdx = async (source: string) => {
+  const fixMetaPlugin = (options: any = {}) => {
+    return (tree: any) => {
+      visit(tree, "element", visit);
+    };
 
-  //   function visit(
-  //     node: { tagName: string; data: any; properties: { metastring: any } },
-  //     index: string,
-  //     parent: { (node: any, index: any, parent: any): void; tagName?: any }
-  //   ) {
-  //     if (!parent || parent.tagName !== "pre" || node.tagName !== "code") {
-  //       return;
-  //     }
+    function visit(
+      node: { tagName: string; data: any; properties: { metastring: any } },
+      index: string,
+      parent: { (node: any, index: any, parent: any): void; tagName?: any }
+    ) {
+      if (!parent || parent.tagName !== "pre" || node.tagName !== "code") {
+        return;
+      }
 
-  //     node.data = { ...node.data, meta: node.properties.metastring };
-  //   }
-  // };
-  return serialize(source, {
+      node.data = { ...node.data, meta: node.properties.metastring };
+    }
+  };
+
+  return serialize(source.trim(), {
     parseFrontmatter: true,
     mdxOptions: {
       remarkPlugins: [remarkGfm, remarkBreaks],
@@ -95,6 +97,7 @@ export const serializeMdx = (source: string) => {
             },
           },
         ],
+        rehypeMdxCodeProps,
       ],
       format: "mdx",
       development: process.env.NODE_ENV !== "production",
@@ -122,7 +125,6 @@ export async function getSlugs() {
   for (let i = 0; i < articles.length; i++) {
     const articleSlug = articles[i];
     const source = fs.readFileSync(path.join(articleSlug), "utf-8");
-
     const mdx = await serializeMdx(source);
     const { data } = matter(source);
 

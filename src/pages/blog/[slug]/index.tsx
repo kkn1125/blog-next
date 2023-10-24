@@ -247,12 +247,14 @@ let copyActive = false;
 function Index({
   post,
   content,
+  origin,
   before,
   next,
 }: {
   post: any;
   content: any;
   before: any;
+  origin: any;
   next: any;
 }) {
   const [responsivePost, setResponsivePost] = useState<any>(null);
@@ -477,9 +479,17 @@ function Index({
                 </Tooltip>
               </Stack>
               <Divider sx={{ my: 3, width: "100%" }} flexItem />
-              <MDXRemote
-                {...responsivePost}
+              {/* <HydratedMDX
+                serialized={...responsivePost}
                 components={components as MDXComponents | MergeComponents}
+              /> */}
+              <MDXRemote
+                compiledSource={responsivePost.compiledSource}
+                frontmatter={responsivePost.frontmatter}
+                scope={{}}
+                // {...responsivePost}
+                components={components as MDXComponents | MergeComponents}
+                lazy
               />
               <PostNavigator before={before} next={next} />
               <Box

@@ -144,11 +144,11 @@ pre[class*="language-"]::-webkit-scrollbar-corner {
 }
 
 .token.inserted {
-  background: #294436;
+  /* background: #294436; */
 }
 
 .token.deleted {
-  background: #484a4a;
+  /* background: #484a4a; */
 }
 
 code.language-css .token.property,
@@ -194,6 +194,7 @@ code[class*="language-"] {
 }
 
 .highlight-line {
-  background-color: rgba(55, 65, 81, 0.5); /* Set highlight bg color */
+  background-color: rgba(42, 81, 144, 0.8); /* Set highlight bg color */
   border-left: 4px solid rgb(59, 130, 246); /* Set highlight accent border color */
+  padding-left: 12px !important;
 }

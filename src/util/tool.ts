@@ -254,8 +254,11 @@ export const parseHeading = (content: string) => {
     .split(/[\n]+/gm)
     .filter((item) => item.match(/^<h[1-6]([\s\S]+)h[1-6]>$/))
     .map((item) => {
-      const title = item.match(/^\<h([1-6])\>([\s\S]+)<\/h[1-6]>$/) as string[];
-      return { order: title[1], head: title[2] };
+      const title = item.match(
+        /^\<h([1-6])\>([\s\S]+)?<\/h[1-6]>$/
+      ) as string[];
+
+      return { order: title[1], head: title[2] || "" };
     });
 };
 

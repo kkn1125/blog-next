@@ -1,15 +1,23 @@
 import { convertIdString } from "@/util/tool";
-import { Stack, Typography, Box, Divider } from "@mui/material";
+import { Box, Divider, Stack, Typography } from "@mui/material";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 interface CodeBlockProps {
   children: string;
   className: string;
 }
 
-const CodeBlock = ({ children, className }: CodeBlockProps | any) => {
+const CodeBlock = (props: CodeBlockProps | any) => {
+  const { filename, children, className } = props;
+  const [fileName, setFileName] = useState("");
   const language = className?.split(" ").shift();
+
+  useEffect(() => {
+    if (props) {
+      setFileName(filename);
+    }
+  }, []);
 
   return className ? (
     <Stack
@@ -35,11 +43,11 @@ const CodeBlock = ({ children, className }: CodeBlockProps | any) => {
           top: 16 * 1,
           left: 20,
           transform: "translateY(-50%)",
-          textTransform: "uppercase",
+          textTransform: !!filename ? "inherit" : "uppercase",
           fontWeight: 700,
           color: "#ffffff",
         }}>
-        {language.split("-").pop()}
+        {!!filename ? fileName : language.split("-").pop()}
       </Typography>
       <Box
         sx={{
@@ -131,7 +139,19 @@ const CodeBlock = ({ children, className }: CodeBlockProps | any) => {
   );
 };
 
-const Pre = ({ children }: any) => <div>{children}</div>;
+const Pre = (props: any) => {
+  const { children, ...rest } = props;
+  const childrenWithProps = React.Children.map(children, (child) => {
+    // Checking isValidElement is the safe way and avoids a
+    // typescript error too.
+    if (React.isValidElement(child)) {
+      return React.cloneElement(child, { ...rest });
+    }
+    return child;
+  });
+
+  return <div>{childrenWithProps}</div>;
+};
 
 const Paragraph = ({ children }: any) => (
   <Box
@@ -173,7 +193,7 @@ const HeaderText =
     (
       <Box
         component={`h${order}`}
-        id={convertIdString((children as string)[1])}
+        id={convertIdString((children as string)[1] || "")}
         sx={{
           position: "relative",
           scrollMarginTop: 65,

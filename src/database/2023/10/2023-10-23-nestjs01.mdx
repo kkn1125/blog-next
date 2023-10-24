@@ -1,0 +1,561 @@
+---
+slug: "/nestjs01/"
+date: 2023-10-23 18:37:15 +0000
+modified: 2023-10-23 18:37:15 +0000
+title: "[NESTJS] Nest.js 프로젝트 초기 설정하기"
+author: Kimson
+categories: [nestjs]
+image: /assets/images/post/covers/TIL-nest2.png
+tags: [node, nest, framework, basic, til]
+description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officiis quia saepe ullam assumenda perferendis aliquid ratione? Inventore aperiam optio soluta, iste temporibus dolor dicta! Amet earum doloribus illo reprehenderit magni."
+featured: true
+rating: 4.5
+profile: false
+published: true
+---
+
+# Nest.js 프로젝트 다루기
+
+Nest.js(이하 네스트)는 Spring boot(이하 스프링)와 아주 유사한 구조를 가지고 있다. 스프링의 어노테이션과 대응하는 데코레이터와 `IoC(제어의 역전)`와 `DI(의존성 주입)` 개념이 사용된다.
+
+## 설치와 실행
+
+네스트를 사용하면서 `fastify`나 `express`와 달리 좋았던 부분은 각 개발 단위의 폼(form)을 생성해주는 `CLI`의 기능을 꼽을 수 있다. 프로젝트를 구성하는데 필요한 모든 기능을 `CLI`가 떠먹여준다고 해도 과언이 아니다.
+
+스프링으로 굳이 비교해보자면 `initializr`가 초기 프로젝트 세팅만 해주는 반면, 네스트는 초기 세팅은 물론 확장되는 앱과 서브앱, 모듈 등을 자동으로 디렉토리 생성 및 파일 내용을 작성하고 임포트해준다. 얼마나 효율적인가? 😮
+
+```bash showLineNumbers
+npm i -g @nestjs/cli
+
+nest new my-project
+
+# 더 엄격한 기능 세트를 위한 경우
+nest new --strict my-project
+```
+
+프로젝트가 생성되었다면 프로젝트로 이동해서 아래와 같이 실행한다. 프로젝트가 생성되는 시점에 이미 `node_modules`도 설치되기 때문에 따로 `npm install`할 필요가 없다.
+
+```bash
+cd my-project
+
+npm run start:dev
+```
+
+## 프로젝트 구조
+
+프로젝트 구조는 어떤 프레임워크를 사용하던 파악이 중요하다고 생각한다. 이것은 백엔드 만의 문제는 아니라 모든 영역에서 중요한 핵심이 아닐까.
+
+// 프로젝트-파일트리
+
+필자는 `resource`를 생성해서 간단한 `CRUD`를 구현할 것이기 때문에 `app.controller.ts`와 `app.service.ts`는 지운다.
+
+```bash
+nest g resource board
+```
+
+제일 만만한 게시판을 제작하기 위해 board 리소스를 생성한다. 아주 놀랍게도 컨트롤러와 서비스에 이어서 엔티티와 DTO를 무려 생성, 수정 포맷에 맞게 초기화 해준다.
+
+// 생성된 리소스 이미지
+
+이제부터 게시판을 제작하면서 필요한 로거와 환경변수, 데이터베이스 연결과 테스트 환경설정까지 다이렉트로 진행한다.
+
+## 환경변수 설정
+
+환경변수는 `.env`에 정의하여 사용되는데, 네스트는 `configuration`이라는 기술을 제공하며, 해당 패키지는 내부적으로 `dotenv`를 사용해서 환경변수를 긁어오기 때문에 설정 또한 쉽고 다양한 방법으로 환경변수를 사용할 수 있다.
+
+> 여기서 모듈에 관련된 내용이 이해가지 않으면 [공식문서](https://docs.nestjs.com/modules)를 선행해야한다.
+
+### 기본적인 방법
+
+```typescript showLineNumbers filename="src/main.ts"
+import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+
+@Module({
+  imports: [ConfigModule.forRoot()],
+})
+export class AppModule {}
+```
+
+인자 없이 `forRoot()`로 사용하면 `.env`의 환경변수를 긁어오고, 개발환경이나 필요에 따라 다른 파일의 환경변수를 지정하기 위해서는 별도로 경로를 지정해 여러 변수를 가져올 수 있다.
+
+```diff-typescript showLineNumbers filename="src/main.ts"
+import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+
+@Module({
+-   imports: [ConfigModule.forRoot()],
++   imports: [ConfigModule.forRoot({
++     envFilePath: ['.env.development.local', '.env.development'],
++   })],
+})
+export class AppModule {}
+```
+
+그렇다면 환경변수를 `process.env.*`로 사용 가능한데, 필자의 경우 전역 변수로 관리하는 파일을 만들어 사용했지만 `ConfigService`를 통해 각 모듈 별로 환경변수를 사용하려 한다.
+
+### 환경변수 주입
+
+모듈 단위로 주입해서 사용하는 방법은 global로 설정하지 않고, 개별 환경변수 파일을 원하는 모듈에 주입하여 사용할 때 유용하다. 주입할 때는 단순히 주입하여 기존의 환경변수를 그대로 사용하는 것보다 네임스페이스를 지정해서 환경변수를 그룹하여 사용한 수 있다.
+
+```typescript filename="src/config/database.config.ts" showLineNumbers
+export default registerAs("database", () => ({
+  host: process.env.DATABASE_HOST,
+  port: +(process.env.DATABASE_PORT || 3306),
+}));
+```
+
+```diff-typescript filename="src/app.module.ts" showLineNumbers
+import databaseConfig from './config/database.config';
+
+@Module({
+  imports: [
+-   envFilePath: ['.env.development.local', '.env.development'],
++   ConfigModule.forRoot({
++     load: [databaseConfig],
++   }),
+  ],
+})
+export class AppModule {}
+```
+
+해당 모듈 내에서는 지정한 네임스페이스의 환경변수를 사용할 수 있다. 사용방법은 아래와 같다.
+
+```typescript highlight={1,8,17} showLineNumbers filename="src/board/board.controller.ts"
+import { ConfigService } from "@nestjs/config";
+// ...
+
+@Injectable()
+export class BoardController {
+  constructor(
+    private readonly boardService: BoardService,
+    private readonly configService: ConfigService,
+    private readonly logger: CustomLoggerService
+  ) {}
+
+  @Get()
+  findAll(@Query("page") page: number) {
+    const boards = this.boardService.findAll({
+      page,
+    });
+    const dbHost = this.configService.get<string>("database.host");
+    return boards;
+  }
+}
+```
+
+컨트롤러나 서비스에 사용되기보다 데이터베이스에 사용하기 위한 설정이므로 데이터베이스 속성에 사용해보자.
+
+## Database 연결
+
+```bash
+nest g mo database
+```
+
+데이터베이스 모듈을 생성하고 같은 디렉토리에 `database.configuration.ts`를 생성한다. 파일명은 다른 이름이어도 좋다.
+
+```typescript filename="src/database/database.configuration.ts" showLineNumbers
+import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from "@nestjs/typeorm";
+
+@Injectable()
+export class DatabaseConfigurationService implements TypeOrmOptionsFactory {
+  constructor(private readonly configService: ConfigService) {}
+
+  createTypeOrmOptions(): TypeOrmModuleOptions {
+    return {
+      type: "mariadb",
+      host: this.configService.get("database.host"),
+      port: +this.configService.get("database.port"),
+      username: this.configService.get("database.username"),
+      password: this.configService.get("database.password"),
+      database: this.configService.get("database.database"),
+      entities: [__dirname + "/../**/*.entity{.ts,.js}"],
+      synchronize: false,
+      timezone: this.configService.get("database.timezone"),
+    };
+  }
+}
+```
+
+위에서 설명한 환경변수를 전역으로 설정했기 때문에 `configService`를 바로 사용해서 `database.*`네임스페이스를 바로 사용할 수 있다.
+
+`createTypeOrmOptions`를 오버라이드하고 데이터베이스 모듈에서 `import`한다.
+
+```typescript filename="src/database/database.module.ts" showLineNumbers
+import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm/dist";
+import { DatabaseConfigurationService } from "./database.configuration";
+
+@Module({
+  imports: [
+    TypeOrmModule.forRootAsync({
+      useClass: DatabaseConfigurationService,
+    }),
+  ],
+})
+export class DatabaseModule {}
+```
+
+`forRootAsync`를 해주는 이유는 환경변수 설정이나 다른 의존성이 설정되는 동안 동시성 문제로 중간에 오류가 발생하는 것을 방지하기 위해 사용한다. 가령, 환경변수 설정이 완료되지 않은 상태에서 데이터베이스 연결을 위해 속성을 정의한다면 값이 없을 경우가 있기 때문이다.
+
+`app.module.ts`를 통해서 다른 모듈에서 데이터베이스를 사용할 것이기 때문에 `DatabaseModule`을 `import`해준다.
+
+```typescript filename="src/app.module.ts" showLineNumbers
+import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { BoardModule } from "./board/board.module";
+import databaseConfig from "./config/database.config";
+import { DatabaseModule } from "./database/database.module";
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: [".env"],
+      load: [databaseConfig],
+    }),
+    DatabaseModule,
+    BoardModule,
+  ],
+  controllers: [],
+  providers: [],
+})
+export class AppModule {}
+```
+
+그 다음은 `board.module.ts`에 `Repository`를 `import`한다.
+
+```typescript filename="src/board/board.module.ts" showLineNumbers
+import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm/dist";
+import { BoardController } from "./board.controller";
+import { BoardService } from "./board.service";
+import { Board } from "./entities/board.entity";
+
+@Module({
+  imports: [TypeOrmModule.forFeature([Board])],
+  controllers: [BoardController],
+  providers: [BoardService],
+})
+export class BoardModule {}
+```
+
+## Logger 설정
+
+커스텀 로거를 생성하고자 했지만 이미 네스트에서 잘 만들어놓은 로거가 있으니 활용하도록 하자. 혹은 필요에 따라 로그 파일을 만들어 기록 파일을 내보내고 관리할 수 있다.
+
+로거는 아래와 같이 설정해서 원하는 곳에 생성자로 주입하여 사용한다.
+
+```bash showLineNumbers
+nest g mo logger
+nest g service logger
+```
+
+`CLI`로 모듈과 서비스를 생성한다.
+
+```typescript showLineNumbers filename="src/logger/logger.service.ts"
+import { ConsoleLogger, Injectable } from "@nestjs/common";
+
+@Injectable()
+export class CustomLoggerService extends ConsoleLogger {
+  /**
+   * Write a 'log' level log.
+   */
+  log(message: any, ...optionalParams: any[]) {
+    super.log(message, ...optionalParams);
+  }
+
+  /**
+   * Write an 'error' level log.
+   */
+  error(message: any, ...optionalParams: any[]) {
+    super.error(message, ...optionalParams);
+  }
+
+  /**
+   * Write a 'warn' level log.
+   */
+  warn(message: any, ...optionalParams: any[]) {
+    super.warn(message, ...optionalParams);
+  }
+
+  /**
+   * Write a 'debug' level log.
+   */
+  debug(message: any, ...optionalParams: any[]) {
+    super.debug(message, ...optionalParams);
+  }
+
+  /**
+   * Write a 'verbose' level log.
+   */
+  verbose(message: any, ...optionalParams: any[]) {
+    super.verbose(message, ...optionalParams);
+  }
+}
+```
+
+`ConsoleLogger`를 상속하고 오버라이드하는데 필요에 따라 커스텀하면 된다.
+
+```typescript showLineNumbers filename="src/logger/logger.module.ts"
+import { Module } from "@nestjs/common";
+import { CustomLoggerService } from "./logger.service";
+
+@Module({
+  providers: [CustomLoggerService],
+  exports: [CustomLoggerService],
+})
+export class LoggerModule {}
+```
+
+로거 모듈에서 `providers`에 서비스를 추가하여 공급하고, `exports`에 추가하여 노출시킨다. 노출된 모듈은 로거를 사용할 모듈에서 `import`하여 사용하고, 설정한 로거서비스를 이용하기 위해 `main.ts`에서 로거 서비스를 등록시켜야한다.
+
+```typescript showLineNumbers filename="src/main.ts" highlight={4,9,11,14}
+import { ConfigService } from "@nestjs/config/dist";
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
+import { CustomLoggerService } from "./logger/logger.service";
+import { UserService } from "./user/user.service";
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
+  const logger = app.get(CustomLoggerService);
+
+  app.setGlobalPrefix("api");
+  app.useLogger(logger);
+
+  const configService: ConfigService = app.get<ConfigService>(ConfigService);
+  const port = configService.get("PORT", 5000);
+
+  await app.listen(port);
+
+  logger.log("server listening on port " + port);
+}
+bootstrap();
+```
+
+11라인의 `app.useLogger`는 네스트가 출력하는 로거를 커스텀로거로 지정하여 사용하도록 한다. `main.ts`는 단지 기본 로거를 커스텀로거로 사용하는 설정을 하는 것이지 모든 모듈에 `import`하는 로거 모듈과는 상관없다. 각 모듈에서 로거를 사용한다면 `import`가 필수이다.
+
+## Authentication
+
+인증하기 위해 `JWT`를 사용할 것이다. 인증과 에러 처리를 편리하게 사용하기 위해 네스트가 제공하는 미들웨어의 성격인 `Guard(이하 가드)`를 사용한다.
+
+### 필요한 스키마 생성
+
+별도로 모듈과 서비스, 가드를 만들어 사용한다.
+
+```bash showLineNumbers
+nest g mo auth
+nest g co auth
+nest g s auth
+nest g gu auth
+```
+
+먼저 가드를 설정한다. 이때 `CanActive`를 상속받아 `canActive` 메서드를 정의한다. 해당 내용은 [네스트 홈페이지의 auth guard](https://docs.nestjs.com/security/authentication#implementing-the-authentication-guard)설정 그대로를 가져온 후 조금 변경했다.
+
+```diff-typescript showLineNumbers filename="src/auth/auth.guard.ts"
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { JwtService } from "@nestjs/jwt";
+import { CustomLoggerService } from "@src/logger/logger.service";
+import { Request } from "express";
+
+@Injectable()
+export class AuthGuard implements CanActivate {
+  constructor(
+    private jwtService: JwtService,
+    private configService: ConfigService,
+    private readonly logger: CustomLoggerService
+  ) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest();
+    const token = this.extractTokenFromHeader(request);
+    if (!token) {
+      throw new UnauthorizedException();
+    }
+    try {
+-     const payload = await this.jwtService.verifyAsync(
+-       token,
+-       {
+-         secret: jwtConstants.secret
+-       }
+-     );
++     const payload = await this.jwtService.verifyAsync(token, {
++       secret: this.configService.get("jwt.secret"),
++     });
+      // 💡 We're assigning the payload to the request object here
+      // so that we can access it in our route handlers
+      request["user"] = payload;
+    } catch {
+      throw new UnauthorizedException();
+    }
+    return true;
+  }
+
+  private extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] = request.headers.authorization?.split(" ") ?? [];
+    return type === "Bearer" ? token : undefined;
+  }
+}
+```
+
+그 다음 서비스와 컨트롤러, 모듈 순서로 설정할 것이다. 서비스와 컨트롤러는 네스트 도큐먼트를 참고한다.
+
+### 서비스 설정
+
+```typescript showLineNumbers filename="src/auth/auth.service.ts" highlight={2,10,26}
+import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { CustomLoggerService } from "@src/logger/logger.service";
+import { UserService } from "@src/user/user.service";
+
+@Injectable()
+export class AuthService {
+  constructor(
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
+    private readonly logger: CustomLoggerService
+  ) {}
+
+  async signIn(email: string, password: string) {
+    const user = await this.userService.findOneByEmail(email);
+    this.logger.debug("get user data", JSON.stringify(user, null, 2));
+    if (user.password !== password) {
+      throw new UnauthorizedException();
+    }
+    const payload = {
+      sub: user.id,
+      email: user.email,
+    };
+
+    this.logger.debug("check value", email, password);
+    return { access_token: await this.jwtService.signAsync(payload) };
+  }
+}
+```
+
+`access_token`을 내보내는 로그인 서비스를 만들어준다.
+
+### 컨트롤러 설정
+
+```typescript showLineNumbers filename="src/auth/auth.contoller.ts" highlight={12,29}
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Request,
+  UseGuards,
+} from "@nestjs/common";
+import { CustomLoggerService } from "@src/logger/logger.service";
+import { AuthGuard } from "./auth.guard";
+import { AuthService } from "./auth.service";
+
+@Controller("auth")
+export class AuthController {
+  constructor(
+    private readonly authService: AuthService,
+    private readonly logger: CustomLoggerService
+  ) {}
+
+  @HttpCode(HttpStatus.OK)
+  @Post("signin")
+  signIn(@Body() signInDto: Record<string, any>) {
+    this.logger.debug("signInDto", signInDto);
+    return this.authService.signIn(signInDto.email, signInDto.password);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get("profile")
+  getProfile(@Request() req) {
+    return req.user;
+  }
+}
+```
+
+`getProfile`은 `AuthGuard`를 통해 요청이 오면 헤더에 담긴 `Authentication` 속성을 보고 유효한 값인지 체크 후에 요청을 허락하는 과정을 거친다.
+
+![가드 동작 도식화](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/84985d74-5342-4a0c-a6d2-aaebe9cbe3a2)
+
+헤더의 토큰 값이 유효하면 가드를 사용하는 메서드가 요청을 받아들이는 방식이다. 요청을 받으면 가드는 방금 정의했던 `canActive`메서드가 실행되면서 헤더의 토큰을 추출하고 `request`의 `user`속성에 저장하며 검증한다. 토큰을 발급받기 위해서는 `signin`메서드를 거쳐 발급 받는다. 참고로 `user`속성은 `@UseGuard`를 사용한 메서드에서만 액세스 가능하다.
+
+### 모듈 설정
+
+아래 모듈을 설정하기에 앞서 jwt 시크릿을 설정하는 환경변수를 별도 네임스페이스를 작성하여 사용하기 때문에 위에서 설정한 `configuration`을 상기하면서 각자 작성해보자.
+
+```typescript showLineNumbers filename="src/auth/auth.module.ts"
+import { Module } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { JwtModule } from "@nestjs/jwt/dist";
+import { LoggerModule } from "@src/logger/logger.module";
+import { UserModule } from "@src/user/user.module";
+import { AuthController } from "./auth.controller";
+import { AuthService } from "./auth.service";
+
+@Module({
+  imports: [
+    JwtModule.registerAsync({
+      global: true,
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get("jwt.secret"),
+        signOptions: { expiresIn: "1d" },
+      }),
+    }),
+    LoggerModule,
+    UserModule,
+  ],
+  controllers: [AuthController],
+  providers: [AuthService],
+  exports: [AuthService],
+})
+export class AuthModule {}
+```
+
+이렇게 설정하고 나면 끝이다. 만일 게시판을 로그인 유저에 한해서 작성되도록 해야한다면 `board.controller`에서 `UseGuard`를 사용하여 처리하면 된다. 별도의 모듈을 `import`하지 않아도 된다.
+
+## Testing
+
+프로젝트를 만들면서 테스팅은 빠질 수 없다고 생각한다. 단위테스트부터 종단 테스트 까지 설정해보자.
+
+### Unit Test
+
+### E2E Test
+
+## 마무리
+
+📚 함께 보면 좋은 내용
+
+[Nest.js AuthGuard 설정 에러::ExceptionHandler metatype is not a constructor](https://velog.io/@wanzekim/ERROR-ExceptionHandler-metatype-is-not-a-constructor)
+
+[Nest.js::configuration 설정 참조 - 1](https://www.daleseo.com/nestjs-configuration/)
+
+[Nest.js::Docs JWT 설정 참조 - 1](https://docs.nestjs.com/security/authentication#jwt-token)
+
+[Nest.js::JWT 설정 참조 - 1::(동시성 문제) secretOrPrivateKey must have a value](https://velog.io/@daep93/Nestjs-secretOrPrivateKey-must-have-a-value)
+
+[Nest.js::transaction 설정 참조 - 1](https://cherrypick.co.kr/typeorm-basic-transaction/)
+
+[Nest.js 생성 시 cascade 설정 참조](https://stackoverflow.com/questions/65012414/issue-saving-entity-through-cascade-with-one-to-many-relationship)
+
+[stackoverflow::database useFactory 예시 참조 - 1](https://stackoverflow.com/questions/67166620/how-to-get-values-from-custom-configuration-file-in-nestjs-with-interface/67181920#67181920)
+
+[포시님 블로그::[Nest.js] 6. TypeORM 설치 및 세팅 - @nestjs/config 사용법](https://4sii.tistory.com/417)
+
+[Nest.js::E2E 종단 테스트 예시 참조](https://medium.com/@salmon.3e/integration-testing-with-nestjs-and-typeorm-2ac3f77e7628)
+
+[Nest.js::TypeOrm getConnection 버전 업데이트에 따른 deprecated 대체 방법 참조](https://jhyeok.com/typeorm-0.3/)
+
+[1youngs님 블로그::유닛, 종단 테스트 예시 참조](https://velog.io/@1yongs_/NestJS-Testing-Jest)

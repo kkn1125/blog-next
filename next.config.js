@@ -6,7 +6,7 @@ const withMDX = require("@next/mdx")({
     // https://github.com/remarkjs/remark-gfm#install
     remarkPlugins: [],
     rehypePlugins: [],
-    providerImportSource: "@mdx-js/react",
+    // providerImportSource: "@mdx-js/react",
     // If you use `MDXProvider`, uncomment the following line.
     // providerImportSource: "@mdx-js/react",
   },
@@ -56,4 +56,4 @@ const nextConfig = {
   // assetPrefix: process.env.NODE_ENV === "development" ? "/" : ".",
 };
 
-module.exports = withMDX(nextConfig);
+module.exports = /* withMDX */ nextConfig;

@@ -56,7 +56,7 @@ fastify와 adminjs를 연결하는 이유는 당연하게도 관리자 페이지
 
 프로젝트를 구성할 때에 디버깅과 확장성을 고려해서 typescript를 사용하고 있습니다. 정확성과 주석을 줄이는데도 도움이 된다고 생각합니다. fastify를 typescript로 제작하고 adminjs와 연결하는데 중요한 부분이 tsconfig라고 생각됩니다. 여기서 많은 이슈가 있었기 때문입니다.
 
-```json {8,31-36} showLineNumbers
+```json highlight={8,31-36} showLineNumbers
 {
   "compilerOptions": {
     "rootDir": "./",
@@ -173,7 +173,7 @@ const getColumnInfo = (column) => {
     };
 };
 
-async getProperties(table) {
+function async getProperties(table) {
     const query = this.knex
         .from('information_schema.columns as col')
         .select('col.column_name', 'col.ordinal_position', 'col.column_default', 'col.is_nullable', 'col.data_type', 'col.column_type', 'col.column_key', 'col.extra', 'col.column_comment', 'key.referenced_table_name', 'key.referenced_column_name')
@@ -242,7 +242,7 @@ columns는 기존에 객체 배열을 받아오게 되어 있었습니다. 해�
 
 module을 찾지 못해서 이것저것 많이 시도해봤는데요. 그중에서 제일 효과적이었던 것은 import()로 모듈을 가져와 사용하는 방법이었습니다.
 
-```tsx showLineNumbers
+```typescript showLineNumbers
 import AdminJS from "adminjs"; // ❌
 
 async function start() {
@@ -254,7 +254,7 @@ async function start() {
 
 이때는 `ts-ignore`로 경고를 제거시키면 해당 모듈 문제를 무시하고 프로젝트를 실행시킬 수 있습니다. 기능상 문제는 없었습니다.
 
-```tsx showLineNumbers
+```typescript showLineNumbers
 async function start() {
   // @ts-ignore: unreachable code error
   const AdminJS = await import("adminjs");
@@ -263,7 +263,7 @@ async function start() {
 
 아래는 @adminjs/fastify 플러그인의 초기 설정에 사용되는 buildRouter 함수입니다. 해당 함수가 동작하는 순서를 보면서 데이터를 어떻게 받아오는지 알기 위해 잠시 보겠습니다.
 
-```tsx showLineNumbers
+```typescript showLineNumbers
 // @adminjs/fastify/lib/buildRouter.js
 
 // ...
@@ -313,7 +313,7 @@ routes.forEach((route) => {
   }
 });
 
-//
+//...
 ```
 
 ![@adminjs/fastify에서 받는 body 데이터](https://github.com/kkn1125/kkn1125.github.io/assets/113876485/27f36ec5-af68-496b-8b08-339461a32eed)
@@ -358,7 +358,7 @@ buildRouter는 설정할 때 주의할 점이 두 가지 있습니다. 하나는
 
 그리고 앞서 말했듯이 import()를 사용하기 때문에 register로 등록하는 방법을 추천합니다. 묶여있어서 보기도 쉽기 때문입니다.
 
-```tsx showLineNumbers
+```typescript showLineNumbers
 server.register(async (req, res, done) => {
   try {
     /* admin panel */
