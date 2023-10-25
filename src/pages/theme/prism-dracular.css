@@ -186,11 +186,45 @@ code[class*="language-"] {
 }
 
 .code-line.inserted {
+  position: relative;
   background-color: rgba(16, 185, 129, 0.2); /* Set inserted line (+) color */
 }
 
 .code-line.deleted {
+  position: relative;
   background-color: rgba(239, 68, 68, 0.2); /* Set deleted line (-) color */
+}
+
+.code-line.inserted > .token.operator:first-child::before {
+  display: "block" !important;
+  content: "+";
+  position: relative;
+  left: -10px;
+  color: rgba(16, 185, 129, 0.5) !important;
+}
+
+.code-line.deleted > .token.operator:first-child::before {
+  display: "block" !important;
+  content: "-";
+  position: relative;
+  left: -10px;
+  color: rgba(239, 68, 68, 0.5) !important;
+}
+
+.code-line.inserted > .token.operator {
+  /* display: none; */
+  display: inline-block;
+  color: #ffffff00;
+  width: 0px !important;
+  pointer-events: none;
+}
+
+.code-line.deleted > .token.operator {
+  /* display: none; */
+  display: inline-block;
+  color: #ffffff00;
+  width: 0px !important;
+  pointer-events: none;
 }
 
 .highlight-line {

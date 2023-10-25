@@ -1,0 +1,457 @@
+---
+slug: "/nestjs02/"
+date: 2023-10-25 17:37:25 +0000
+modified: 2023-10-25 17:37:25 +0000
+title: "[NESTJS] Swagger와 Decorator, Pipe, Guard 알아보기"
+author: Kimson
+categories: [nestjs]
+image: /assets/images/post/covers/TIL-nest2.png
+tags: [node, nest, framework, swagger, decorator, pipe, role, guard, til]
+description: "문서화와 미들웨어
+
+문서화는 프로젝트를 구성하면서 절대 빠질 수 없는 요소 중 하나라고 생각합니다. 오늘은 성격이 다른 두 가지 주제를 다루려고 합니다. 문서화에 사용되는 `Swagger(이하 스웨거)`를 설정하는 과정과 미들웨어의 성격을 가진 `Pipe(이하 파이프)`와 `Guard(이하 가드)`는 어떻게 사용하고 어디에 적용할 수 있는지 알아봅니다.
+
+Swagger 설정
+
+스웨거는 `OpenAPI`는 오픈소스 같은 공개된 API의 개념이 아닙니다. `OpenAPI Specification(OpenAPI 사양)`은 다른 사람에게 API를 정의하기 위한 표준화된 수단을 제공하는 HTTP API용 사양 언어입니다. 줄여서 `OAS`라고 합니다."
+featured: true
+rating: 4.5
+profile: false
+published: true
+---
+
+# 문서화와 미들웨어
+
+문서화는 프로젝트를 구성하면서 절대 빠질 수 없는 요소 중 하나라고 생각합니다. 오늘은 성격이 다른 두 가지 주제를 다루려고 합니다. 문서화에 사용되는 `Swagger(이하 스웨거)`를 설정하는 과정과 미들웨어의 성격을 가진 `Pipe(이하 파이프)`와 `Guard(이하 가드)`는 어떻게 사용하고 어디에 적용할 수 있는지 알아봅니다.
+
+## Swagger 설정
+
+스웨거는 `OpenAPI`는 오픈소스 같은 공개된 API의 개념이 아닙니다. `OpenAPI Specification(OpenAPI 사양)`은 다른 사람에게 API를 정의하기 위한 표준화된 수단을 제공하는 HTTP API용 사양 언어입니다. 줄여서 `OAS`라고 합니다.
+
+참고로 `포스트맨(postman)` 또한 `OpenAPI` 사양을 사용합니다. `nestjs(이하 네스트)`에서 스웨거를 설정하고 [공식 홈페이지](https://docs.nestjs.com/openapi/introduction)에 있는 내용을 토대로 작성해나가겠습니다.
+
+```bash
+npm i -S @nestjs/swagger
+```
+
+네스트에서 지원하는 스웨거 모듈을 추가하고 아래 부트스트랩 함수에서 도큐먼트 빌더를 통해 추가해줍니다. 소스코드는 [본 블로그의 이전 포스팅::Nest.js 프로젝트 초기 설정하기](/blog/nestjs01/)를 참조합니다.
+
+```diff-typescript showLineNumbers filename="src/main.ts"
++import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { ConfigService } from "@nestjs/config/dist";
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
+import { CustomLoggerService } from "./logger/logger.service";
+import { UserService } from "./user/user.service";
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
+  const logger = app.get(CustomLoggerService);
+
+  app.setGlobalPrefix("api");
+  app.useLogger(logger);
+
+  const configService: ConfigService = app.get<ConfigService>(ConfigService);
+  const port = configService.get("PORT", 5000);
+
++  /* swagger 설정 */
++  const config = new DocumentBuilder()
++    .setTitle("board domain")
++    .setDescription("The board API description")
++    .setVersion("1.0")
++    .addTag("board", "board tag")
++    .build();
+
++  const document = SwaggerModule.createDocument(app, config, {
++    include: [BoardModule], // 특정 모듈만 문서화
++  });
++  SwaggerModule.setup("docs", app, document);
+
+  await app.listen(port);
+
+  logger.log("server listening on port " + port);
+}
+bootstrap();
+```
+
+`29라인`에서 `include` 속성을 설정하면 선택한 모듈만 문서화합니다. 그 외 모듈은 생성되지 않습니다. `include`없이 사용하면 사용된 모든 모듈을 자동으로 문서화 합니다. 생성된 모습은 다음과 같습니다.
+
+![스웨거 생성 페이지](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/49c3f532-b21b-44e4-96d6-c80395015855)
+
+### Schema 설정
+
+```diff-typescript showLineNumbers filename="src/board/board.entity.ts"
++import { ApiProperty } from "@nestjs/swagger/dist";
+import { User } from "@src/user/entities/user.entity";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { DeleteDateColumn } from "typeorm/decorator/columns/DeleteDateColumn";
+
+@Entity()
+export class Board extends BaseEntity {
++  @ApiProperty({ example: 1, description: "게시판 PK" })
+  @PrimaryGeneratedColumn()
+  id: number;
+
++  @ApiProperty({ example: "테스트 제목", description: "게시판 제목" })
+  @Column()
+  title: string;
+
++  @ApiProperty({ example: "테스트 내용.....", description: "게시판 내용" })
+  @Column()
+  content: string;
+
++  @ApiProperty({ example: 1, description: "작성자 PK" })
+  @Column()
+  author: number;
+
++  @ApiProperty({
++    examples: ["2023-10-12", null],
++    description: "게시글 삭제 시간",
++    required: false,
++    nullable: true,
++  })
+  @DeleteDateColumn()
+  deleted_at: string;
+
+  @ManyToOne(() => User, (user) => user.boards, {
+    cascade: true,
+  })
+  @JoinColumn({
+    name: "author",
+  })
+  user: User;
+}
+```
+
+`ApiProperty` 데코레이터를 사용하면 스웨거 페이지에 스키마가 생성됩니다.
+
+### Schema 등록이 되지 않을 때
+
+하지만 `Board`라는 이름으로 생성되지 않고, 제대로 등록되지 않는 경우가 있는데 컨트롤러나 서비스에 `import`되지 않거나 사용되지 않았을 때 스웨거가 찾지 못하는 상황일 수 있습니다.
+
+```diff-typescript showLineNumbers filename="src/board/board.controller.ts" highlight={42}
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  Request,
+  UseGuards,
+  ValidationPipe,
+} from "@nestjs/common";
++import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiResponseService } from "@src/api.response/api.response.service";
+import { AuthGuard } from "@src/auth/auth.guard";
+import { CustomLoggerService } from "@src/logger/logger.service";
+import { UserService } from "@src/user/user.service";
+import { BoardPipe } from "./board.pipe";
+import { BoardService } from "./board.service";
+import { CreateBoardDto } from "./dto/create-board.dto";
+import { UpdateBoardDto } from "./dto/update-board.dto";
+import { Board } from "./entities/board.entity";
+
++@ApiTags("게시판 API")
+@Controller("board")
+export class BoardController {
+  constructor(
+    private readonly userService: UserService,
+    private readonly boardService: BoardService,
+    private readonly logger: CustomLoggerService
+  ) {
+    logger.setContext(BoardController.name);
+  }
+
++  @ApiOperation({
++    summary: "게시판 전체 조회",
++    description: "게시판 전체를 조회한다.",
++  })
++  @ApiOkResponse({
++    status: "2XX",
+    type: Board,
++  })
+  @Get()
+  findAll(@Query("page", BoardPipe) page: number) {
+    this.logger.log("test page");
+    this.logger.log(page);
+    return page;
+  }
+
+  @Get(":id")
+  findOne(@Param("id") id: string) {
+    return this.boardService.findOne(+id);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post()
+  async create(
+    @Request() req,
+    @Body(new ValidationPipe({ stopAtFirstError: true, groups: ["create"] }))
+    createBoardDto: CreateBoardDto
+  ) {
+    console.log(req.user, createBoardDto);
+    createBoardDto.user = await this.userService.findOne(req.user.sub);
+    return this.boardService.create(createBoardDto);
+  }
+
+  @Post("restore/:id")
+  resotre(@Param("id") id: string) {
+    return this.boardService.restore(+id);
+  }
+
+  @Put(":id")
+  update(@Param("id") id: string, @Body() updateBoardDto: UpdateBoardDto) {
+    return this.boardService.update(+id, updateBoardDto);
+  }
+
+  @Delete(":id")
+  remove(@Param("id") id: string) {
+    return this.boardService.remove(+id);
+  }
+}
+```
+
+위처럼 컨트롤러에 `import`한 후 등록되는 것을 확인했습니다.
+
+## 미들웨어
+
+미들웨어 성격의 가드와 파이프를 설정하고 활용되는 방식을 몇가지 기록하고자 합니다.
+
+가드를 이용해 인증과 권한 검증이 가능합니다. 꼭 인증관련해서 사용하지 않더라도 다른 방향으로 기능을 구현할 수도 있습니다. 대게 로그인을 구현하고 `JWT`를 연결하며, 해당 토큰의 권한을 검증해서 "원하는 역할"의 사용자가 특정 메서드를 통과하도록 할 수 있습니다.
+
+### RoleDecorator
+
+여기서 "역할"에 대한 메서드 통과는 `데코레이터`를 사용합니다. 가드와 무관하지 않기 때문에 함께 설명하겠습니다. 가드 생성과 설정에 대한 내용은 [이전 포스팅](/blog/nestjs01/#Authentication)을 참조하시기 바랍니다.
+
+바로 데코레이터로 넘어가서 "역할"을 검증하는 기능을 구현하겠습니다.
+
+```typescript showLineNumbers filename="src/role/role.decorator.ts"
+import { Reflector } from "@nestjs/core";
+
+export const Role = Reflector.createDecorator<string[]>();
+```
+
+데코레이터는 `nest cli`를 통해 편하게 세팅 가능합니다. 생성 후 `Reflector`를 사용해 생성합니다. 이 상태에서 곧 바로 원하는 컨트롤러나 메서드 단위로 적용할 수 있습니다.
+
+### RoleGuard
+
+바로 사용할 수 있지만 데이터를 개발자의 입장에서 가공하고 로직을 통해 기능을 만드는 작업은 가드를 생성해서 별도 작업을 해주어야 합니다.
+
+```typescript showLineNumbers filename="src/role/role.guard.ts"
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { Reflector } from "@nestjs/core";
+import { JwtService } from "@nestjs/jwt";
+import { Role } from "./role.decorator";
+import { Request } from "express";
+
+@Injectable()
+export class RoleGuard implements CanActivate {
+  constructor(
+    private readonly reflector?: Reflector,
+    private readonly jwtService?: JwtService,
+    private readonly configService?: ConfigService
+  ) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const roles = this.reflector.get(Role, context.getHandler());
+    if (!roles) {
+      return true;
+    }
+    const request = context.switchToHttp().getRequest();
+    const token = this.extractTokenFromHeader(request);
+    console.log(token);
+    if (!token) {
+      throw new UnauthorizedException();
+    }
+    try {
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: this.configService.get("jwt.secret"),
+      });
+      // 💡 We're assigning the payload to the request object here
+      // so that we can access it in our route handlers
+      request["user"] = payload;
+    } catch {
+      throw new UnauthorizedException();
+    }
+
+    const user = request.user || {};
+    // console.log('user', user);
+    return roles.includes(user.role);
+  }
+
+  private extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] = request.headers.authorization?.split(" ") ?? [];
+    return type === "Bearer" ? token : undefined;
+  }
+}
+```
+
+`request`에 `user`프로퍼티를 넣는 과정은 `AuthGuard`의 내용을 조금 뜯어 붙였습니다.
+
+### RoleDecorator 사용 시 주의점
+
+`RoleGuard`에서 `Role`데코레이터를 사용한 메서드에 접근하는 사용자의 토큰을 파싱하고 메서드에 지정한 `Role`범위에 속한다면 통과하고 속하지 않는다면 에러를 반환합니다. 아래는 컨트롤러에 적용한 예시 모습입니다.
+
+```diff-typescript showLineNumbers filename="src/board/board.controller.ts" highlight={6}
+// ... others
++import { Role } from "@src/role/role.decorator";
++import { RoleGuard } from "@src/role/role.guard";
+
+@ApiTags("게시판 API")
+@UseGuards(RoleGuard) // 중요한 부분
+@Controller("board")
+export class BoardController {
+  constructor(
+    private readonly userService: UserService,
+    private readonly boardService: BoardService,
+    private readonly logger: CustomLoggerService
+  ) {
+    logger.setContext(BoardController.name);
+  }
+
+  @ApiOperation({
+    summary: "게시판 전체 조회",
+    description: "게시판 전체를 조회한다.",
+  })
+  @ApiOkResponse({
+    status: "2XX",
+    type: Board,
+  })
+  @Get()
++  @Role(["user", "admin"])
+  findAll(@Query("page", BoardPipe) page: number) {
+    // const boards = this.boardService.findAll({
+    //   page,
+    // });
+    this.logger.log("test page");
+    this.logger.log(page);
+    return page;
+  }
+
+  // ... others
+}
+```
+
+여기까지는 공식 홈페이지 예시 입니다. 예시에는 전체 코드가 아닌 부분 코드로 설명하기 때문에 "오해의 소지"가 있다고 생각됩니다. 때문에 덧붙여 이야기하자면, `Role`데코레이터의 메타데이터를 처리하는 부분이 방금 설정한 `RoleGuard`이기 떄문에 `RoleGuard`를 `UseGuard`데코레이터로 적용해서 사용해야합니다.
+
+## Pipe를 이용한 로직 단순화
+
+공식 홈페이지에서는 파이프는 필터와 연관해서 설명합니다. 파이프는 요청 데이터의 변환이나 유효성 검사에 사용되는 기술입니다. 각 기술에 대한 차이와 호출시간과 범위는 [마무리](#마무리)에서 정리하였으니 참고하시기 바랍니다.
+
+파이프는 앞서 데이터 변환이야기를 했습니다. 즉, 요청 시 넘어오는 값에 대해서 변환하고 해당 값에 대입 가능하다는 이야기입니다.
+
+파이프를 이용하면 컨트롤러의 코드량을 대폭 줄일 수 있기도 합니다. 아래는 파이프를 이용해서 전체 조회 데이터로 변환하는 예시입니다.
+
+```typescript showLineNumbers filename="src/board/board.pipe.ts"
+import { ArgumentMetadata, Injectable, PipeTransform } from "@nestjs/common";
+import { BoardService } from "./board.service";
+
+@Injectable()
+export class BoardPipe implements PipeTransform {
+  constructor(private readonly boardService: BoardService) {}
+
+  async transform(value: any, metadata: ArgumentMetadata) {
+    console.log("value", value, metadata);
+    const boards = await this.boardService.findAll({ page: value });
+    return boards;
+  }
+}
+```
+
+`cli`로 `pipe`를 생성하고 `boardService`를 주입하여 `value`를 받아 조회합니다. 해당 파이프는 컨트롤러의 `findAll(@Query('page') page :number = 1)`메서드에 적용할 것입니다. 해당 `value`는 `page`값으로 기본값 1입니다.
+
+여기서 `return`하는 값은 해당 메서드의 `page`변수에 덮어씌어 집니다. 때문에 아래와 같이 컨트롤러의 코드량이 줄어드는 효과를 줍니다.
+
+```diff-typescript showLineNumbers filename="src/board/board.contoller.ts"
+// ... others
++import { BoardPipe } from "./board.pipe";
+@ApiTags("게시판 API")
+@UseGuards(RoleGuard)
+@Controller("board")
+export class BoardController {
+  constructor(
+    private readonly userService: UserService,
+    private readonly boardService: BoardService,
+    private readonly logger: CustomLoggerService
+  ) {
+    logger.setContext(BoardController.name);
+  }
+
+  @ApiOperation({
+    summary: "게시판 전체 조회",
+    description: "게시판 전체를 조회한다.",
+  })
+  @ApiOkResponse({
+    status: "2XX",
+    type: Board,
+  })
+  @Get()
+  @Role(["user", "admin"])
+-  findAll(@Query("page") page: number) {
+-    const boards = this.boardService.findAll({
+-      page,
+-    });
+-    return boards;
+-  }
++  findAll(@Query("page", BoardPipe) page: number) {
++    return page;
++  }
+
+  // ... others
+}
+```
+
+## 마무리
+
+오늘 리딩한 내용을 정리해봤습니다. 문서화를 하는데 있어서 기본적인 설정과 가드와 데코레이터의 활용, 파이프 설정으로 로직 간소화에 대한 내용을 다루었습니다.
+
+네스트를 사용하면서 관련 기술을 하나씩 익히는데 재미가 붙는 것 같아 기쁩니다. 프레임워크만의 장점이라고 한다면 개발에 편의를 더해주는 기능을 사용하여 개발 시간을 단축 시키고 보기 쉽게 규격화 된다는 것이라 생각하는데요.
+
+반면에 제공되는 기술만을 사용한다면 제한적인 상황으로 인해 자유도가 떨어지거나 해당 기술이 어떻게 구성되었는지 코드를 열어보는 수고로움이 생기는 것 같습니다.
+
+포스팅에서 언급하지는 않았지만 해당 기술의 코드를 직접 들여다보고 어떤 원리로 작동하는지 찾아보는 습관만 있다면 프레임워크가 주는 제한적인 상황을 극복할 수 있지 않을까 생각합니다.
+
+### Nest.js에서 지원하는 기술 정리
+
+네스트의 기술 중에서 `middleware`, `filter`, `pipe`, `guard` 및 `interceptor` 사이의 차이점은 액세스 범위와 호출 시간을 기반으로 정리했습니다.
+
+|   구분   |     액세스 범위      | 호출 시점                                                                                   | 목적                                        | 예시                                              |
+| :------: | :------------------: | :------------------------------------------------------------------------------------------ | :------------------------------------------ | :------------------------------------------------ |
+| 미들웨어 |  글로벌 or 라우트별  | 라우트 핸들러 이전 실행                                                                     | 요청 전처리, 로깅, 인증 및 요청 데이터 파싱 | 들어오는 요청을 로깅하는 미들웨어                 |
+|   필터   |        글로벌        | 라우트 핸들러 및 예외 필터 이후에 실행                                                      | 전역적으로 예외 처리 및 응답 변환을 처리    | 오류 응답을 형식화하는 예외 필터                  |
+|  파이프  |       라우트별       | 라우트 핸들러 이전에 실행되며 요청 데이터의 변환 및 유효성 검사를 수행                      | 요청 데이터의 데이터 변환 및 유효성 검사    | 요청 본문 데이터를 유효성 검사하는 검증 파이프    |
+|   가드   |       라우트별       | 라우트 가드의 조건에 따라 라우트 핸들러 이전에 실행                                         | 권한 및 액세스 제어                         | 사용자 인증 여부를 확인하는 인증 가드             |
+| 인터셉터 | 글로벌 또는 라우트별 | 라우트 핸들러 및 필터 이후에 실행되며 응답 데이터를 전역적으로 또는 특정 라우트에 대해 조작 | 라우터 가로채기                             | 응답 데이터를 형식화하고 향상시키는 응답 인터셉터 |
+
+네스트에서 이러한 기술은 요청 처리의 다른 측면을 다루며, 요청 전처리, 예외 처리, 데이터 유효성 검사, 액세스 제어 또는 응답 조작이 필요한지에 따라 사용을 선택할 수 있습니다.
+
+---
+
+📚 함께 보면 좋은 내용
+
+[ApiProperty Decorator 적용 예시 참조](https://github.com/nestjs/nest/blob/master/sample/11-swagger/src/cats/entities/cat.entity.ts)
+
+[Guard 적용 예시 참조](https://github.com/nestjs/nest/blob/master/sample/01-cats-app/src/cats/cats.controller.ts)
+
+[stackoverflow::What's the difference between Interceptor vs Middleware vs Filter in Nest.js?](https://stackoverflow.com/questions/54863655/whats-the-difference-between-interceptor-vs-middleware-vs-filter-in-nest-js)
+
+[stackoverflow::Nestjs Swagger - Publishing different API docs on separate routes](https://stackoverflow.com/questions/59902490/nestjs-swagger-publishing-different-api-docs-on-separate-routes)

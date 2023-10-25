@@ -53,7 +53,33 @@ npm run start:dev
 
 프로젝트 구조는 어떤 프레임워크를 사용하던 파악이 중요하다고 생각한다. 이것은 백엔드 만의 문제는 아니라 모든 영역에서 중요한 핵심이 아닐까.
 
-// 프로젝트-파일트리
+```plaintext
+└┬  📂 root/
+ ├┬  📂 src/
+ │├┬  📂 board/
+ ││├┬  📂 dto/
+ │││├─  📄 create-board.dto.ts
+ │││└─  📄 update-board.dto.ts
+ ││└┬  📂 entities/
+ ││ ├─  📄 board.controller.spec.ts
+ ││ ├─  📄 board.controller.ts
+ ││ ├─  📄 board.module.ts
+ ││ ├─  📄 board.service.spec.ts
+ ││ └─  📄 board.srevice.ts
+ │├─  📄 app.module.ts
+ │└─  📄 main.ts
+ ├┬  📂 test/
+ │├─  📄 app.e2e-spec.ts
+ │└─  📄 jest-e2e.json
+ ├─  📄 .env
+ ├─  📄 .eslintrc.js
+ ├─  📄 .gitignore
+ ├─  📄 .prettierrc
+ ├─  📄 nest-cli.json
+ ├─  📄 package.json
+ ├─  📄 README.md
+ └─  📄 tsconfig.json
+```
 
 필자는 `resource`를 생성해서 간단한 `CRUD`를 구현할 것이기 때문에 `app.controller.ts`와 `app.service.ts`는 지운다.
 
@@ -61,9 +87,9 @@ npm run start:dev
 nest g resource board
 ```
 
-제일 만만한 게시판을 제작하기 위해 board 리소스를 생성한다. 아주 놀랍게도 컨트롤러와 서비스에 이어서 엔티티와 DTO를 무려 생성, 수정 포맷에 맞게 초기화 해준다.
+제일 만만한 게시판을 제작하기 위해 board 리소스를 생성한다. 아주 놀랍게도 컨트롤러와 서비스에 이어서 엔티티와 DTO를 무려 생성, 수정 포맷에 맞게 초기화 해준다. 아래 이미지에서 생성되는 부분만 셀렉트 했다. 나머지는 공부 과정에 생긴 것이기 때문에 설명은 생략한다.
 
-// 생성된 리소스 이미지
+![리소스 생성 후](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/16e0882c-4e8e-443b-b18c-a5360dadac7a)
 
 이제부터 게시판을 제작하면서 필요한 로거와 환경변수, 데이터베이스 연결과 테스트 환경설정까지 다이렉트로 진행한다.
 
@@ -346,7 +372,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-11라인의 `app.useLogger`는 네스트가 출력하는 로거를 커스텀로거로 지정하여 사용하도록 한다. `main.ts`는 단지 기본 로거를 커스텀로거로 사용하는 설정을 하는 것이지 모든 모듈에 `import`하는 로거 모듈과는 상관없다. 각 모듈에서 로거를 사용한다면 `import`가 필수이다.
+`11라인`의 `app.useLogger`는 네스트가 출력하는 로거를 커스텀로거로 지정하여 사용하도록 한다. `main.ts`는 단지 기본 로거를 커스텀로거로 사용하는 설정을 하는 것이지 모든 모듈에 `import`하는 로거 모듈과는 상관없다. 각 모듈에서 로거를 사용한다면 `import`가 필수이다.
 
 ## Authentication
 
@@ -670,7 +696,6 @@ import { BoardController } from "./board.controller";
 import { BoardService } from "./board.service";
 import { CreateBoardDto } from "./dto/create-board.dto";
 import { Board } from "./entities/board.entity";
-// import { ApiResponseModule } from '@/api.response/api.response.module';
 
 const boards = [
   {

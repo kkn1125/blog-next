@@ -31,7 +31,8 @@ function Index({ posts }: any) {
   useEffect(() => {
     setPost(
       posts.find((post: any) =>
-        post.frontmatter.slug.match(location.pathname.replace(/\/+/g, ""))
+        /* 잘못된 로직 수정 2023-10-25 17:32:24 */
+        post.frontmatter.slug.endsWith(location.pathname.slice(1))
       )
     );
   }, []);

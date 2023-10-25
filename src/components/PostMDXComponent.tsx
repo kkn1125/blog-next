@@ -212,23 +212,50 @@ const HeaderText =
       </Box>
     );
 
-const ALink = ({ children, ...rest }: any) => (
-  <Box
-    component={Link}
-    {...rest}
-    sx={{
-      textDecoration: "none",
-      color: (theme) => theme.palette.primary.main,
-      fontWeight: 400,
-      display: "inline-block",
-    }}>
-    {children}
-  </Box>
-);
+/* 새 창으로 열기 설정 2023-10-25 15:19:26 */
+const ALink = ({ children, ...rest }: any) => {
+  const isExternalLink =
+    typeof children === "string"; /*  && children.startsWith("@ex") */
+  const convertChildren = isExternalLink ? children.slice(3) : children;
+  return (
+    <Box
+      component={Link}
+      {...(isExternalLink && { target: "_blank" })}
+      {...rest}
+      sx={{
+        textDecoration: "none",
+        color: (theme) => theme.palette.error.main,
+        fontWeight: 700,
+        display: "inline-block",
+        position: "relative",
+        "&::before": {
+          bottom: 0,
+          height: "0.2rem",
+          width: "0%",
+          pointerEvents: "none",
+          content: '"0"',
+          color: "#ffffff00",
+          display: "inline-block",
+          backgroundColor: (theme) =>
+            theme.palette.error.light.replace("rgb", "rgba").slice(0, -1) +
+            ", 0.5)",
+          position: "absolute",
+          left: 0,
+          transition: `150ms ease-in-out`,
+        },
+        "&:hover::before": {
+          width: "100%",
+        },
+      }}>
+      {convertChildren}
+    </Box>
+  );
+};
 
 const Table = ({ children }: any) => (
   <Box
     component='table'
+
     sx={{
       my: 2,
       borderCollapse: "collapse",
@@ -237,13 +264,14 @@ const Table = ({ children }: any) => (
           borderWidth: 1,
           borderColor: "#cccccc",
           borderStyle: "solid",
-          textAlign: "center",
+          // textAlign: "center",
         },
       },
       "& thead": {
         "tr th": {
           borderTop: "none",
           py: 1,
+          textAlign: "center",
         },
         "th:nth-of-type(1)": {
           borderLeft: "none !important",
@@ -268,6 +296,9 @@ const Table = ({ children }: any) => (
             borderRight: "none !important",
           },
         },
+      },
+      "& td,th": {
+        p: 1,
       },
     }}>
     {children}
