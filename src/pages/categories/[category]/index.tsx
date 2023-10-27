@@ -3,12 +3,19 @@ import Card from "@/components/Card";
 import GenerateHead from "@/components/GenerateHead";
 import { getAllArticles, getArticlesByCategory } from "@/libs/service";
 import { CommentContext, findComment } from "@/context/CommentProvider";
-import { AUTHOR, BRAND_DESC, BRAND_LOGO, BRAND_NAME } from "@/util/global";
+import {
+  AUTHOR,
+  BRAND_DESC,
+  BRAND_LOGO,
+  BRAND_NAME,
+  TITLE_SIZE,
+} from "@/util/global";
 import {
   capitalize,
   changeHipenToWhiteSpace,
   changeWhiteSpaceToHipen,
   duplicateRemoveArrayFromCategory,
+  filterByCategory,
   slicedBundle,
 } from "@/util/tool";
 import {
@@ -22,6 +29,8 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
+import { PostContext } from "@/context/PostProvider";
+import { Article } from "@/util/types";
 
 const PAGINATION_AMOUNT = 6;
 
@@ -32,16 +41,20 @@ const metadatas = (param: string) => ({
   image: BRAND_LOGO,
 });
 
-function Index({ posts, totalCount }: any) {
+function Index(
+  { params }: { params: { category: string } } /* { posts, totalCount }: any */
+) {
   const theme = useTheme();
   const router = useRouter();
-  const [postList, setPostList] = useState([]);
-  const [page, setPage] = useState(1);
-  const [totalPageCount, setTotalPageCount] = useState(0);
+
+  const { posts } = useContext(PostContext);
   const { comments: commentList } = useContext(CommentContext);
 
+  const [postList, setPostList] = useState<Article[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalPageCount, setTotalPageCount] = useState(0);
+
   useEffect(() => {
-    setTotalPageCount(Math.ceil(totalCount / PAGINATION_AMOUNT));
     return () => {
       setPostList((postList) => []);
     };
@@ -51,10 +64,13 @@ function Index({ posts, totalCount }: any) {
     const currentPage = Number(router.query.page?.slice(0, -1)) || 1;
     const start = (currentPage - 1) * PAGINATION_AMOUNT;
     const end = PAGINATION_AMOUNT * currentPage;
+
+    const categoryArticles = posts.filter(filterByCategory(params.category));
+
     setPage((page) => currentPage);
-    setPostList((postList) => posts.slice(start, end));
+    setPostList((postList) => categoryArticles.slice(start, end));
     setTotalPageCount((totalPageCount) =>
-      Math.ceil(totalCount / PAGINATION_AMOUNT)
+      Math.ceil(categoryArticles.length / PAGINATION_AMOUNT)
     );
   }, [router.query, posts]);
 
@@ -74,7 +90,7 @@ function Index({ posts, totalCount }: any) {
       <Toolbar />
       <Animated order={0} animate='fadeInUp'>
         <Typography
-          fontSize={(theme) => theme.typography.pxToRem(52)}
+          fontSize={(theme) => theme.typography.pxToRem(TITLE_SIZE.L)}
           fontWeight={500}
           align='center'
           gutterBottom
@@ -138,14 +154,15 @@ export default Index;
 
 export async function getStaticProps({ params }: any) {
   try {
-    const posts = await getArticlesByCategory(
-      changeHipenToWhiteSpace(params.category)
-    );
+    // const posts = await getArticlesByCategory(
+    //   changeHipenToWhiteSpace(params.category)
+    // );
 
     return {
       props: {
-        posts: posts,
-        totalCount: posts.length,
+        params,
+        // posts: posts,
+        // totalCount: posts.length,
       },
     };
   } catch (error) {

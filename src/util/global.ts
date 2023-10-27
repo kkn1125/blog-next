@@ -1,5 +1,12 @@
 /* use server */
 
+import { SerializeOptions } from "next-mdx-remote/dist/types";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import rehypeMdxCodeProps from "rehype-mdx-code-props";
+import rehypePrism from "rehype-prism-plus";
+import rehypeSlug from "rehype-slug";
+import remarkBreaks from "remark-breaks";
+import remarkGfm from "remark-gfm";
 import { Base64 } from "./tool";
 
 /* post file directory */
@@ -53,3 +60,31 @@ export const COMMENT_PATH =
   process.env.NEXT_PUBLIC_BLOG_COMMENT_PATH || "/comments";
 export const VISITANT_PATH =
   process.env.NEXT_PUBLIC_BLOG_VISITANT_PATH || "/visitant";
+
+export const MDX_REMOTE_OPTIONS = {
+  parseFrontmatter: true,
+  mdxOptions: {
+    remarkPlugins: [remarkGfm, remarkBreaks],
+    rehypePlugins: [
+      rehypeSlug,
+      rehypePrism,
+      [
+        rehypeAutolinkHeadings,
+        {
+          properties: {
+            className: ["anchor"],
+          },
+        },
+      ],
+      rehypeMdxCodeProps,
+    ],
+    format: "mdx",
+    development: process.env.NODE_ENV !== "production",
+  },
+} as SerializeOptions;
+
+export const TITLE_SIZE = {
+  L: 36,
+  M: 24,
+  S: 16,
+};

@@ -3,7 +3,13 @@ import Card from "@/components/Card";
 import GenerateHead from "@/components/GenerateHead";
 import { getAllArticles } from "@/libs/service";
 import { CommentContext, findComment } from "@/context/CommentProvider";
-import { AUTHOR, BRAND_DESC, BRAND_LOGO, BRAND_NAME } from "@/util/global";
+import {
+  AUTHOR,
+  BRAND_DESC,
+  BRAND_LOGO,
+  BRAND_NAME,
+  TITLE_SIZE,
+} from "@/util/global";
 import { slicedBundle } from "@/util/tool";
 import { Badge } from "@mui/material";
 import { Chip } from "@mui/material";
@@ -18,6 +24,8 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
+import { PostContext } from "@/context/PostProvider";
+import { Article } from "@/util/types";
 
 const metadatas = {
   title: `${BRAND_NAME.toUpperCase()}::Blog`,
@@ -28,17 +36,18 @@ const metadatas = {
 
 const PAGINATION_AMOUNT = 6;
 
-function Index({ posts, totalCount }: any) {
+function Index(/* { posts, totalCount }: any */) {
   const theme = useTheme();
   const router = useRouter();
-  const [postList, setPostList] = useState([]);
+
+  const { posts } = useContext(PostContext);
+  const { comments: commentList } = useContext(CommentContext);
+
+  const [postList, setPostList] = useState<Article[]>([]);
   const [page, setPage] = useState(1);
   const [totalPageCount, setTotalPageCount] = useState(0);
 
-  const { comments: commentList } = useContext(CommentContext);
-
   useEffect(() => {
-    setTotalPageCount(Math.ceil(totalCount / PAGINATION_AMOUNT));
     return () => {
       setPostList((postList) => []);
     };
@@ -51,7 +60,7 @@ function Index({ posts, totalCount }: any) {
     setPage((page) => currentPage);
     setPostList((postList) => posts.slice(start, end));
     setTotalPageCount((totalPageCount) =>
-      Math.ceil(totalCount / PAGINATION_AMOUNT)
+      Math.ceil(posts.length / PAGINATION_AMOUNT)
     );
   }, [router.query, posts]);
 
@@ -79,7 +88,7 @@ function Index({ posts, totalCount }: any) {
       <Stack sx={{ flex: 1 }}>
         <Animated order={0} animate='fadeInUp'>
           <Typography
-            fontSize={(theme) => theme.typography.pxToRem(36)}
+            fontSize={(theme) => theme.typography.pxToRem(TITLE_SIZE.M)}
             fontWeight={500}
             gutterBottom
             fontFamily={`"IBM Plex Sans KR", sans-serif`}>
@@ -140,7 +149,7 @@ function Index({ posts, totalCount }: any) {
 
 export default Index;
 
-export const getStaticProps = async () => {
+/* export const getStaticProps = async () => {
   const posts = await getAllArticles();
 
   return {
@@ -149,7 +158,7 @@ export const getStaticProps = async () => {
       totalCount: posts.length,
     },
   };
-};
+}; */
 
 /* post paginations */
 // export const getStaticProps = async ({ params }: any) => {

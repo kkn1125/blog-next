@@ -18,7 +18,7 @@ interface CardInfo {
 
 function MainCard({
   post,
-  comment = { title: post.frontmatter.slug, comments: 0 },
+  comment = { title: post?.frontmatter?.slug, comments: 0 },
 }: CardInfo) {
   useEffect(() => {
     setTimeout(() => {
@@ -34,7 +34,7 @@ function MainCard({
 
   const colors = () => (theme.mode() !== "light" ? "#000000" : "#ffffff");
 
-  return (
+  return post ? (
     <Stack
       direction='row'
       alignItems={"flex-end"}
@@ -166,6 +166,8 @@ function MainCard({
         </Typography>
       </Stack>
     </Stack>
+  ) : (
+    <div></div>
   );
 }
 

@@ -9,6 +9,7 @@ import Document, {
   Main,
   NextScript,
 } from "next/document";
+import Script from "next/script";
 import * as React from "react";
 import createEmotionCache from "../libs/createEmotionCache";
 import theme from "../libs/theme";
@@ -97,7 +98,6 @@ export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
           name='naver-site-verification'
           content='6cebf2441529d02294b07c32ba2cd5ce09ba2c71'
         />
-
         {emotionStyleTags}
       </Head>
       <body>

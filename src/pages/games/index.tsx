@@ -1,6 +1,6 @@
 import Animated from "@/components/Animated";
 import GenerateHead from "@/components/GenerateHead";
-import { BRAND_NAME, BRAND_DESC, BRAND_LOGO } from "@/util/global";
+import { BRAND_NAME, BRAND_DESC, BRAND_LOGO, TITLE_SIZE } from "@/util/global";
 import {
   Stack,
   Container,
@@ -58,12 +58,20 @@ function Index() {
       <Toolbar />
 
       <Animated order={0} animate='fadeInUp'>
-        <Typography fontSize={24} fontWeight={700} gutterBottom align='center'>
+        <Typography
+          fontSize={TITLE_SIZE.M}
+          fontWeight={700}
+          gutterBottom
+          align='center'>
           Play Games
         </Typography>
       </Animated>
       <Animated order={1} animate='fadeInUp'>
-        <Typography fontSize={18} fontWeight={200} gutterBottom align='center'>
+        <Typography
+          fontSize={TITLE_SIZE.S}
+          fontWeight={200}
+          gutterBottom
+          align='center'>
           재미로 만든 게임입니다. 광고 없이 즐기세요 😁
         </Typography>
       </Animated>

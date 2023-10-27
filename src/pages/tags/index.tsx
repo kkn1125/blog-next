@@ -1,7 +1,8 @@
 import Animated from "@/components/Animated";
 import GenerateHead from "@/components/GenerateHead";
+import { PostContext } from "@/context/PostProvider";
 import { getAllArticles, getArticlesByCategory } from "@/libs/service";
-import { BRAND_NAME, BRAND_DESC, BRAND_LOGO } from "@/util/global";
+import { BRAND_NAME, BRAND_DESC, BRAND_LOGO, TITLE_SIZE } from "@/util/global";
 import {
   changeHipenToWhiteSpace,
   changeWhiteSpaceToHipen,
@@ -12,7 +13,7 @@ import { Toolbar } from "@mui/material";
 import { Stack, Typography, Chip } from "@mui/material";
 import Link from "next/link";
 import router from "next/router";
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 const metadatas = {
   title: BRAND_NAME.toUpperCase() + "::Tags",
@@ -21,7 +22,21 @@ const metadatas = {
   image: BRAND_LOGO,
 };
 
-function Index({ tags }: any) {
+function Index(/* { tags }: any */) {
+  const { posts } = useContext(PostContext);
+  const [tags, setTags] = useState<string[]>([]);
+
+  useEffect(() => {
+    const tags = duplicateRemoveArrayFromTag(posts);
+    const hipens = tags
+      .filter((tag: string) => tag.match(/[\s]+/g))
+      .map((tag: string) => changeWhiteSpaceToHipen(tag));
+    const removeDuplicates = [
+      ...new Set(tags.concat(hipens.map((tag: string) => tag.toLowerCase()))),
+    ].sort();
+    setTags(removeDuplicates);
+  }, [posts]);
+
   return (
     <Stack
       component={Container}
@@ -35,7 +50,7 @@ function Index({ tags }: any) {
         <Typography
           component={Link}
           href={"/tags/"}
-          fontSize={(theme) => theme.typography.pxToRem(36)}
+          fontSize={(theme) => theme.typography.pxToRem(TITLE_SIZE.M)}
           fontWeight={500}
           gutterBottom
           fontFamily={`"IBM Plex Sans KR", sans-serif`}
@@ -77,23 +92,20 @@ function Index({ tags }: any) {
   );
 }
 
-export const getStaticProps = async () => {
-  const articles = await getAllArticles();
-  const tags = duplicateRemoveArrayFromTag(articles);
-  const hipens = tags
-    .filter((tag: string) => tag.toLowerCase().match(/[\s]+/g))
-    .map((tag: string) => changeWhiteSpaceToHipen(tag));
-  return {
-    props: {
-      tags: [
-        ...new Set(
-          tags
-            .map((tag: any) => tag.toLowerCase())
-            .concat(hipens.map((tag: string) => tag.toLowerCase()))
-        ),
-      ].sort(),
-    },
-  };
-};
+// export const getStaticProps = async () => {
+//   const articles = await getAllArticles();
+//   const tags = duplicateRemoveArrayFromTag(articles);
+//   const hipens = tags
+//     .filter((tag: string) => tag.match(/[\s]+/g))
+//     .map((tag: string) => changeWhiteSpaceToHipen(tag));
+//   const removeDuplicates = [
+//     ...new Set(tags.concat(hipens.map((tag: string) => tag.toLowerCase()))),
+//   ].sort();
+//   return {
+//     props: {
+//       tags: removeDuplicates,
+//     },
+//   };
+// };
 
 export default Index;

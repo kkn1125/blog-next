@@ -6,14 +6,21 @@ import ListItemText from "@mui/material/ListItemText";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-export default function SideBar({ list }: { list: any[] }) {
+export default function SideBar({
+  list,
+}: {
+  list: {
+    order: number;
+    head: string;
+  }[];
+}) {
   const router = useRouter();
   const theme = useTheme();
   const isUpMd = useMediaQuery(theme.breakpoints.up("md"));
   const [currentHead, setCurrentHead] = useState("");
 
   useEffect(() => {
-    setCurrentHead(list[0].head);
+    setCurrentHead(list[0]?.head || "");
     return () => {};
   }, []);
 

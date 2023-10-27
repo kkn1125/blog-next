@@ -1,6 +1,56 @@
 {
   "2023": {
     "9": {
+      "27": [
+        {
+          "todo": "캘린더 수정 및 post데이터 추출 + 슬러그 - 포스트 매치 오류 수정",
+          "tag": "check",
+          "time": "2023-10-27 16:00:36",
+          "repeat": false,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": [],
+          "dueStart": null,
+          "due": 0
+        },
+        {
+          "todo": "빌드 배포 시간 20분 -> 30초, 초기 로드 시간 *.0초대 0.*초 대 단축",
+          "tag": "check",
+          "time": "2023-10-27 16:00:36",
+          "repeat": false,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": [],
+          "dueStart": null,
+          "due": 0
+        },
+        {
+          "todo": "빌드 시간 20분 -> 30초, 초기 로드 시간 0.*초 대 단축",
+          "tag": "check",
+          "time": "2023-10-27 11:30:55",
+          "repeat": false,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": [],
+          "dueStart": null,
+          "due": 0
+        },
+        {
+          "todo": "블로그 포스트 로딩 방식 및 로직 최적화",
+          "tag": "check",
+          "time": "2023-10-27 11:30:55",
+          "repeat": false,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": [],
+          "dueStart": null,
+          "due": 0
+        }
+      ],
       "25": [
         {
           "todo": "Nest.js 문서화, 미들웨어 관련 내용 포스팅",

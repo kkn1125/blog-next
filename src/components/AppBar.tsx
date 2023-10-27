@@ -375,7 +375,7 @@ function ResponsiveAppBar() {
                     sx={{
                       width: "100%",
                     }}>
-                    {name}
+                    {name.toUpperCase()}
                   </Typography>
                 </MenuItem>
               ))}

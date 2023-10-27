@@ -1,16 +1,19 @@
 import Animated from "@/components/Animated";
 import Card from "@/components/Card";
 import GenerateHead from "@/components/GenerateHead";
-import { getAllArticles, getArticlesByTag } from "@/libs/service";
 import { CommentContext, findComment } from "@/context/CommentProvider";
-import { AUTHOR, BRAND_DESC, BRAND_LOGO, BRAND_NAME } from "@/util/global";
+import { PostContext } from "@/context/PostProvider";
+import { getAllArticles, getArticlesByTag } from "@/libs/service";
+import { BRAND_DESC, BRAND_LOGO, BRAND_NAME, TITLE_SIZE } from "@/util/global";
 import {
   capitalize,
   changeHipenToWhiteSpace,
   changeWhiteSpaceToHipen,
   duplicateRemoveArrayFromTag,
+  filterByTag,
   slicedBundle,
 } from "@/util/tool";
+import { Article } from "@/util/types";
 import {
   Container,
   Pagination,
@@ -28,32 +31,40 @@ const PAGINATION_AMOUNT = 6;
 const metadatas = (param: string) => ({
   title: BRAND_NAME.toUpperCase() + "::Tag" + "-" + param,
   description: BRAND_DESC,
-  // author: AUTHOR,
   image: BRAND_LOGO,
 });
 
-function Index({ posts, totalCount }: any) {
+function Index(
+  { params }: { params: { tag: string } } /* { posts, totalCount }: any */
+) {
   const theme = useTheme();
   const router = useRouter();
-  const [postList, setPostList] = useState([]);
+
+  const { posts } = useContext(PostContext);
+  const { comments: commentList } = useContext(CommentContext);
+
+  const [postList, setPostList] = useState<Article[]>([]);
   const [page, setPage] = useState(1);
   const [totalPageCount, setTotalPageCount] = useState(0);
 
   useEffect(() => {
-    setTotalPageCount(Math.ceil(totalCount / PAGINATION_AMOUNT));
+    // setTotalPageCount(Math.ceil(totalCount / PAGINATION_AMOUNT));
+    return () => {
+      setPostList((postList) => []);
+    };
   }, []);
 
   useEffect(() => {
     const currentPage = Number(router.query.page?.slice(0, -1)) || 1;
     const start = (currentPage - 1) * PAGINATION_AMOUNT;
     const end = PAGINATION_AMOUNT * currentPage;
-    setPage((page) => currentPage);
-    setPostList((postList) => posts.slice(start, end));
-    setTotalPageCount((totalPageCount) =>
-      Math.ceil(totalCount / PAGINATION_AMOUNT)
-    );
+
+    const tagArticles = posts.filter(filterByTag(params.tag));
+
+    setPage(() => currentPage);
+    setPostList(() => tagArticles.slice(start, end));
+    setTotalPageCount(() => Math.ceil(tagArticles.length / PAGINATION_AMOUNT));
   }, [router.query, posts]);
-  const { comments: commentList } = useContext(CommentContext);
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     router.push(`/tags/${router.query.tag}/?page=${value}/`);
@@ -70,7 +81,7 @@ function Index({ posts, totalCount }: any) {
       <Toolbar />
       <Animated order={0} animate='fadeInUp'>
         <Typography
-          fontSize={(theme) => theme.typography.pxToRem(52)}
+          fontSize={(theme) => theme.typography.pxToRem(TITLE_SIZE.L)}
           fontWeight={500}
           align='center'
           gutterBottom
@@ -134,11 +145,12 @@ export default Index;
 
 export async function getStaticProps({ params }: any) {
   try {
-    const posts = await getArticlesByTag(changeHipenToWhiteSpace(params.tag));
+    // const posts = await getArticlesByTag(changeHipenToWhiteSpace(params.tag));
     return {
       props: {
-        posts: posts,
-        totalCount: posts.length,
+        params,
+        // posts: posts,
+        // totalCount: posts.length,
       },
     };
   } catch (error) {

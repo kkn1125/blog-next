@@ -1,6 +1,8 @@
 import GenerateHead from "@/components/GenerateHead";
+import { PostContext } from "@/context/PostProvider";
 import { getAllArticles } from "@/libs/service";
 import { AUTHOR, BRAND_DESC, BRAND_LOGO, BRAND_NAME } from "@/util/global";
+import { Article } from "@/util/types";
 import {
   Alert,
   AlertTitle,
@@ -16,7 +18,7 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 const metadatas = {
   title: `${BRAND_NAME.toUpperCase()}::Not Found`,
@@ -25,17 +27,20 @@ const metadatas = {
   image: BRAND_LOGO,
 };
 
-function Index({ posts }: any) {
+function Index(/* { posts }: any */) {
   const router = useRouter();
-  const [post, setPost] = useState(null);
+
+  const { posts } = useContext(PostContext);
+
+  const [post, setPost] = useState<Article | undefined>(undefined);
   useEffect(() => {
     setPost(
-      posts.find((post: any) =>
+      posts.find((post) =>
         /* 잘못된 로직 수정 2023-10-25 17:32:24 */
         post.frontmatter.slug.endsWith(location.pathname.slice(1))
       )
     );
-  }, []);
+  }, [posts]);
   return (
     <Container>
       <GenerateHead metadatas={metadatas} />
@@ -109,12 +114,12 @@ function Index({ posts }: any) {
 
 export default Index;
 
-export const getStaticProps = async () => {
-  const posts = await getAllArticles();
+// export const getStaticProps = async () => {
+//   const posts = await getAllArticles();
 
-  return {
-    props: {
-      posts: posts,
-    },
-  };
-};
+//   return {
+//     props: {
+//       posts: posts,
+//     },
+//   };
+// };

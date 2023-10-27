@@ -4,8 +4,17 @@ import Link from "next/link";
 import React from "react";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import { Article } from "@/util/types";
 
-function PostNavigatorButton({ data, currentPath, order = false }: any) {
+function PostNavigatorButton({
+  data,
+  currentPath,
+  order = false,
+}: {
+  data: Article;
+  currentPath: string;
+  order?: boolean;
+}) {
   return (
     <Box
       component={Link}
@@ -80,7 +89,7 @@ function PostNavigatorButton({ data, currentPath, order = false }: any) {
               <Typography
                 fontSize={(theme) => theme.typography.pxToRem(13)}
                 fontWeight={200}>
-                {data.frontmatter.readingTime}
+                {data.readingTime}
               </Typography>
             </>
           ) : order ? (

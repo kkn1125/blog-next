@@ -2,6 +2,7 @@ import axios from "axios";
 import markdown from "markdown-it";
 import { SetStateAction } from "react";
 import { COMMENT_BASE_URL, COMMENT_PATH, VISITANT_PATH } from "./global";
+import { Article } from "./types";
 
 export const convertDate = (date: string) => new Date(date.slice(0, -6));
 
@@ -25,20 +26,22 @@ export const slugToBlogTrailingSlash = (slug: string) => {
   return `/blog${trailingSlash}${slug}`;
 };
 
-export const duplicateRemoveArrayFromCategory = (array: any[]) =>
-  array.reduce((acc, cur) => {
+export const duplicateRemoveArrayFromCategory = (array: Article[]) =>
+  array.reduce((acc: string[], cur) => {
     for (let category of cur.frontmatter.categories) {
-      if (acc.includes(category.toLowerCase())) continue;
-      acc.push(category.toLowerCase());
+      const lowerCaseCategory = category.toLowerCase();
+      if (acc.includes(lowerCaseCategory.toLowerCase())) continue;
+      acc.push(lowerCaseCategory.toLowerCase());
     }
     return acc;
   }, []);
 
-export const duplicateRemoveArrayFromTag = (array: any[]) =>
-  array.reduce((acc, cur) => {
+export const duplicateRemoveArrayFromTag = (array: Article[]) =>
+  array.reduce((acc: string[], cur) => {
     for (let tag of cur.frontmatter.tags) {
-      if (acc.includes(tag)) continue;
-      acc.push(tag);
+      const lowerCaseTag = tag.toLowerCase();
+      if (acc.includes(lowerCaseTag)) continue;
+      acc.push(lowerCaseTag);
     }
     return acc;
   }, []);
@@ -257,8 +260,7 @@ export const parseHeading = (content: string) => {
       const title = item.match(
         /^\<h([1-6])\>([\s\S]+)?<\/h[1-6]>$/
       ) as string[];
-
-      return { order: title[1], head: title[2] || "" };
+      return { order: title[1] as unknown as number, head: title[2] || "" };
     });
 };
 
@@ -366,3 +368,41 @@ export async function getVisitantHtml() {
 export const getRandomItemInArray = (array: any[]) => {
   return array.at(Math.floor(Math.random() * array.length));
 };
+
+export const removeSlashForSlug = (slug: `/${string}/`) =>
+  slug.replace(/(\/|\\)+/g, "").trim();
+
+export const contentReplaceCustomSign = (content: string = "") => {
+  const regExp = /@<=>|@=>|@<=|@<->|@->|@<-/g;
+  const swap = ($1: string) => {
+    switch ($1) {
+      case "@<=>":
+        return "⇔";
+      case "@=>":
+        return "⇒";
+      case "@<=":
+        return "⇐";
+      case "@<->":
+        return "↔";
+      case "@->":
+        return "→";
+      case "@<-":
+        return "←";
+      default:
+        return $1;
+    }
+  };
+  return content.replace(regExp, swap);
+};
+
+/* 카테고리 검색 filter predicate 함수 */
+export const filterByCategory = (category: string) => (article: any) =>
+  article.frontmatter.categories
+    .map((_category: string) => _category.toLowerCase())
+    .includes(category.toLowerCase());
+
+/* 태그 검색 filter predicate 함수 */
+export const filterByTag = (tag: string) => (article: any) =>
+  article.frontmatter.tags
+    .map((_tag: string) => _tag.toLowerCase())
+    .includes(tag.toLowerCase());

@@ -3,15 +3,20 @@ import GoTop from "@/components/GoTop";
 import PostMDXComponent from "@/components/PostMDXComponent";
 import PostNavigator from "@/components/PostNavigator";
 import SideBar from "@/components/SideBar";
+import { PostContext } from "@/context/PostProvider";
 import {
-  getArticleFromSlug,
-  getBeforeArticleFromSlug,
-  getNextArticleFromSlug,
-  getSlugs,
-  serializeMdx,
+  findArticleFromSlugAndBothSideArticles,
+  getOnlySlugs,
 } from "@/libs/service";
 import { BRAND_NAME } from "@/util/global";
-import { format, getReponsiveImageUrl, parseHeading } from "@/util/tool";
+import {
+  contentReplaceCustomSign,
+  format,
+  getReponsiveImageUrl,
+  parseHeading,
+  removeSlashForSlug,
+} from "@/util/tool";
+import { Article } from "@/util/types";
 import { MergeComponents } from "@mdx-js/react/lib";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import LinkIcon from "@mui/icons-material/Link";
@@ -29,7 +34,8 @@ import {
 } from "@mui/material";
 import { MDXComponents } from "mdx/types";
 import { MDXRemote } from "next-mdx-remote";
-import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/router";
+import { useContext, useEffect, useRef, useState } from "react";
 
 const components: MDXComponents | MergeComponents = {
   code: PostMDXComponent.CodeBlock,
@@ -244,39 +250,61 @@ const metadatas = (frontmatter: any) => ({
 
 let copyActive = false;
 
-function Index({
-  post,
-  content,
-  origin,
-  before,
-  next,
-}: {
-  post: any;
-  content: any;
-  before: any;
-  origin: any;
-  next: any;
-}) {
-  const [responsivePost, setResponsivePost] = useState<any>(null);
-  const [mode, setMode] = useState(false);
+function Index({ origin }: { origin: any }) {
+  const router = useRouter();
   const theme = useTheme();
   const commentEl = useRef<HTMLElement>();
+
+  const { posts } = useContext(PostContext);
+
+  const [prev, setPrev] = useState<Article | undefined>(undefined);
+  const [next, setNext] = useState<Article | undefined>(undefined);
+  const [current, setCurrent] = useState<Article | undefined>(undefined);
+  const [content, setContent] = useState<string>("");
+  const [mode, setMode] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  useEffect(() => {
-    setResponsivePost(post);
-  }, [post]);
+  const postEl = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (responsivePost?.frontmatter) {
+    if (location.hash === "#comment-wrap") {
+      if (postEl.current) {
+        const main = document.getElementById("main");
+        if (main) {
+          main.scrollTo({
+            top: main.scrollHeight,
+            behavior: "auto",
+            left: 0,
+          });
+        }
+      }
+    }
+  }, [postEl.current?.scrollHeight, current, mode]);
+
+  useEffect(() => {
+    const centerIndex = posts.findIndex(
+      (article) =>
+        removeSlashForSlug(article.frontmatter.slug) === router.query.slug
+    );
+    const prevArticle = posts.at(centerIndex - 1);
+    const currentArticle = posts.at(centerIndex);
+    const nextArticle = posts.at(centerIndex + 1);
+
+    setPrev(prevArticle);
+    setCurrent(currentArticle);
+    setNext(nextArticle);
+    setContent(currentArticle?.content || "");
+  }, [posts, router.asPath]);
+
+  useEffect(() => {
+    if (current?.frontmatter) {
       ((window as any).Kakao as any).Share.createDefaultButton({
         container: "#kakaotalk-sharing-btn",
         objectType: "feed",
         content: {
-          title: responsivePost.frontmatter.title,
-          description:
-            responsivePost.frontmatter.description.slice(0, 50) + "...",
-          imageUrl: location.origin + responsivePost.frontmatter.image,
+          title: current.frontmatter.title,
+          description: current.frontmatter.description.slice(0, 50) + "...",
+          imageUrl: location.origin + current.frontmatter.image,
           link: {
             // [내 애플리케이션] > [플랫폼] 에서 등록한 사이트 도메인과 일치해야 함
             mobileWebUrl: location.origin + location.pathname,
@@ -306,7 +334,7 @@ function Index({
         ],
       });
     }
-  }, [responsivePost?.frontmatter]);
+  }, [current?.frontmatter]);
 
   useEffect(() => {
     const scriptEl = document.createElement("script");
@@ -343,10 +371,9 @@ function Index({
   };
 
   const isUpdated =
-    responsivePost &&
-    responsivePost.frontmatter.modified > responsivePost.frontmatter.date;
+    current && current.frontmatter.modified > current.frontmatter.date;
 
-  return (
+  return !current ? (
     <Stack
       id='post-wrap'
       direction={{ xs: "column", md: "row" }}
@@ -355,14 +382,49 @@ function Index({
         height: "fit-content",
         position: "relative",
       }}>
-      {responsivePost && (
+      <Box id='side-bar-wrap'></Box>
+      <Stack
+        ref={postEl}
+        id='post'
+        direction={{ xs: "column", md: "row" }}
+        justifyContent={"center"}
+        alignItems={"center"}
+        sx={{
+          flex: 1,
+          width: "100%",
+          wordBreak: "break-word",
+          whiteSpace: "break-spaces",
+        }}>
+        <CircularProgress
+          size={50}
+          sx={{
+            position: "fixed",
+            top: "calc(50% - 25px)",
+            left: "calc(50% - 25px)",
+            transform: "translate(-50%, -50%)",
+          }}
+        />
+      </Stack>
+      <GoTop />
+    </Stack>
+  ) : (
+    <Stack
+      id='post-wrap'
+      direction={{ xs: "column", md: "row" }}
+      sx={{
+        width: { lg: "100%", xl: "80%" },
+        height: "fit-content",
+        position: "relative",
+      }}>
+      {current && (
         <Box id='side-bar-wrap'>
           <SideBar list={parseHeading(content)} />
         </Box>
       )}
 
-      {responsivePost && (
+      {current && (
         <Stack
+          ref={postEl}
           id='post'
           direction={{ xs: "column", md: "row" }}
           justifyContent={"center"}
@@ -374,8 +436,8 @@ function Index({
             whiteSpace: "break-spaces",
           }}>
           <GenerateHead
-            metadatas={metadatas(responsivePost.frontmatter)}
-            url={location.origin + "/blog" + responsivePost.frontmatter.slug}
+            metadatas={metadatas(current.frontmatter)}
+            url={location.origin + "/blog" + current.frontmatter.slug}
           />
 
           <Stack
@@ -393,7 +455,7 @@ function Index({
                   md: "auto",
                 },
               }}>
-              <PostNavigator before={before} next={next} />
+              <PostNavigator prev={prev} next={next} />
               <Box
                 sx={{
                   mb: 2,
@@ -401,7 +463,7 @@ function Index({
                 <Box
                   sx={{
                     backgroundImage: `url(${getReponsiveImageUrl(
-                      responsivePost.frontmatter.image
+                      current.frontmatter.image
                     )})`,
                     backgroundSize: { xs: "contain", md: "cover" },
                     backgroundPosition: "center center",
@@ -417,7 +479,7 @@ function Index({
                 fontFamily={`"IBM Plex Sans KR", sans-serif`}
                 align='center'
                 gutterBottom>
-                {responsivePost.frontmatter.title || ""}
+                {current.frontmatter.title || ""}
               </Typography>
               <Typography
                 fontSize={(theme) => theme.typography.pxToRem(16)}
@@ -428,8 +490,8 @@ function Index({
                 {isUpdated && "Update."}
                 {format(
                   (isUpdated
-                    ? responsivePost.frontmatter.modified
-                    : responsivePost.frontmatter.date) || "",
+                    ? current.frontmatter.modified
+                    : current.frontmatter.date) || "",
                   "YYYY-MM-dd HH:mm",
                   false
                 )}
@@ -440,7 +502,7 @@ function Index({
                 fontFamily={`"IBM Plex Sans KR", sans-serif`}
                 align='center'
                 gutterBottom>
-                {responsivePost.frontmatter.author || ""}
+                {current.frontmatter.author || ""}
               </Typography>
               <Typography
                 fontSize={(theme) => theme.typography.pxToRem(14)}
@@ -448,7 +510,7 @@ function Index({
                 fontFamily={`"IBM Plex Sans KR", sans-serif`}
                 align='center'
                 gutterBottom>
-                {responsivePost.frontmatter.readingTime || ""}
+                {current.frontmatter.readingTime || ""}
               </Typography>
               <Stack direction='row' justifyContent='center' gap={1}>
                 <Tooltip title={`카카오톡 공유`} placement='bottom'>
@@ -480,18 +542,18 @@ function Index({
               </Stack>
               <Divider sx={{ my: 3, width: "100%" }} flexItem />
               {/* <HydratedMDX
-                serialized={...responsivePost}
+                serialized={...current}
                 components={components as MDXComponents | MergeComponents}
               /> */}
               <MDXRemote
-                compiledSource={responsivePost.compiledSource}
-                frontmatter={responsivePost.frontmatter}
+                compiledSource={current.compiledSource}
+                frontmatter={current.frontmatter}
                 scope={{}}
-                // {...responsivePost}
+                // {...current}
                 components={components as MDXComponents | MergeComponents}
                 lazy
               />
-              <PostNavigator before={before} next={next} />
+              <PostNavigator prev={prev} next={next} />
               <Box
                 id='comment-wrap'
                 sx={{
@@ -530,93 +592,36 @@ function Index({
 }
 
 export const getStaticProps = async ({ params }: any) => {
-  const before = await getBeforeArticleFromSlug(params.slug);
-  const post = await getArticleFromSlug(params.slug);
-  const next = await getNextArticleFromSlug(params.slug);
-  if (before) {
-    Object.assign(before, {
-      content: before.content.replace(
-        /@<=>|@=>|@<=|@<->|@->|@<-/g,
-        ($1: string) => {
-          switch ($1) {
-            case "@<=>":
-              return "⇔";
-            case "@=>":
-              return "⇒";
-            case "@<=":
-              return "⇐";
-            case "@<->":
-              return "↔";
-            case "@->":
-              return "→";
-            case "@<-":
-              return "←";
-            default:
-              return $1;
-          }
-        }
-      ),
-    });
-  }
-  if (next) {
-    Object.assign(next, {
-      content: next.content.replace(
-        /@<=>|@=>|@<=|@<->|@->|@<-/g,
-        ($1: string) => {
-          switch ($1) {
-            case "@<=>":
-              return "⇔";
-            case "@=>":
-              return "⇒";
-            case "@<=":
-              return "⇐";
-            case "@<->":
-              return "↔";
-            case "@->":
-              return "→";
-            case "@<-":
-              return "←";
-            default:
-              return $1;
-          }
-        }
-      ),
-    });
-  }
-  Object.assign(post, {
-    content: post.content.replace(
-      /@<=>|@=>|@<=|@<->|@->|@<-/g,
-      ($1: string) => {
-        switch ($1) {
-          case "@<=>":
-            return "⇔";
-          case "@=>":
-            return "⇒";
-          case "@<=":
-            return "⇐";
-          case "@<->":
-            return "↔";
-          case "@->":
-            return "→";
-          case "@<-":
-            return "←";
-          default:
-            return $1;
-        }
-      }
-    ),
-  });
+  // const { prev, current, next } = await findArticleFromSlugAndBothSideArticles(
+  //   params.slug
+  // );
 
-  const mdxSource = (await serializeMdx(post.content || "")) || {};
-  mdxSource.frontmatter = post.frontmatter;
+  // console.log(current?.frontmatter.slug);
+
+  // if (prev) {
+  //   Object.assign(prev, {
+  //     content: contentReplaceCustomSign(prev.content),
+  //   });
+  // }
+  // if (next) {
+  //   Object.assign(next, {
+  //     content: contentReplaceCustomSign(next.content),
+  //   });
+  // }
+  // if (current) {
+  //   Object.assign(current, {
+  //     content: contentReplaceCustomSign(current.content),
+  //   });
+  // }
 
   return {
     props: {
-      origin: post,
-      post: mdxSource,
-      content: post.content,
-      before: before,
-      next: next,
+      params,
+      // origin: current,
+      // current,
+      // content: current?.content || "",
+      // prev,
+      // next,
     },
   };
 };
@@ -629,7 +634,7 @@ export const getStaticPaths = async () => {
     };
   }
 
-  const slugs = await getSlugs();
+  const slugs = await getOnlySlugs();
 
   return {
     paths: slugs.map((slug: string) => ({

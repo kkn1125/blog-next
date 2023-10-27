@@ -2,7 +2,7 @@ import { Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import PostNavigatorButton from "./PostNavigatorButton";
 
-function PostNavigator({ before, next }: any) {
+function PostNavigator({ prev, next }: any) {
   const [currentPath, setCurrentPath] = useState("");
   useEffect(() => {
     setCurrentPath(location.origin + location.pathname);
@@ -18,7 +18,7 @@ function PostNavigator({ before, next }: any) {
       sx={{
         my: 3,
       }}>
-      <PostNavigatorButton data={before} order currentPath={currentPath} />
+      <PostNavigatorButton data={prev} order currentPath={currentPath} />
       <PostNavigatorButton data={next} currentPath={currentPath} />
     </Stack>
   );

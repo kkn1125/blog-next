@@ -8,6 +8,7 @@ import {
   BRAND_NAME,
   GITHUB,
   PORTFOLIO,
+  TITLE_SIZE,
 } from "@/util/global";
 import {
   Alert,
@@ -57,7 +58,7 @@ function Index() {
       <GenerateHead metadatas={metadatas} />
       <Animated order={1} animate='fadeInUp'>
         <Typography
-          fontSize={(theme) => theme.typography.pxToRem(52)}
+          fontSize={(theme) => theme.typography.pxToRem(TITLE_SIZE.L)}
           fontWeight={500}
           gutterBottom
           fontFamily={`"IBM Plex Sans KR", sans-serif`}>
@@ -66,20 +67,37 @@ function Index() {
       </Animated>
       <Animated order={2} animate='fadeInUp'>
         <Alert color='success'>
-          <AlertTitle>블로그 디자인 변경 ⇒ Next.js 13!</AlertTitle>
-          2023. 05. 29 일자로 블로그 UI가 업데이트 되었습니다. 실험적이거나
-          불필요한 기능을 모두 제거하고 포스팅을 이전보다 편하게 볼 수 있습니다.
+          <AlertTitle>블로그 기능 추가</AlertTitle>
+          2023. 10. 27 일자로 블로그 업데이트 되었습니다.
+          <br />
+          1. 채널 톡이 추가되었습니다.
+          <br />
+          2. 블로그 성능 최적화 작업이 있었습니다.
+          <br />
+          3. 포스팅별 댓글 개수를 조회할 수 있습니다.
+          <br />
         </Alert>
       </Animated>
+      <Toolbar />
       <Animated order={3} animate='fadeInUp'>
         <Typography fontWeight={200} sx={{ my: 1 }}>
-          회사 일정과 개인 일정으로 인해 최대한 1주일 1포스팅을 지키려 하고
-          있습니다. 계속해서 블로그를 관리하면서 보기 불편한 점 등을 찾아
-          개선하는 노력을 기울이고 있습니다. 감사합니다 😊
+          실수와 경험을 통해 얻은 내용과 기술에 대해 작성하는 개인 기술 블로그
+          입니다. 블로그를 관리하면서 보기 불편한 점 등을 찾아 개선하고
+          있습니다. 문의사항은 채널톡을 이용해주세요.
+        </Typography>
+        <Typography fontWeight={200} sx={{ my: 1 }}>
+          감사합니다 😊
         </Typography>
       </Animated>
+      <Toolbar />
 
       <Animated order={4} animate='fadeInUp'>
+        <Typography
+          fontSize={(theme) => theme.typography.pxToRem(TITLE_SIZE.M)}
+          fontWeight={200}
+          sx={{ my: 1 }}>
+          Others
+        </Typography>
         <List
           sx={{
             "& .MuiTypography-root.MuiListItemText-secondary": {

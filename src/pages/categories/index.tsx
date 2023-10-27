@@ -1,13 +1,16 @@
 import Animated from "@/components/Animated";
 import GenerateHead from "@/components/GenerateHead";
+import { PostContext } from "@/context/PostProvider";
 import { getAllArticles } from "@/libs/service";
-import { BRAND_DESC, BRAND_LOGO, BRAND_NAME } from "@/util/global";
+import { BRAND_DESC, BRAND_LOGO, BRAND_NAME, TITLE_SIZE } from "@/util/global";
 import {
   changeWhiteSpaceToHipen,
   duplicateRemoveArrayFromCategory,
+  duplicateRemoveArrayFromTag,
 } from "@/util/tool";
 import { Chip, Container, Stack, Toolbar, Typography } from "@mui/material";
 import Link from "next/link";
+import { useContext, useState, useEffect } from "react";
 
 const metadatas = {
   title: BRAND_NAME.toUpperCase() + "::Categories",
@@ -16,7 +19,25 @@ const metadatas = {
   image: BRAND_LOGO,
 };
 
-function Index({ categories }: any) {
+function Index(/* { categories }: any */) {
+  const { posts } = useContext(PostContext);
+  const [categories, setCategories] = useState<string[]>([]);
+
+  useEffect(() => {
+    const categories = duplicateRemoveArrayFromCategory(posts);
+    const hipens = categories
+      .filter((category: string) => category.match(/[\s]+/g))
+      .map((category: string) => changeWhiteSpaceToHipen(category));
+    const removeDuplicates = [
+      ...new Set(
+        categories.concat(
+          hipens.map((category: string) => category.toLowerCase())
+        )
+      ),
+    ].sort();
+    setCategories(removeDuplicates);
+  }, [posts]);
+
   return (
     <Stack
       component={Container}
@@ -30,7 +51,7 @@ function Index({ categories }: any) {
         <Typography
           component={Link}
           href={"/categories/"}
-          fontSize={(theme) => theme.typography.pxToRem(36)}
+          fontSize={(theme) => theme.typography.pxToRem(TITLE_SIZE.M)}
           fontWeight={500}
           gutterBottom
           fontFamily={`"IBM Plex Sans KR", sans-serif`}
@@ -72,23 +93,23 @@ function Index({ categories }: any) {
   );
 }
 
-export const getStaticProps = async () => {
-  const articles = await getAllArticles();
-  const categories = duplicateRemoveArrayFromCategory(articles);
-  const hipens = categories
-    .filter((category: string) => category.toLowerCase().match(/[\s]+/g))
-    .map((category: string) => changeWhiteSpaceToHipen(category));
-  return {
-    props: {
-      categories: [
-        ...new Set(
-          categories
-            .map((category: any) => category.toLowerCase())
-            .concat(hipens.map((category: string) => category.toLowerCase()))
-        ),
-      ].sort(),
-    },
-  };
-};
+// export const getStaticProps = async () => {
+//   const articles = await getAllArticles();
+//   const categories = duplicateRemoveArrayFromCategory(articles);
+//   const hipens = categories
+//     .filter((category: string) => category.toLowerCase().match(/[\s]+/g))
+//     .map((category: string) => changeWhiteSpaceToHipen(category));
+//   return {
+//     props: {
+//       categories: [
+//         ...new Set(
+//           categories
+//             .map((category: any) => category.toLowerCase())
+//             .concat(hipens.map((category: string) => category.toLowerCase()))
+//         ),
+//       ].sort(),
+//     },
+//   };
+// };
 
 export default Index;

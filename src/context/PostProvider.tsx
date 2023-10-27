@@ -1,12 +1,13 @@
+import { Article } from "@/util/types";
 import React, { createContext, useReducer } from "react";
 
 interface PostValue {
-  posts: any[];
+  posts: Article[];
 }
 
 interface PostAction {
   type: POST_INIT;
-  posts: any[];
+  posts: Article[];
 }
 
 const initialValues: PostValue = {
@@ -17,7 +18,7 @@ export enum POST_INIT {
   INIT = "post/initial",
 }
 
-export const PostContext = createContext({ posts: [] });
+export const PostContext = createContext({ posts: [] as Article[] });
 export const PostDispatchContext = createContext(new Function());
 
 const reducer = (state: PostValue, action: PostAction) => {

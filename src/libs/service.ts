@@ -1,374 +1,185 @@
+import { MDX_REMOTE_OPTIONS } from "@/util/global";
+import { filterByCategory, filterByTag, removeSlashForSlug } from "@/util/tool";
+import { Article } from "@/util/types";
 import fs from "fs";
 import { globSync } from "glob";
 import matter from "gray-matter";
 import { serialize } from "next-mdx-remote/serialize";
 import path from "path";
 import readingTime from "reading-time";
-import rehypeAutolinkHeadings from "rehype-autolink-headings";
-import rehypePrism from "rehype-prism-plus";
-import rehypeSlug from "rehype-slug";
-import remarkBreaks from "remark-breaks";
-import remarkGfm from "remark-gfm";
-import rehypeMdxCodeProps from "rehype-mdx-code-props";
 
+const metapostLocation = "src/database/metapost/posts.json";
 const basePath = "src/database/**/*.mdx";
-
 const blogMdxDirs = ["src/database/**/*.md", "src/database/**/*.mdx"];
+const articlesPath = path.join(process.cwd(), basePath);
 
-/* initialize for metapost file : refresh */
+const IS_TEST_MODE = process.env.RUN_MODE === "test";
+const IS_REFRESH_MODE = process.env.RUN_MODE === "refresh";
+const SLICE_FOR_TEST_RUN_AMOUNT = +(process.env.RUN_LIMIT || 20);
 
-if (process.env.RUN_MODE === "refresh") {
-  setTimeout(async () => {
-    const posts = await getAllArticles();
-    const metaPostLocate = path.join(
-      path.resolve(),
-      "src/database/metapost/posts.json"
+let isSamePost = false;
+
+if (IS_REFRESH_MODE) {
+  console.log("✅ start refresh mode, now comparing with metapost.json");
+  console.log("🌟 no use this option: SLICE_FOR_TEST_RUN");
+}
+
+if (IS_TEST_MODE) {
+  console.log("✅ start test mode, use this option: SLICE_FOR_TEST_MODE");
+  console.log("✅ SLICE_FOR_TEST_RUN_AMOUNT", SLICE_FOR_TEST_RUN_AMOUNT);
+}
+
+const metapostSave = async () => {
+  const posts = await getAllArticles();
+  const metapostLocation = path.join(
+    path.resolve(),
+    "src/database/metapost/posts.json"
+  );
+  const saveCurrent = JSON.stringify(posts, null, 2);
+  try {
+    const metapost = fs.readFileSync(metapostLocation);
+    const metapostJSON = JSON.stringify(
+      JSON.parse(metapost.toString() || "[]"),
+      null,
+      2
     );
-    const saveCurrent = JSON.stringify(posts, null, 2);
-    try {
-      const metapost = fs.readFileSync(metaPostLocate);
-      const metapostJSON = JSON.stringify(
-        JSON.parse(metapost.toString() || "[]"),
-        null,
-        2
-      );
-      if (saveCurrent !== metapostJSON) {
-        fs.rmSync(metaPostLocate);
-        fs.writeFileSync(metaPostLocate, saveCurrent);
-        console.log("start refresh metapost.json");
-      }
-    } catch (error) {
-      fs.writeFileSync(metaPostLocate, saveCurrent);
-      console.log("replace metapost.json");
-    } finally {
-      console.log("success refresh metapost.json !");
+    if (saveCurrent !== metapostJSON) {
+      fs.rmSync(metapostLocation);
+      fs.writeFileSync(metapostLocation, saveCurrent);
+      console.log("🛠️ save refresh metapost.json");
+    } else {
+      throw new Error("now content is same the metapost.json");
     }
+  } catch (error) {
+    fs.writeFileSync(metapostLocation, saveCurrent);
+    console.log("✅ now is same as before");
+    isSamePost = true;
+  } finally {
+    console.log("✨ success !");
+  }
+};
+
+if (IS_REFRESH_MODE) {
+  setTimeout(async () => {
+    metapostSave();
   }, 1000);
 }
 
-const SLICE_FOR_TEST_RUN_AMOUNT = Number(process.env.RUN_LIMIT) || 20;
-if (process.env.RUN_MODE === "refresh") {
-  console.log("🌟 no use this option: SLICE_FOR_TEST_RUN");
-  console.log("SLICE_FOR_TEST_RUN_AMOUNT", SLICE_FOR_TEST_RUN_AMOUNT);
-}
-
 const SLICE_FOR_TEST_RUN = (array: any[], limitSize: number) => {
-  return array.slice(
-    0,
-    process.env.RUN_MODE === "test" ? limitSize : undefined
-  );
+  return array.slice(0, IS_TEST_MODE ? limitSize : undefined);
 };
 
 const customGlob = (globCondition: string | string[]) => {
   return SLICE_FOR_TEST_RUN(globSync(globCondition), SLICE_FOR_TEST_RUN_AMOUNT);
 };
 
-export const serializeMdx = async (source: string) => {
-  const fixMetaPlugin = (options: any = {}) => {
-    return (tree: any) => {
-      visit(tree, "element", visit);
-    };
-
-    function visit(
-      node: { tagName: string; data: any; properties: { metastring: any } },
-      index: string,
-      parent: { (node: any, index: any, parent: any): void; tagName?: any }
-    ) {
-      if (!parent || parent.tagName !== "pre" || node.tagName !== "code") {
-        return;
-      }
-
-      node.data = { ...node.data, meta: node.properties.metastring };
-    }
-  };
-
-  return serialize(source.trim(), {
-    parseFrontmatter: true,
-    mdxOptions: {
-      remarkPlugins: [remarkGfm, remarkBreaks],
-      rehypePlugins: [
-        rehypeSlug,
-        rehypePrism,
-        [
-          rehypeAutolinkHeadings,
-          {
-            properties: {
-              className: ["anchor"],
-            },
-          },
-        ],
-        rehypeMdxCodeProps,
-      ],
-      format: "mdx",
-      development: process.env.NODE_ENV !== "production",
-    },
-  });
-};
-
-const articlesPath = path.join(process.cwd(), basePath);
-
-export async function getAllSlugNames() {
-  const paths = customGlob(`${articlesPath}/*.mdx`).map((path) =>
-    path
-      .split(/\\+|\/+/)
-      .pop()
-      ?.replace(/\.mdx/, "")
-  );
-  SLICE_FOR_TEST_RUN(paths, SLICE_FOR_TEST_RUN_AMOUNT);
-}
-
-export async function getSlugs() {
-  const articles = customGlob(blogMdxDirs);
-
-  let convert: any = [];
-
-  for (let i = 0; i < articles.length; i++) {
-    const articleSlug = articles[i];
-    const source = fs.readFileSync(path.join(articleSlug), "utf-8");
-    const mdx = await serializeMdx(source);
-    const { data } = matter(source);
-
-    const sources = mdx || data;
-
-    if (articleSlug.match(/\.md(x)?/)) {
-      convert.push({
-        ...sources,
-        readingTime: readingTime(source).text,
-        originPath: articleSlug,
-      });
-    } else {
-    }
-  }
-  const slugs = convert
-    .sort((a: any, b: any) =>
-      b.frontmatter.date.localeCompare(a.frontmatter.date)
-    )
-    .filter((article: any) => article.frontmatter.published)
-    .map((a: any) => a.frontmatter.slug.replace(/(\/|\\)+/g, "").trim());
-
-  return SLICE_FOR_TEST_RUN(slugs, SLICE_FOR_TEST_RUN_AMOUNT);
-}
-
-export async function getNextArticleFromSlug(slug: string) {
+/* 슬러그만 배열로 추출 */
+export async function getOnlySlugs() {
   const articles = await getAllArticles();
-  const articleIndex = articles.findIndex((article: any) =>
-    article.frontmatter.slug.match(slug)
+  const slugs = articles.map((a: any) =>
+    removeSlashForSlug(a.frontmatter.slug)
   );
-  const article = articles[articleIndex - 1];
-
-  if (article) {
-    const source = fs.readFileSync(
-      article.originPath as string
-    ) as unknown as string;
-    const { content, data } = matter(source);
-    return {
-      content,
-      frontmatter: {
-        slug: slug || "",
-        excerpt: data.excerpt || "",
-        title: data.title || "",
-        publishedAt: data.date || new Date().toLocaleString("ko"),
-        readingTime: readingTime(source).text,
-        ...Object.fromEntries(
-          Object.entries(data).map(([k, v]) => [k, v || ""])
-        ),
-      },
-    };
-  } else {
-    return null;
-  }
-}
-export async function getBeforeArticleFromSlug(slug: string) {
-  const articles = await getAllArticles();
-  const articleIndex = articles.findIndex((article: any) =>
-    article.frontmatter.slug.match(slug)
-  );
-  const article = articles[articleIndex + 1];
-
-  if (article) {
-    const source = fs.readFileSync(
-      article.originPath as string
-    ) as unknown as string;
-    const { content, data } = matter(source);
-    return {
-      content,
-      frontmatter: {
-        slug: slug || "",
-        excerpt: data.excerpt || "",
-        title: data.title || "",
-        publishedAt: data.date || new Date().toLocaleString("ko"),
-        readingTime: readingTime(source).text,
-        ...Object.fromEntries(
-          Object.entries(data).map(([k, v]) => [k, v || ""])
-        ),
-      },
-    };
-  } else {
-    return null;
-  }
+  return slugs;
 }
 
-export async function getArticleFromSlug(slug: string) {
+/* 현재 포스팅 및 앞, 뒤 포스팅 반환 */
+export async function findArticleFromSlugAndBothSideArticles(slug: string) {
   const articles = await getAllArticles();
-  const article = articles.find((article: any) =>
-    article.frontmatter.slug.match(slug)
+  const centerIndex = articles.findIndex(
+    (article) => removeSlashForSlug(article.frontmatter.slug) === slug
   );
-  const source = fs.readFileSync(
-    article.originPath as string
-  ) as unknown as string;
-  const { content, data } = matter(source);
+  const prevArticle = articles.at(centerIndex - 1);
+  const currentArticle = articles.at(centerIndex);
+  const nextArticle = articles.at(centerIndex + 1);
+
   return {
-    content,
-    frontmatter: {
-      slug: slug || "",
-      excerpt: data.excerpt || "",
-      title: data.title || "",
-      publishedAt: data.date || new Date().toLocaleString("ko"),
-      readingTime: readingTime(source).text,
-      ...Object.fromEntries(Object.entries(data).map(([k, v]) => [k, v || ""])),
-    },
+    prev: prevArticle,
+    current: currentArticle,
+    next: nextArticle,
   };
 }
 
+/* 포스트 페이지별로 가져오기 */
 export async function getPaginationArticles(start: number, end: number) {
-  const articles = customGlob(blogMdxDirs);
-  let convert: any = [];
-
-  for (let i = 0; i < articles.length; i++) {
-    const articleSlug = articles[i];
-    const source = fs.readFileSync(path.join(articleSlug), "utf-8");
-
-    const mdx = await serializeMdx(source);
-    const { data } = matter(source);
-
-    const sources = mdx || data;
-
-    if (articleSlug.match(/\.md(x)?/)) {
-      convert.push({
-        ...sources,
-        readingTime: readingTime(source).text,
-        originPath: articleSlug,
-      });
-    } else {
-    }
-  }
-
+  const articles = await getAllArticles();
   return {
-    posts: convert
-      .sort((a: any, b: any) =>
-        b.frontmatter.date.localeCompare(a.frontmatter.date)
-      )
-      .filter((article: any) => article.frontmatter.published)
-      .slice(start, end + 1),
+    posts: articles.slice(start, end + 1),
     totalAmount: articles.length,
   };
 }
 
-export async function getAllArticles(limit?: number) {
-  const articles = customGlob(blogMdxDirs);
-  let convert: any = [];
-
-  for (let i = 0; i < articles.length; i++) {
-    const articleSlug = articles[i];
-    const source = fs.readFileSync(path.join(articleSlug), "utf-8");
-
-    const mdx = await serializeMdx(source);
-    const { data } = matter(source);
-
-    const sources = mdx || data;
-
-    if (articleSlug.match(/\.md(x)?/)) {
-      convert.push({
-        ...sources,
-        readingTime: readingTime(source).text,
-        originPath: articleSlug,
-      });
-    } else {
-    }
+/* 단일 포스트 찾기 */
+export async function findArticleBySlug(slug: string) {
+  const filePath = findArticlePathBySlug(slug);
+  return await readFileAndGetSerializedPostMetadata(filePath);
+}
+/* 단일 포스트 찾기 - 모듈 1 */
+export function findArticlePathBySlug(slug: string) {
+  const slugName = slug.replace(/\/+/g, "").trim();
+  const articlePath = customGlob(`src/database/**/*${slugName}.{md,mdx}`)[0];
+  if (!articlePath) {
+    throw new ReferenceError(`Could not found article. [${slugName}]`);
   }
+  return articlePath;
+}
+/* 단일 포스트 찾기 - 모듈 2 */
+async function readFileAndGetSerializedPostMetadata(
+  filePath: string
+): Promise<Article | null> {
+  const file = fs.readFileSync(path.join(filePath), "utf-8");
+  const source = await serialize(file.trim(), MDX_REMOTE_OPTIONS);
 
-  const result = convert
-    .sort((a: any, b: any) =>
-      b.frontmatter.date.localeCompare(a.frontmatter.date)
-    )
-    .filter((article: any) => article.frontmatter.published)
-    .slice(0, limit || undefined);
+  const { content, data } = matter(file);
+  const mdxData = (source || data) as unknown as Article;
 
-  // fs.writeFileSync("./posts.json", JSON.stringify(result, null, 2));
+  if (mdxData.frontmatter.published) {
+    return {
+      ...mdxData,
+      content,
+      readingTime: readingTime(file).text,
+      originPath: filePath,
+    };
+  } else {
+    return null;
+  }
+}
+/* 전체 포스트 찾기 */
+export async function getAllArticles(limit?: number): Promise<Article[]> {
+  const metapost = fs.readFileSync(metapostLocation);
+  const metapostJSON = JSON.parse(metapost.toString() || "[]") as Article[];
 
-  return result;
+  const json = IS_TEST_MODE
+    ? metapostJSON.slice(0, limit)
+    : (await findAllArticles()).slice(0, limit);
+  // console.log(IS_TEST_MODE, metapostJSON)
+  return json;
 }
 
+export async function findAllArticles() {
+  const articles = customGlob(blogMdxDirs) as string[];
+  let convert: Article[] = [];
+  for (let i = 0; i < articles.length; i++) {
+    const articleSlug = articles[i];
+    if (articleSlug.match(/\.md(x)?/)) {
+      const article = await readFileAndGetSerializedPostMetadata(articleSlug);
+      if (article) convert.push(article);
+    }
+  }
+  const result = convert.sort((a: any, b: any) =>
+    b.frontmatter.date.localeCompare(a.frontmatter.date)
+  );
+  // .slice(0, limit || undefined);
+  return SLICE_FOR_TEST_RUN(result, SLICE_FOR_TEST_RUN_AMOUNT);
+}
+
+/* 카테고리 검색 로직 변경 */
 export async function getArticlesByCategory(category: string) {
-  const articles = customGlob(blogMdxDirs);
-  let convert: any = [];
+  const articles = await getAllArticles();
 
-  for (let i = 0; i < articles.length; i++) {
-    const articleSlug = articles[i];
-    const source = fs.readFileSync(path.join(articleSlug), "utf-8");
-
-    const mdx = await serializeMdx(source);
-    const { data } = matter(source);
-
-    const sources = mdx || data;
-
-    if (articleSlug.match(/\.md(x)?/)) {
-      convert.push({
-        ...sources,
-        readingTime: readingTime(source).text,
-        originPath: articleSlug,
-      });
-    } else {
-      // return allArticles;
-    }
-  }
-
-  return convert
-    .sort((a: any, b: any) =>
-      b.frontmatter.date.localeCompare(a.frontmatter.date)
-    )
-    .filter(
-      (article: any) =>
-        article.frontmatter.published &&
-        article.frontmatter.categories
-          .map((category: string) => category.toLowerCase())
-          .includes(category.toLowerCase())
-    );
+  return articles.filter(filterByCategory(category));
 }
-
+/* 태그 검색 로직 변경 */
 export async function getArticlesByTag(tag: string) {
-  const articles = customGlob(blogMdxDirs);
-  let convert: any = [];
-
-  for (let i = 0; i < articles.length; i++) {
-    const articleSlug = articles[i];
-    const source = fs.readFileSync(path.join(articleSlug), "utf-8");
-
-    const mdx = await serializeMdx(source);
-    const { data } = matter(source);
-
-    const sources = mdx || data;
-
-    if (articleSlug.match(/\.md(x)?/)) {
-      convert.push({
-        ...sources,
-        readingTime: readingTime(source).text,
-        originPath: articleSlug,
-      });
-    } else {
-      // return allArticles;
-    }
-  }
-
-  return convert
-    .sort((a: any, b: any) =>
-      b.frontmatter.date.localeCompare(a.frontmatter.date)
-    )
-    .filter(
-      (article: any) =>
-        article.frontmatter.published &&
-        article.frontmatter.tags
-          .map((tag: string) => tag.toLowerCase())
-          .includes(tag.toLowerCase())
-    );
+  const articles = await getAllArticles();
+  return articles.filter(filterByTag(tag));
 }

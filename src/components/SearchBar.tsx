@@ -8,12 +8,13 @@ import {
   PostDispatchContext,
   POST_INIT,
 } from "@/context/PostProvider";
-import metapost from "@/database/metapost/posts.json";
+import articleJson from "@/database/metapost/posts.json";
 import {
   format,
   getRandomItemInArray,
   slugToBlogTrailingSlash,
 } from "@/util/tool";
+import { Article } from "@/util/types";
 import { Box, Chip, Paper, Stack, TextField, Typography } from "@mui/material";
 import Link from "next/link";
 import React, {
@@ -34,13 +35,13 @@ function SearchBar({
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { posts } = useContext(PostContext);
   const postDispatch = useContext(PostDispatchContext);
-  const [searchList, setSearchList] = useState([]);
+  const [searchList, setSearchList] = useState<Article[]>([]);
   const { comments } = useContext(CommentContext);
 
   useEffect(() => {
     postDispatch({
       type: POST_INIT.INIT,
-      posts: metapost,
+      posts: articleJson,
     });
     window.addEventListener("keyup", handleKeydownClose);
     window.addEventListener("click", handleClickClose);

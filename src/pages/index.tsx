@@ -10,6 +10,7 @@ import {
   BRAND_LOGO,
   BRAND_NAME,
   MAIN_SUBSCRIPTION,
+  TITLE_SIZE,
 } from "@/util/global";
 import { slicedBundle } from "@/util/tool";
 import {
@@ -21,7 +22,9 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
+import { PostContext } from "@/context/PostProvider";
+import { Article } from "@/util/types";
 
 const metadatas = {
   title: BRAND_NAME.toUpperCase(),
@@ -30,15 +33,17 @@ const metadatas = {
   image: BRAND_LOGO,
 };
 
-export default function Home({ posts }: any) {
+export default function Home(/* { posts }: any */) {
+  const { posts: postList } = useContext(PostContext);
+  const [posts, setPosts] = useState<Article[]>([]);
+  const { comments } = useContext(CommentContext);
+
   const theme = useTheme();
   const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
 
-  // const router = useRouter();
-  // console.log(router);
-
-  // useEffect(() => {}, [router.asPath]);
-  const { comments } = useContext(CommentContext);
+  useEffect(() => {
+    setPosts(postList.slice(0, 4));
+  }, [postList]);
 
   return (
     <Container maxWidth='lg'>
@@ -48,17 +53,17 @@ export default function Home({ posts }: any) {
         <Box component={"section"}>
           <Animated order={0} animate='fadeInUp'>
             <Typography
-              fontSize={(theme) => theme.typography.pxToRem(52)}
+              fontSize={(theme) => theme.typography.pxToRem(TITLE_SIZE.L)}
               fontWeight={700}
               align='center'
               gutterBottom
               fontFamily={`"IBM Plex Sans KR", sans-serif`}>
-              Tech. Dev. Write.
+              Devlog.
             </Typography>
           </Animated>
           <Animated order={1} animate='fadeInUp'>
             <Typography
-              fontSize={(theme) => theme.typography.pxToRem(16)}
+              fontSize={(theme) => theme.typography.pxToRem(TITLE_SIZE.S)}
               fontWeight={200}
               align='center'
               fontFamily={`"IBM Plex Sans KR", sans-serif`}>
@@ -104,10 +109,9 @@ export default function Home({ posts }: any) {
   );
 }
 
-export async function getStaticProps() {
+/* export async function getStaticProps() {
   try {
     const articles = await getAllArticles(4);
-
     return {
       props: {
         posts: articles,
@@ -117,3 +121,4 @@ export async function getStaticProps() {
     console.log(error);
   }
 }
+ */
