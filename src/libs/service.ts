@@ -8,33 +8,17 @@ import { serialize } from "next-mdx-remote/serialize";
 import path from "path";
 import readingTime from "reading-time";
 
-const metapostLocation = "src/database/metapost/posts.json";
+const metapostLocation = path.join(
+  path.resolve(),
+  "src/database/metapost/posts.json"
+);
 const basePath = "src/database/**/*.mdx";
 const blogMdxDirs = ["src/database/**/*.md", "src/database/**/*.mdx"];
 const articlesPath = path.join(process.cwd(), basePath);
 
-const IS_TEST_MODE = process.env.RUN_MODE === "test";
-const IS_REFRESH_MODE = process.env.RUN_MODE === "refresh";
-const SLICE_FOR_TEST_RUN_AMOUNT = +(process.env.RUN_LIMIT || 20);
-
-let isSamePost = false;
-
-if (IS_REFRESH_MODE) {
-  console.log("✅ start refresh mode, now comparing with metapost.json");
-  console.log("🌟 no use this option: SLICE_FOR_TEST_RUN");
-}
-
-if (IS_TEST_MODE) {
-  console.log("✅ start test mode, use this option: SLICE_FOR_TEST_MODE");
-  console.log("✅ SLICE_FOR_TEST_RUN_AMOUNT", SLICE_FOR_TEST_RUN_AMOUNT);
-}
-
+/* metadata save */
 const metapostSave = async () => {
-  const posts = await getAllArticles();
-  const metapostLocation = path.join(
-    path.resolve(),
-    "src/database/metapost/posts.json"
-  );
+  const posts = await findAllArticles();
   const saveCurrent = JSON.stringify(posts, null, 2);
   try {
     const metapost = fs.readFileSync(metapostLocation);
@@ -59,7 +43,30 @@ const metapostSave = async () => {
   }
 };
 
+const IS_TEST_MODE = process.env.NODE_ENV === "development";
+
+const IS_REFRESH_MODE =
+  process.env.NODE_ENV === "production" || process.env.RUN_MODE === "refresh";
+const SLICE_FOR_TEST_RUN_AMOUNT = +(process.env.RUN_LIMIT || 20);
+
+console.log("runmode", process.env.NODE_ENV);
+
+let isSamePost = false;
+
 if (IS_REFRESH_MODE) {
+  console.log("✅ start refresh mode, now comparing with metapost.json");
+  console.log("🌟 no use this option: SLICE_FOR_TEST_RUN");
+  setTimeout(async () => {
+    metapostSave();
+  }, 1000);
+}
+
+const TEST_INITIAL_SAVE_POST_DATA = [];
+
+if (IS_TEST_MODE && TEST_INITIAL_SAVE_POST_DATA.length === 0) {
+  TEST_INITIAL_SAVE_POST_DATA.push(1);
+  console.log("✅ start test mode, use this option: SLICE_FOR_TEST_MODE");
+  console.log("✅ SLICE_FOR_TEST_RUN_AMOUNT", SLICE_FOR_TEST_RUN_AMOUNT);
   setTimeout(async () => {
     metapostSave();
   }, 1000);
@@ -70,7 +77,7 @@ const SLICE_FOR_TEST_RUN = (array: any[], limitSize: number) => {
 };
 
 const customGlob = (globCondition: string | string[]) => {
-  return SLICE_FOR_TEST_RUN(globSync(globCondition), SLICE_FOR_TEST_RUN_AMOUNT);
+  return globSync(globCondition);
 };
 
 /* 슬러그만 배열로 추출 */
@@ -152,11 +159,12 @@ export async function getAllArticles(limit?: number): Promise<Article[]> {
     ? metapostJSON.slice(0, limit)
     : (await findAllArticles()).slice(0, limit);
   // console.log(IS_TEST_MODE, metapostJSON)
-  return json;
+  return json /* SLICE_FOR_TEST_RUN(json, SLICE_FOR_TEST_RUN_AMOUNT) */;
 }
 
 export async function findAllArticles() {
-  const articles = customGlob(blogMdxDirs) as string[];
+  const articles = customGlob(`src/database/**/*.{md,mdx}`) as string[];
+  // console.log(articles);
   let convert: Article[] = [];
   for (let i = 0; i < articles.length; i++) {
     const articleSlug = articles[i];
@@ -169,7 +177,7 @@ export async function findAllArticles() {
     b.frontmatter.date.localeCompare(a.frontmatter.date)
   );
   // .slice(0, limit || undefined);
-  return SLICE_FOR_TEST_RUN(result, SLICE_FOR_TEST_RUN_AMOUNT);
+  return result;
 }
 
 /* 카테고리 검색 로직 변경 */

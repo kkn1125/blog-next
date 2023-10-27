@@ -4,13 +4,9 @@ import PostMDXComponent from "@/components/PostMDXComponent";
 import PostNavigator from "@/components/PostNavigator";
 import SideBar from "@/components/SideBar";
 import { PostContext } from "@/context/PostProvider";
-import {
-  findArticleFromSlugAndBothSideArticles,
-  getOnlySlugs,
-} from "@/libs/service";
+import { findArticleBySlug, getOnlySlugs } from "@/libs/service";
 import { BRAND_NAME } from "@/util/global";
 import {
-  contentReplaceCustomSign,
   format,
   getReponsiveImageUrl,
   parseHeading,
@@ -250,7 +246,15 @@ const metadatas = (frontmatter: any) => ({
 
 let copyActive = false;
 
-function Index({ origin }: { origin: any }) {
+function Index({
+  /* current, */ origin,
+  params,
+}: // runMode,
+{
+  /* current: Article; */ origin: any;
+  params: { slug: string };
+  // runMode: string;
+}) {
   const router = useRouter();
   const theme = useTheme();
   const commentEl = useRef<HTMLElement>();
@@ -260,12 +264,26 @@ function Index({ origin }: { origin: any }) {
   const [prev, setPrev] = useState<Article | undefined>(undefined);
   const [next, setNext] = useState<Article | undefined>(undefined);
   const [current, setCurrent] = useState<Article | undefined>(undefined);
-  const [content, setContent] = useState<string>("");
+  // const [content, setContent] = useState<string>("");
   const [mode, setMode] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const postEl = useRef<HTMLDivElement>(null);
 
+  const getFlexibleImageUrl = (url: string = "") => {
+    if (
+      url.startsWith("http") ||
+      url.startsWith("https") ||
+      url.startsWith("/assets")
+    ) {
+      return url;
+    } else if (url) {
+      return "/assets" + url;
+    } else {
+      // 아무 이미지도 없을 때 기본 이미지
+      return "/assets/images/post/covers/TIL.png";
+    }
+  };
   useEffect(() => {
     if (location.hash === "#comment-wrap") {
       if (postEl.current) {
@@ -286,14 +304,13 @@ function Index({ origin }: { origin: any }) {
       (article) =>
         removeSlashForSlug(article.frontmatter.slug) === router.query.slug
     );
-    const prevArticle = posts.at(centerIndex - 1);
-    const currentArticle = posts.at(centerIndex);
-    const nextArticle = posts.at(centerIndex + 1);
+    const prevArticle = posts[centerIndex + 1];
+    const currentArticle = posts[centerIndex];
+    const nextArticle = posts[centerIndex - 1];
 
     setPrev(prevArticle);
     setCurrent(currentArticle);
     setNext(nextArticle);
-    setContent(currentArticle?.content || "");
   }, [posts, router.asPath]);
 
   useEffect(() => {
@@ -304,7 +321,7 @@ function Index({ origin }: { origin: any }) {
         content: {
           title: current.frontmatter.title,
           description: current.frontmatter.description.slice(0, 50) + "...",
-          imageUrl: location.origin + current.frontmatter.image,
+          imageUrl: getFlexibleImageUrl(current.frontmatter.image),
           link: {
             // [내 애플리케이션] > [플랫폼] 에서 등록한 사이트 도메인과 일치해야 함
             mobileWebUrl: location.origin + location.pathname,
@@ -334,6 +351,7 @@ function Index({ origin }: { origin: any }) {
         ],
       });
     }
+    console.log(getFlexibleImageUrl(current?.frontmatter.image));
   }, [current?.frontmatter]);
 
   useEffect(() => {
@@ -372,7 +390,7 @@ function Index({ origin }: { origin: any }) {
 
   const isUpdated =
     current && current.frontmatter.modified > current.frontmatter.date;
-
+  // console.log(current?.compiledSource);
   return !current ? (
     <Stack
       id='post-wrap'
@@ -418,180 +436,180 @@ function Index({ origin }: { origin: any }) {
       }}>
       {current && (
         <Box id='side-bar-wrap'>
-          <SideBar list={parseHeading(content)} />
+          <SideBar list={parseHeading(current.content)} />
         </Box>
       )}
 
-      {current && (
-        <Stack
-          ref={postEl}
-          id='post'
-          direction={{ xs: "column", md: "row" }}
-          justifyContent={"center"}
-          alignItems={"center"}
-          sx={{
-            flex: 1,
-            width: "100%",
-            wordBreak: "break-word",
-            whiteSpace: "break-spaces",
-          }}>
-          <GenerateHead
-            metadatas={metadatas(current.frontmatter)}
-            url={location.origin + "/blog" + current.frontmatter.slug}
-          />
+      <Stack
+        ref={postEl}
+        id='post'
+        direction={{ xs: "column", md: "row" }}
+        justifyContent={"center"}
+        alignItems={"center"}
+        sx={{
+          flex: 1,
+          width: "100%",
+          wordBreak: "break-word",
+          whiteSpace: "break-spaces",
+        }}>
+        <GenerateHead metadatas={metadatas(current.frontmatter)} />
 
-          <Stack
+        <Stack
+          sx={{
+            width: { xs: "90vw", md: "60vw", lg: "60vw" },
+          }}>
+          <Box
             sx={{
-              width: { xs: "90vw", md: "60vw", lg: "60vw" },
+              maxWidth: {
+                sm: "100",
+                lg: "80%",
+              },
+              m: {
+                sx: 0,
+                md: "auto",
+              },
             }}>
+            <PostNavigator prev={prev} next={next} />
             <Box
               sx={{
-                maxWidth: {
-                  sm: "100",
-                  lg: "80%",
-                },
-                m: {
-                  sx: 0,
-                  md: "auto",
-                },
+                mb: 2,
               }}>
-              <PostNavigator prev={prev} next={next} />
               <Box
                 sx={{
-                  mb: 2,
-                }}>
-                <Box
-                  sx={{
-                    backgroundImage: `url(${getReponsiveImageUrl(
-                      current.frontmatter.image
-                    )})`,
-                    backgroundSize: { xs: "contain", md: "cover" },
-                    backgroundPosition: "center center",
-                    backgroundRepeat: "no-repeat",
-                    width: { xs: "auto", md: "100%" },
-                    height: { xs: 300, md: 700 },
-                  }}
-                />
-              </Box>
-              <Typography
-                fontSize={(theme) => theme.typography.pxToRem(32)}
-                fontWeight={700}
-                fontFamily={`"IBM Plex Sans KR", sans-serif`}
-                align='center'
-                gutterBottom>
-                {current.frontmatter.title || ""}
-              </Typography>
-              <Typography
-                fontSize={(theme) => theme.typography.pxToRem(16)}
-                fontWeight={200}
-                fontFamily={`"IBM Plex Sans KR", sans-serif`}
-                align='center'
-                gutterBottom>
-                {isUpdated && "Update."}
-                {format(
-                  (isUpdated
-                    ? current.frontmatter.modified
-                    : current.frontmatter.date) || "",
-                  "YYYY-MM-dd HH:mm",
-                  false
-                )}
-              </Typography>
-              <Typography
-                fontSize={(theme) => theme.typography.pxToRem(16)}
-                fontWeight={500}
-                fontFamily={`"IBM Plex Sans KR", sans-serif`}
-                align='center'
-                gutterBottom>
-                {current.frontmatter.author || ""}
-              </Typography>
-              <Typography
-                fontSize={(theme) => theme.typography.pxToRem(14)}
-                fontWeight={200}
-                fontFamily={`"IBM Plex Sans KR", sans-serif`}
-                align='center'
-                gutterBottom>
-                {current.frontmatter.readingTime || ""}
-              </Typography>
-              <Stack direction='row' justifyContent='center' gap={1}>
-                <Tooltip title={`카카오톡 공유`} placement='bottom'>
-                  <IconButton id='kakaotalk-sharing-btn' color={"inherit"}>
-                    <img
-                      width='24'
-                      height='24'
-                      src='https://developers.kakao.com/assets/img/about/logos/kakaotalksharing/kakaotalk_sharing_btn_medium.png'
-                      alt='카카오톡 공유 보내기 버튼'
-                    />
-                  </IconButton>
-                </Tooltip>
+                  backgroundImage: `url(${getReponsiveImageUrl(
+                    current.frontmatter.image
+                  )})`,
+                  backgroundSize: { xs: "contain", md: "cover" },
+                  backgroundPosition: "center center",
+                  backgroundRepeat: "no-repeat",
+                  width: { xs: "auto", md: "100%" },
+                  height: { xs: 300, md: 700 },
+                }}
+              />
+            </Box>
+            <Typography
+              fontSize={(theme) => theme.typography.pxToRem(32)}
+              fontWeight={700}
+              fontFamily={`"IBM Plex Sans KR", sans-serif`}
+              align='center'
+              gutterBottom>
+              {current.frontmatter.title || ""}
+            </Typography>
+            <Typography
+              fontSize={(theme) => theme.typography.pxToRem(16)}
+              fontWeight={200}
+              fontFamily={`"IBM Plex Sans KR", sans-serif`}
+              align='center'
+              gutterBottom>
+              {isUpdated && "Update."}
+              {format(
+                (isUpdated
+                  ? current.frontmatter.modified
+                  : current.frontmatter.date) || "",
+                "YYYY-MM-dd HH:mm",
+                false
+              )}
+            </Typography>
+            <Typography
+              fontSize={(theme) => theme.typography.pxToRem(16)}
+              fontWeight={500}
+              fontFamily={`"IBM Plex Sans KR", sans-serif`}
+              align='center'
+              gutterBottom>
+              {current.frontmatter.author || ""}
+            </Typography>
+            <Typography
+              fontSize={(theme) => theme.typography.pxToRem(14)}
+              fontWeight={200}
+              fontFamily={`"IBM Plex Sans KR", sans-serif`}
+              align='center'
+              gutterBottom>
+              {current.frontmatter.readingTime || ""}
+            </Typography>
+            <Stack direction='row' justifyContent='center' gap={1}>
+              <Tooltip title={`카카오톡 공유`} placement='bottom'>
+                <IconButton id='kakaotalk-sharing-btn' color={"inherit"}>
+                  <img
+                    width='24'
+                    height='24'
+                    src='https://developers.kakao.com/assets/img/about/logos/kakaotalksharing/kakaotalk_sharing_btn_medium.png'
+                    alt='카카오톡 공유 보내기 버튼'
+                  />
+                </IconButton>
+              </Tooltip>
 
-                <Tooltip
-                  title={`링크 복사${copied ? " 완료" : ""}`}
-                  placement='bottom'>
-                  <IconButton
-                    onClick={handleCopyLink}
-                    color={copied ? "success" : "inherit"}>
-                    {copied ? <CheckCircleOutlineIcon /> : <LinkIcon />}
-                  </IconButton>
-                </Tooltip>
+              <Tooltip
+                title={`링크 복사${copied ? " 완료" : ""}`}
+                placement='bottom'>
+                <IconButton
+                  onClick={handleCopyLink}
+                  color={copied ? "success" : "inherit"}>
+                  {copied ? <CheckCircleOutlineIcon /> : <LinkIcon />}
+                </IconButton>
+              </Tooltip>
 
-                <Tooltip title={`준비 중입니다.`} placement='bottom'>
-                  <IconButton color={"inherit"}>
-                    <QuestionMarkIcon />
-                  </IconButton>
-                </Tooltip>
-              </Stack>
-              <Divider sx={{ my: 3, width: "100%" }} flexItem />
-              {/* <HydratedMDX
+              <Tooltip title={`준비 중입니다.`} placement='bottom'>
+                <IconButton color={"inherit"}>
+                  <QuestionMarkIcon />
+                </IconButton>
+              </Tooltip>
+            </Stack>
+            <Divider sx={{ my: 3, width: "100%" }} flexItem />
+            {/* <HydratedMDX
                 serialized={...current}
                 components={components as MDXComponents | MergeComponents}
               /> */}
-              <MDXRemote
-                compiledSource={current.compiledSource}
-                frontmatter={current.frontmatter}
-                scope={{}}
-                // {...current}
-                components={components as MDXComponents | MergeComponents}
-                lazy
-              />
-              <PostNavigator prev={prev} next={next} />
-              <Box
-                id='comment-wrap'
-                sx={{
-                  minHeight: 50,
-                }}>
-                {mode && (
-                  <Stack
-                    direction='row'
-                    justifyContent='center'
-                    sx={{
-                      my: 5,
-                      minHeight: 230,
-                    }}>
-                    <CircularProgress color='success' />
-                  </Stack>
-                )}
-                <Box
+            <MDXRemote
+              compiledSource={current.compiledSource}
+              frontmatter={current.frontmatter}
+              scope={{}}
+              // {...current}
+              components={components as MDXComponents | MergeComponents}
+              lazy
+            />
+            <PostNavigator prev={prev} next={next} />
+            <Box
+              id='comment-wrap'
+              sx={{
+                minHeight: 50,
+              }}>
+              {mode && (
+                <Stack
+                  direction='row'
+                  justifyContent='center'
                   sx={{
-                    display: mode ? "hidden" : "block",
-                    "& .utterances": {
-                      maxWidth: "90%",
-                    },
-                  }}
-                  ref={commentEl}
-                />
-              </Box>
+                    my: 5,
+                    minHeight: 230,
+                  }}>
+                  <CircularProgress color='success' />
+                </Stack>
+              )}
+              <Box
+                sx={{
+                  display: mode ? "hidden" : "block",
+                  "& .utterances": {
+                    maxWidth: "90%",
+                  },
+                }}
+                ref={commentEl}
+              />
             </Box>
+          </Box>
 
-            <Toolbar />
-          </Stack>
+          <Toolbar />
         </Stack>
-      )}
+      </Stack>
       <GoTop />
     </Stack>
   );
 }
 
-export const getStaticProps = async ({ params }: any) => {
+export const getStaticProps = async ({
+  params,
+}: {
+  params: { slug: string };
+}) => {
+  // const current = await findArticleBySlug(params.slug);
   // const { prev, current, next } = await findArticleFromSlugAndBothSideArticles(
   //   params.slug
   // );
@@ -617,6 +635,7 @@ export const getStaticProps = async ({ params }: any) => {
   return {
     props: {
       params,
+      // runMode: process.env.RUN_MODE,
       // origin: current,
       // current,
       // content: current?.content || "",
@@ -635,6 +654,7 @@ export const getStaticPaths = async () => {
   }
 
   const slugs = await getOnlySlugs();
+  // console.log(slugs);
 
   return {
     paths: slugs.map((slug: string) => ({

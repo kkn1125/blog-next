@@ -56,4 +56,4 @@ const nextConfig = {
   // assetPrefix: process.env.NODE_ENV === "development" ? "/" : ".",
 };
 
-module.exports = /* withMDX */ nextConfig;
+module.exports = withMDX(nextConfig);

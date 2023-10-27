@@ -50,13 +50,7 @@ function convertToMetadata(metadatas: Metadata) {
   return dataSet;
 }
 
-function GenerateHead({
-  metadatas,
-  url = "",
-}: {
-  metadatas: Metadata;
-  url?: string;
-}) {
+function GenerateHead({ metadatas }: { metadatas: Metadata; url?: string }) {
   const [parent, setParent] = useState<{
     origin?: Window["location"]["origin"];
     pathname?: Window["location"]["pathname"];
@@ -72,7 +66,7 @@ function GenerateHead({
       })}
       <link
         rel='canonical'
-        href={url || (parent?.origin || "") + (parent?.pathname || "")}
+        href={(parent?.origin || "") + (parent?.pathname || "")}
       />
     </Head>
   );

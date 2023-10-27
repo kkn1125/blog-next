@@ -3,7 +3,9 @@ import {
   CommentDispatchContext,
   CommentType,
 } from "@/context/CommentProvider";
+import { PostDispatchContext, POST_INIT } from "@/context/PostProvider";
 import { ColorModeContext } from "@/context/ThemeModeProvider";
+import articleJson from "@/database/metapost/posts.json";
 import { BRAND_BW_LOGO, BRAND_LOGO, BRAND_NAME, PROFILE } from "@/util/global";
 import {
   compareWithOrigin,
@@ -29,7 +31,6 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRouter as useNavigate } from "next/router";
@@ -66,8 +67,9 @@ function ResponsiveAppBar() {
 
   const commentList = useContext(CommentContext);
   const commentDispatch = useContext(CommentDispatchContext);
-
+  const postDispatch = useContext(PostDispatchContext);
   const colorMode = useContext(ColorModeContext) as any;
+
   const router = useRouter();
   const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
@@ -110,6 +112,13 @@ function ResponsiveAppBar() {
     today: 0,
     stack: 0,
   });
+
+  useEffect(() => {
+    postDispatch({
+      type: POST_INIT.INIT,
+      posts: articleJson,
+    });
+  }, []);
 
   useEffect(() => {
     // visite check

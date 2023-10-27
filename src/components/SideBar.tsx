@@ -23,7 +23,6 @@ export default function SideBar({
     setCurrentHead(list[0]?.head || "");
     return () => {};
   }, []);
-
   return (
     <List
       sx={{

@@ -250,7 +250,7 @@ export const setAnimate = (
   });
 };
 
-export const parseHeading = (content: string) => {
+export const parseHeading = (content: string = "") => {
   const md = markdown();
   return md
     .render(content, {})

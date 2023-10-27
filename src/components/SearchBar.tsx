@@ -34,15 +34,15 @@ function SearchBar({
 }) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { posts } = useContext(PostContext);
-  const postDispatch = useContext(PostDispatchContext);
+  // const postDispatch = useContext(PostDispatchContext);
   const [searchList, setSearchList] = useState<Article[]>([]);
   const { comments } = useContext(CommentContext);
 
   useEffect(() => {
-    postDispatch({
-      type: POST_INIT.INIT,
-      posts: articleJson,
-    });
+    // postDispatch({
+    //   type: POST_INIT.INIT,
+    //   posts: articleJson,
+    // });
     window.addEventListener("keyup", handleKeydownClose);
     window.addEventListener("click", handleClickClose);
     return () => {
