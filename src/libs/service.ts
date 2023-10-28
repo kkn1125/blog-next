@@ -12,69 +12,8 @@ const metapostLocation = path.join(
   path.resolve(),
   "src/database/metapost/posts.json"
 );
-const basePath = "src/database/**/*.mdx";
-const blogMdxDirs = ["src/database/**/*.md", "src/database/**/*.mdx"];
-const articlesPath = path.join(process.cwd(), basePath);
-
-/* metadata save */
-const metapostSave = async () => {
-  const posts = await findAllArticles();
-  const saveCurrent = JSON.stringify(posts, null, 2);
-  try {
-    const metapost = fs.readFileSync(metapostLocation);
-    const metapostJSON = JSON.stringify(
-      JSON.parse(metapost.toString() || "[]"),
-      null,
-      2
-    );
-    if (saveCurrent !== metapostJSON) {
-      fs.rmSync(metapostLocation);
-      fs.writeFileSync(metapostLocation, saveCurrent);
-      console.log("🛠️ save refresh metapost.json");
-    } else {
-      throw new Error("now content is same the metapost.json");
-    }
-  } catch (error) {
-    fs.writeFileSync(metapostLocation, saveCurrent);
-    console.log("✅ now is same as before");
-    isSamePost = true;
-  } finally {
-    console.log("✨ success !");
-  }
-};
 
 const IS_TEST_MODE = process.env.NODE_ENV === "development";
-
-const IS_REFRESH_MODE =
-  process.env.NODE_ENV === "production" || process.env.RUN_MODE === "refresh";
-const SLICE_FOR_TEST_RUN_AMOUNT = +(process.env.RUN_LIMIT || 20);
-
-console.log("runmode", process.env.NODE_ENV);
-
-let isSamePost = false;
-
-if (IS_REFRESH_MODE) {
-  console.log("✅ start refresh mode, now comparing with metapost.json");
-  console.log("🌟 no use this option: SLICE_FOR_TEST_RUN");
-  setTimeout(async () => {
-    metapostSave();
-  }, 1000);
-}
-
-const TEST_INITIAL_SAVE_POST_DATA = [];
-
-if (IS_TEST_MODE && TEST_INITIAL_SAVE_POST_DATA.length === 0) {
-  TEST_INITIAL_SAVE_POST_DATA.push(1);
-  console.log("✅ start test mode, use this option: SLICE_FOR_TEST_MODE");
-  console.log("✅ SLICE_FOR_TEST_RUN_AMOUNT", SLICE_FOR_TEST_RUN_AMOUNT);
-  setTimeout(async () => {
-    metapostSave();
-  }, 1000);
-}
-
-const SLICE_FOR_TEST_RUN = (array: any[], limitSize: number) => {
-  return array.slice(0, IS_TEST_MODE ? limitSize : undefined);
-};
 
 const customGlob = (globCondition: string | string[]) => {
   return globSync(globCondition);
@@ -158,13 +97,11 @@ export async function getAllArticles(limit?: number): Promise<Article[]> {
   const json = IS_TEST_MODE
     ? metapostJSON.slice(0, limit)
     : (await findAllArticles()).slice(0, limit);
-  // console.log(IS_TEST_MODE, metapostJSON)
-  return json /* SLICE_FOR_TEST_RUN(json, SLICE_FOR_TEST_RUN_AMOUNT) */;
+  return json;
 }
 
 export async function findAllArticles() {
   const articles = customGlob(`src/database/**/*.{md,mdx}`) as string[];
-  // console.log(articles);
   let convert: Article[] = [];
   for (let i = 0; i < articles.length; i++) {
     const articleSlug = articles[i];
@@ -176,7 +113,6 @@ export async function findAllArticles() {
   const result = convert.sort((a: any, b: any) =>
     b.frontmatter.date.localeCompare(a.frontmatter.date)
   );
-  // .slice(0, limit || undefined);
   return result;
 }
 
