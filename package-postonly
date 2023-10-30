@@ -2,6 +2,7 @@
   "name": "blog3",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "cross-env next dev",
     "dev:confirm": "cross-env next dev",

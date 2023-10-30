@@ -1,0 +1,15 @@
+#! /usr/bin/env bash
+
+cp package-postonly package.json
+
+pnpm run metadata-prod
+
+cp package-origin package.json
+
+echo "✨ success prod save !"
+
+echo "running on deploy ..."
+
+pnpm run deploy
+
+echo "end of deploy"

@@ -1,14 +1,19 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "lib": ["dom", "dom.iterable", "esnext", "WebWorker"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext",
+      "WebWorker"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "module": "esnext",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -16,7 +21,9 @@
     "incremental": true,
     "noImplicitAny": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     }
   },
   "include": [
@@ -25,10 +32,18 @@
     "**/*.tsx",
     "worker.ts",
     "public/worker.js",
-    "public/worker.ts"
+    "public/worker.ts",
+    "src/libs/save.postdata.ts"
   ],
   "ts-node": {
-    "esm": true
+    "esm": true,
+    "compilerOptions": {
+      "target": "ES6",
+      "module": "ESNext",
+      "moduleResolution": "Node"
+    }
   },
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

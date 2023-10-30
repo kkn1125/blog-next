@@ -351,7 +351,7 @@ function Index({
         ],
       });
     }
-    console.log(getFlexibleImageUrl(current?.frontmatter.image));
+    // console.log(getFlexibleImageUrl(current?.frontmatter.image));
   }, [current?.frontmatter]);
 
   useEffect(() => {

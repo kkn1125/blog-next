@@ -110,9 +110,6 @@ dependencies:
   remark-breaks:
     specifier: ^3.0.3
     version: 3.0.3
-  remark-mdx-code-meta:
-    specifier: ^2.0.0
-    version: 2.0.0
   sharp:
     specifier: ^0.32.1
     version: 0.32.6
@@ -151,6 +148,9 @@ devDependencies:
   ts-node:
     specifier: ^10.9.1
     version: 10.9.1(@types/node@20.2.4)(typescript@5.0.4)
+  tslib:
+    specifier: ^2.6.2
+    version: 2.6.2
 
 packages:
 
@@ -2014,6 +2014,7 @@ packages:
     resolution: {integrity: sha512-02AQ3vLhuH3FisaMM+i/9sm4OXGSq1UhOOCpTLLQtHdL3tZt7qil69r8M8iDkZYyC0HCFylcYoP+8IO7ddta1A==}
     dependencies:
       '@types/hast': 2.3.7
+    dev: true
 
   /hast-util-whitespace@2.0.1:
     resolution: {integrity: sha512-nAxA0v8+vXSBDt3AnRUNjyRIQ0rD+ntpbAp4LnPkumc5M9yUbSMa4XDU9Q6etY4f1Wp4bNgvc1yjiZtsTTrSng==}
@@ -3523,20 +3524,6 @@ packages:
       - supports-color
     dev: true
 
-  /remark-mdx-code-meta@2.0.0:
-    resolution: {integrity: sha512-UA7i3ooevNEmgr5DAVtUY+KRIkvbVe5OOysvJcNXEjS2ZiT3gaibPHN57JPbbiT1kq4x8+e3viy88svrReuLfw==}
-    engines: {node: '>=14'}
-    deprecated: Use rehype-mdx-code-props instead
-    dependencies:
-      '@types/mdast': 3.0.14
-      acorn: 8.11.0
-      acorn-jsx: 5.3.2(acorn@8.11.0)
-      estree-util-is-identifier-name: 2.1.0
-      hast-util-to-string: 2.0.0
-      unified: 10.1.2
-      unist-util-visit: 4.1.2
-    dev: false
-
   /remark-mdx@2.3.0:
     resolution: {integrity: sha512-g53hMkpM0I98MU266IzDFMrTD980gNF3BJnkyFcmN+dD873mQeD5rdMO3Y2X+x8umQfbSE0PcoEDl7ledSA+2g==}
     dependencies:
@@ -4041,7 +4028,6 @@ packages:
 
   /tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
-    dev: false
 
   /tunnel-agent@0.6.0:
     resolution: {integrity: sha512-McnNiV1l8RYeY8tBgEpuodCC1mLUdbSN+CYBL7kJsJNInOP8UjDDEwdk6Mw60vdLLrr5NHKZhMAOSrR2NZuQ+w==}
