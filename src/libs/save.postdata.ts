@@ -17,8 +17,13 @@ import remarkGfm from "remark-gfm";
 import fs from "fs";
 import path from "path";
 
+let totalLen = 0;
+
 const customGlob = (globCondition) => {
-  return globSync(globCondition);
+  return globSync(globCondition, {
+    ignore: ["../database/notyet/*.{md,mdx}"],
+    dot: true,
+  });
 };
 
 const MDX_REMOTE_OPTIONS = {
@@ -43,10 +48,7 @@ const MDX_REMOTE_OPTIONS = {
   },
 };
 
-const metapostLocation = path.join(
-  path.resolve(),
-  "src/database/metapost/posts.json"
-);
+const metapostLocation = "../database/metapost/posts.json";
 
 /* metadata save */
 // if (process.env.NODE_ENV === "production") {
@@ -54,6 +56,7 @@ const metapostLocation = path.join(
   const posts = await findAllArticles();
   const saveCurrent = JSON.stringify(posts, null, 2);
   try {
+    console.log("starting mode:", process.env.NODE_ENV);
     const metapost = fs.readFileSync(metapostLocation);
     const metapostJSON = JSON.stringify(
       JSON.parse(metapost.toString() || "[]"),
@@ -79,7 +82,7 @@ const metapostLocation = path.join(
 
 /* 단일 포스트 찾기 - 모듈 2 */
 async function readFileAndGetSerializedPostMetadata(filePath) {
-  const file = fs.readFileSync(path.join(filePath), "utf-8");
+  const file = fs.readFileSync(filePath, "utf-8");
   const source = await serialize(file.trim(), MDX_REMOTE_OPTIONS);
 
   const { content, data } = matter(file);
@@ -97,7 +100,8 @@ async function readFileAndGetSerializedPostMetadata(filePath) {
   }
 }
 async function findAllArticles() {
-  const articles = customGlob(`src/database/**/*.{md,mdx}`);
+  const articles = customGlob(`../database/**/*.{md,mdx}`);
+  totalLen = articles.length;
   let convert = [];
   for (let i = 0; i < articles.length; i++) {
     const articleSlug = articles[i];
@@ -105,6 +109,12 @@ async function findAllArticles() {
       const article = await readFileAndGetSerializedPostMetadata(articleSlug);
       if (article) convert.push(article);
     }
+    console.log(
+      "procceding %d% (%d/%d)",
+      ((i / totalLen) * 100).toFixed(1),
+      i,
+      totalLen
+    );
   }
   const result = convert.sort((a, b) =>
     b.frontmatter.date.localeCompare(a.frontmatter.date)

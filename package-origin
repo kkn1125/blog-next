@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "cross-env next dev",
+    "dev": "concurrently --kill-others-on-fail \"bash ./metapost-dev\" \"cross-env next dev\"",
     "dev:confirm": "cross-env next dev",
     "set404": "mv build/404/index.html build/404.html && rm -rf build/404/",
     "metadata-dev": "cross-env NODE_ENV=development node --no-warnings --loader ts-node/esm ./src/libs/save.postdata.ts",

@@ -1,6 +1,20 @@
 {
   "2023": {
     "9": {
+      "30": [
+        {
+          "todo": "next.js 개발, 빌드 환경 최적화 포스팅",
+          "tag": "check",
+          "time": "2023-10-30 16:44:52",
+          "repeat": false,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": [],
+          "dueStart": null,
+          "due": 0
+        }
+      ],
       "27": [
         {
           "todo": "캘린더 수정 및 post데이터 추출 + 슬러그 - 포스트 매치 오류 수정",

@@ -501,14 +501,18 @@ function Index({
               fontFamily={`"IBM Plex Sans KR", sans-serif`}
               align='center'
               gutterBottom>
-              {isUpdated && "Update."}
               {format(
-                (isUpdated
-                  ? current.frontmatter.modified
-                  : current.frontmatter.date) || "",
+                current.frontmatter.date || "",
                 "YYYY-MM-dd HH:mm",
                 false
               )}
+              {isUpdated &&
+                "| Update." +
+                  format(
+                    current.frontmatter.modified || "",
+                    "YYYY-MM-dd HH:mm",
+                    false
+                  )}
             </Typography>
             <Typography
               fontSize={(theme) => theme.typography.pxToRem(16)}

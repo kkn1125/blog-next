@@ -1,0 +1,407 @@
+---
+slug: "/nextjs-performance01/"
+date: 2023-10-30 16:28:13 +0000
+modified: 2023-10-30 16:28:13 +0000
+title: "[NEXT.js] Next.js 빌드 속도 개선 - 웹 사이트를 빠르게 만드는 방법"
+author: Kimson
+categories: [next]
+image: /assets/images/post/covers/nextjs-black-logo.svg
+tags: [next, preformance, upgrade, til]
+description: "`Next.js(이하 넥스트)`는 구인공고를 보면 꽤 많은 비중을 차지하는 프레임워크 중 하나라고 생각합니다. `넥스트`는 13버전 전, 후로 크게 나뉘게 되는데 \"디렉토리\"방식과 \"앱\"방식으로 나뉩니다. 현재 블로그는 \"디렉토리\"방식을 선택해서 배포된 예라고 할 수 있습니다. 앞서 \"방식\"과 상관없이 블로그를 지속적으로 운영하다보면 포스트가 늘어나고 개발 환경에서 초기 로드, 페이지 변경, 빌드 배포 시간이 점점 길어지는 것을 느낄 수 있습니다. 때문에 빠르게 빌드하면서 테스트 환경에서도 페이지를 로딩하는 속도를 개선하는 방법을 기록해보고자 합니다.
+
+Next.js 빌드 속도의 중요성
+
+빌드 속도가 느려지면 느려질수록 개발에 안좋은 영향을 주면서 때로는 너무 느려서 개발하는 것조차 꺼려질 때가 있습니다."
+featured: true
+rating: 4.5
+profile: false
+published: true
+---
+
+`Next.js(이하 넥스트)`는 구인공고를 보면 꽤 많은 비중을 차지하는 프레임워크 중 하나라고 생각합니다. `넥스트`는 13버전 전, 후로 크게 나뉘게 되는데 "디렉토리"방식과 "앱"방식으로 나뉩니다. 현재 블로그는 "디렉토리"방식을 선택해서 배포된 예라고 할 수 있습니다. 앞서 "방식"과 상관없이 블로그를 지속적으로 운영하다보면 포스트가 늘어나고 개발 환경에서 초기 로드, 페이지 변경, 빌드 배포 시간이 점점 길어지는 것을 느낄 수 있습니다. 때문에 빠르게 빌드하면서 테스트 환경에서도 페이지를 로딩하는 속도를 개선하는 방법을 기록해보고자 합니다.
+
+# Next.js 빌드 속도의 중요성
+
+빌드 속도가 느려지면 느려질수록 개발에 안좋은 영향을 주면서 때로는 너무 느려서 개발하는 것조차 꺼려질 때가 있습니다. 점점 느려지는 속도 때문에 빌드 시켜놓고 시간을 허비할 수 없는 노릇이지요.
+
+빌드가 느려지는 이유는 단순히 포스트가 많아서의 이유일 수 있고, 최적화 되지 않은 `getStaticProps`으로 다량의 데이터를 빌드하는 과정에서 페이지별 빌드 속도가 저하되는 것일 수도 있습니다.
+
+이번 포스팅에서는 페이지별 `getStaticProps`를 제거하면서 빌드 시 기존보다 빠른 속도로 완료할 수 있게 데이터를 가져오는 방식에 대해 기록하려합니다.
+
+## 빌드 속도 개선을 위한 전략
+
+필자의 경우 페이지별 데이터 로드 용량이 기준치의 128KB를 초과해서 테스트환경과 빌드환경 모두 느리게 동작해서 많은 답답함을 느꼈습니다. 빌드 속도를 개선하는데 사용한 방법은 아래와 같습니다.
+
+1. 페이지 별 데이터 로드 양 줄이기
+2. 빌드 시 fetch 데이터 또한 빌드되므로, 필요한 데이터를 미리 추출하기
+3. 데이터 추출 모드 개발, 프로덕션 모드로 분리하기
+
+위 3번을 제외한 1, 2번이 주요점입니다. 위 전략을 적용하기 위해 데이터를 가져와 사용하는 `getStaticProps`를 제거하였습니다.
+
+`getStaticProps`에서 가져오는 데이터는 넥스트가 빌드할 때 데이터를 같이 빌드합니다. 때문에 `[slug].ts`라는 페이지가 `getStaticProps`를 통해 많은 양의 데이터를 가져오면서 100개 또는 그보다 많은 양의 포스트가 빌드된다면 프로젝트 용량 및 빌드 시간이 기하급수적으로 늘어납니다.
+
+### getStaticProps가 필요가 없는 것인가?
+
+`getStaticProps`가 무쓸모라는 말은 아닙니다. 단순히 필자의 경우 데이터를 빠르게 로드하고 빌드 속도와 테스트 환경의 속도를 향상시키기 위한 1차원적인 해결방법입니다. 유용한 기능은 그에 맞게 사용되는 것이 맞다고 생각합니다.
+
+현재 블로그의 상황과 테스트 환경을 고려했을 때 데이터를 한 번 로드하면서 모든 페이지에서 데이터를 공유하고 테스트 속도를 개선하는데는 이만한 방법이 없었습니다.
+
+## getStaticProps가 없다면 데이터를 어떻게 가져오는가?
+
+`getStaticProps`는 해당 페이지에서 사용되는 데이터를 `props`로 전달 받게 됩니다. 하지만 `getStaticProps`를 제거하고 나면 데이터를 공유하는 방법은 많겠지만 필자는 `context`를 생성해서 데이터를 전역으로 제어하는 방법을 채택했습니다.
+
+```typescript showLineNumbers filename="src/pages/blog/[slug].ts" highlight={9-12,16-19}
+// ... others
+const Index = () => {};
+
+export const getStaticProps = async ({
+  params,
+}: {
+  params: { slug: string };
+}) => {
+  const current = await findArticleBySlug(params.slug);
+  const { prev, current, next } = await findArticleFromSlugAndBothSideArticles(
+    params.slug
+  );
+
+  return {
+    props: {
+      params,
+      prev,
+      current,
+      next,
+    },
+  };
+};
+```
+
+기존에 사용하는 코드는 위와 같습니다. `getStaticProps`에서 내려주는 모든 데이터를 제거합니다. `[...].ts`파일의 경우 `getStaticPaths`가 들어가기 때문에 `getStaicProps`함수는 필수로 호출되어야하는 넥스트의 규칙때문에 남겨둡니다.
+
+나머지 파일에서 사용하는 `getStaticProps`는 제거해도 상관없습니다.
+
+## Context 생성과 전역으로 데이터 사용
+
+```tsx showLineNumbers filename="src/context/post.provider.ts"
+import { Article } from "@/util/types";
+import React, { createContext, useReducer } from "react";
+
+interface PostValue {
+  posts: Article[];
+}
+
+interface PostAction {
+  type: POST_INIT;
+  posts: Article[];
+}
+
+const initialValues: PostValue = {
+  posts: [],
+};
+
+export enum POST_INIT {
+  INIT = "post/initial",
+}
+
+export const PostContext = createContext({ posts: [] as Article[] });
+export const PostDispatchContext = createContext(new Function());
+
+const reducer = (state: PostValue, action: PostAction) => {
+  switch (action.type) {
+    case POST_INIT.INIT:
+      return {
+        ...state,
+        posts: action.posts,
+      };
+    default:
+      return { ...state };
+  }
+};
+
+export const PostProvider = ({
+  children,
+}: {
+  children: React.ReactElement;
+}) => {
+  const [state, dispatch] = useReducer(reducer, initialValues);
+  return (
+    <PostDispatchContext.Provider value={dispatch}>
+      <PostContext.Provider value={state as any}>
+        {children}
+      </PostContext.Provider>
+    </PostDispatchContext.Provider>
+  );
+};
+```
+
+`provider`를 `_app.tsx`에서 가져와 사용하고 전역에서 사용되는 컴포넌트에서 `fetch`함수로 `posts.json`파일을 불러와 `POST_INIT`으로 `dispatch`를 날려 데이터 초기화 해줍니다.
+
+`posts.json`은 이후 자동으로 포스트 데이터를 취합해서 생성될 파일이름입니다.
+
+## gnb 컴포넌트에서 데이터 fetch하기
+
+필자의 경우 모든 페이지에서 사용되는 컴포넌트인 `gnb`에서 `posts.json`을 가져와 컨텍스트로 사용하고자 합니다.
+
+```tsx showLineNumbers filename="src/components/AppBar.tsx" highlight={1-2}
+import { PostDispatchContext, POST_INIT } from "@/context/PostProvider";
+import articleJson from "@/database/metapost/posts.json";
+
+function ResponsiveAppBar() {
+  const postDispatch = useContext(PostDispatchContext);
+
+  useEffect(() => {
+    postDispatch({
+      type: POST_INIT.INIT,
+      posts: articleJson,
+    });
+  }, []);
+
+  // ... 코드들
+
+  return (
+    <AppBar
+    // ...options
+    ></AppBar>
+  );
+}
+export default ResponsiveAppBar;
+```
+
+`postDispatch`를 이용해 `posts.json`을 가져와 컨텍스트에 저장합니다. 이제 모든 페이지에서 `useContext(PostContext)`로 빌드된 포스트 데이터를 사용할 수 있습니다. 작업하는 환경에 따라 빌드 속도가 상이하지만 인터넷 속도가 느린 상황에서는 20분가량, 빠른 상황에서는 15분가량 걸렸습니다.
+
+현재 이 방식으로 변경한 후 2분 30초면 모두 빌드되고 깃허브에 곧바로 배포하여 총 3분이 소요됩니다.
+
+개발 환경에서 또한 페이지를 초기 로드하는 속도가 5분에서 10초대로 줄어 체감 상 매우 빠른 속도로 로드되는 것을 경험했습니다.
+
+## 모든 포스트 데이터 취합 및 빌드
+
+위 설정이 끝났다면 실제로 동작하기 위해 포스트 데이터를 미리 취합하는 기능이 필요합니다. 이때 넥스트와 같이 실행된다면 `type`설정에 의한 충돌이 있을 수 있기 때문에 넥스트와 별개로 동작하도록 합니다.
+
+### 별도 package.json 사용
+
+기존 package.json은 `type`이 `commonjs`입니다. `src/libs/save.postdata.ts`를 생성하고 해당 디렉토리에 `package.json`을 생성합니다. 아래는 예시입니다.
+
+```json showLineNumbers filename="src/libs/package.json" highlight={5}
+{
+  "name": "blog3-libs",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development nodemon -e md,mdx -w ../database/ -i ../database/notyet -i ../database/metapost --exec 'node --no-warnings --loader ts-node/esm ./save.postdata.ts'",
+    "prod": "cross-env NODE_ENV=production node --no-warnings --loader ts-node/esm ./save.postdata.ts"
+  },
+  "dependencies": {
+    "@mdx-js/loader": "^2.3.0",
+    "@mdx-js/react": "^2.3.0",
+    "@next/mdx": "^13.4.3",
+    "@types/mdx": "^2.0.5",
+    "@types/node": "20.2.4",
+    "date-fns": "^2.30.0",
+    "dayjs": "^1.11.7",
+    "glob": "^10.2.6",
+    "gray-matter": "^4.0.3",
+    "markdown-it": "^13.0.1",
+    "next": "13.4.4",
+    "next-mdx-remote": "^4.4.1",
+    "prismjs": "^1.29.0",
+    "reading-time": "^1.5.0",
+    "rehype": "^12.0.1",
+    "rehype-mdx-code-props": "^1.0.0",
+    "remark-breaks": "^3.0.3",
+    "sharp": "^0.32.1",
+    "typescript": "5.0.4"
+  },
+  "devDependencies": {
+    "rehype-autolink-headings": "^6.1.1",
+    "rehype-prism-plus": "^1.5.1",
+    "rehype-slug": "^5.1.0",
+    "remark-gfm": "^3.0.1",
+    "replace-in-files-cli": "^2.2.0",
+    "ts-node": "^10.9.1",
+    "tslib": "^2.6.2"
+  }
+}
+```
+
+위 실행환경은 `src/libs/save.postsdata.ts`를 실행하기 위한 설정입니다. 이후 `root` 디렉토리에서 `concurrently`와 연계해서 사용할 예정입니다.
+
+이제 `save.postdata.ts`를 완성해보겠습니다.
+
+```typescript showLineNumbers filename="src/libs/save.postdata.ts"
+import { globSync } from "glob";
+import matter from "gray-matter";
+import { serialize } from "next-mdx-remote/serialize";
+import readingTime from "reading-time";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import rehypeMdxCodeProps from "rehype-mdx-code-props";
+import rehypePrism from "rehype-prism-plus";
+import rehypeSlug from "rehype-slug";
+import remarkBreaks from "remark-breaks";
+import remarkGfm from "remark-gfm";
+import fs from "fs";
+
+let totalLen = 0;
+
+const customGlob = (globCondition) => {
+  return globSync(globCondition, {
+    ignore: ["../database/notyet/*.{md,mdx}"],
+    dot: true,
+  });
+};
+
+const MDX_REMOTE_OPTIONS = {
+  parseFrontmatter: true,
+  mdxOptions: {
+    remarkPlugins: [remarkGfm, remarkBreaks],
+    rehypePlugins: [
+      rehypeSlug,
+      rehypePrism,
+      [
+        rehypeAutolinkHeadings,
+        {
+          properties: {
+            className: ["anchor"],
+          },
+        },
+      ],
+      rehypeMdxCodeProps,
+    ],
+    format: "mdx",
+    development: process.env.NODE_ENV !== "production",
+  },
+};
+
+const metapostLocation = "../database/metapost/posts.json";
+
+/* metadata save */
+(async () => {
+  const posts = await findAllArticles();
+  const saveCurrent = JSON.stringify(posts, null, 2);
+  try {
+    console.log("starting mode:", process.env.NODE_ENV);
+    const metapost = fs.readFileSync(metapostLocation);
+    const metapostJSON = JSON.stringify(
+      JSON.parse(metapost.toString() || "[]"),
+      null,
+      2
+    );
+    if (saveCurrent !== metapostJSON) {
+      fs.rmSync(metapostLocation);
+      fs.writeFileSync(metapostLocation, saveCurrent);
+      console.log("🛠️ save refresh metapost.json");
+    } else {
+      throw new Error("now content is same the metapost.json");
+    }
+  } catch (error) {
+    fs.writeFileSync(metapostLocation, saveCurrent);
+    console.log("✅ now is same as before", error);
+  } finally {
+    console.log("✨ success !");
+    process.exit(0);
+  }
+})();
+
+/* 단일 포스트 찾기 - 모듈 2 */
+async function readFileAndGetSerializedPostMetadata(filePath) {
+  const file = fs.readFileSync(filePath, "utf-8");
+  const source = await serialize(file.trim(), MDX_REMOTE_OPTIONS);
+
+  const { content, data } = matter(file);
+  const mdxData = source || data;
+
+  if (mdxData.frontmatter.published) {
+    return {
+      ...mdxData,
+      content,
+      readingTime: readingTime(file).text,
+      originPath: filePath,
+    };
+  } else {
+    return null;
+  }
+}
+/* 단일 포스트 찾기 - 모듈 1 */
+async function findAllArticles() {
+  const articles = customGlob(`../database/**/*.{md,mdx}`);
+  totalLen = articles.length;
+  let convert = [];
+  for (let i = 0; i < articles.length; i++) {
+    const articleSlug = articles[i];
+    if (articleSlug.match(/\.md(x)?/)) {
+      const article = await readFileAndGetSerializedPostMetadata(articleSlug);
+      if (article) convert.push(article);
+    }
+    console.log(
+      "procceding %d% (%d/%d)",
+      ((i / totalLen) * 100).toFixed(1),
+      i,
+      totalLen
+    );
+  }
+  const result = convert.sort((a, b) =>
+    b.frontmatter.date.localeCompare(a.frontmatter.date)
+  );
+  return result;
+}
+```
+
+이제 저장 후 `root`디렉토리의 `package.json`을 수정해줍니다.
+
+```diff-json
+{
+  // 다른 설정들...,
+  "scripts": {
+-    "dev": "cross-env next dev"
++    "dev": "concurrently --kill-others-on-fail \"cd src/libs/ && pnpm run dev\" \"cross-env next dev\""
++    "deploy": "npm run build && cd build/ && git init && git add -A && git commit -m \"add post and fixbugs\" && git push -f https://github.com/kkn1125/kkn1125.github.io.git master:gh-pages",
+    "build": "cd src/libs/ && pnpm run prod && cd - && next build && npm run set404 && next-sitemap --config next-sitemap.config.js && touch build/.nojekyll",
+  },
+  // 다른 설정들...
+}
+```
+
+이제 `dev` 스크립트를 실행하면 아래와 같이 작성해둔 콘솔로 빌드의 상태를 확인할 수 있고, mdx,md 파일을 저장하면 자동으로 빌드하게 됩니다.
+
+![mdx,md 파일 저장 후 자동 추출 예시](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/a779168c-68df-4399-b974-fd079ed43744)
+
+빌드 후 넥스트에서 아래와 같은 오류가 발생할 수 있지만 무시해도 되는 오류 입니다. 이는 `posts.json`을 사용하는 부분에서 해당 파일 내용이 변경되었기 때문에 발생하는 오류이고, 변경된 `posts.json`을 다시 자동으로 로드하기 때문에 기다려면 페이지를 새로 띄어줍니다.
+
+![포스트 생성 후 넥스트 오류](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/24470b53-0364-4355-87b5-8cc26710fb83)
+
+그리고 페이지를 보면 작성중이던 mdx가 최신화되어 있는 것을 볼 수 있습니다.
+
+![변경 전](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/a4fa07da-c5b8-4298-b8bd-5bc7b9f397b8)
+
+위 내용에서 mdx를 저장하고나면 아래처럼 실시간으로 곧바로 추가됩니다. 필자의 경우 포스트가 빌드된 후 2초가 지나면 아래처럼 내용이 알아서 변경되는 것을 확인했습니다.
+
+![변경 적용 후](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/4cde6bde-c970-49d3-8b16-9c626cb354b2)
+
+### 자동 빌드
+
+`root`의 `package.json`에 설정한 `deploy`를 실행하면 끝입니다. 하지만 블로그에 광고나 구글 애널리틱스를 설정하셨다면 조금 신중하게 테스트 후 배포하시기 바랍니다.
+
+> 포스트가 제대로 `production`모드로 추출되었는지, `serve`나 `http-server` 툴을 이용해 모의로 실행해 본 후 배포하시기 바랍니다.
+
+아래는 프로덕션으로 포스트가 추출이 잘 되는지 확인하는 과정의 예시입니다.
+
+![production모드 추출 진행](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/aa5f1aee-910f-4b28-b78e-e0f233313433)
+
+![production모드 추출 완료](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/4c5e1538-58a2-49d0-87c3-6261877143f8)
+
+![파일 내용 확인](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/d977cc56-a73f-46e0-a4cb-c8a619f2bdcb)
+
+파일 내용은 작업하시는 분마다 다를 수 있습니다. 저는 `compileSource`와 `frontmatter`, 기타 필요한 옵션을 추가한 배열로 추출해서 사용했습니다.
+
+## 마무리
+
+이번 포스팅은 조금 귀찮은 설정이 사전에 필요하기 때문에 현재 프로젝트에서 마이그레이션하는 경우 상황에 따라 손이 많이 갈 수 도 있습니다. 손이 많이 가는 만큼 포스팅하고 블로그를 최신으로 업데이트하는 속도가 그만큼 빨라지니 적용 안 할 수가 없습니다.
+
+하위 디렉토리에 `package.json`을 생성하고 `nodemon`이 포스트를 자동 빌드하는 부분에서 경로 설정과 `watch`를 어디로 두어야 할 지 고민을 많이 했습니다. 결과적으로 포스팅을 위한 최적화이기 때문에 개발환경에서의 사용이 번거로울 수 있습니다.
+
+확실하게 말씀드릴 수 있는 것은 속도가 매우 개선되는 점입니다. 이 외에도 개발 환경에서 로드하는 포스트 수를 줄이는 방법을 채택할 수도 있습니다. 100개가 넘어가면 로드하는 속도가 확실히 느려져 처음 시도에서는 로드하는 포스트 수를 최신 기준으로 10개를 불러오는 시도를 했습니다.
+
+10개를 불러오는 것만으로는 근본적인 성능문제가 해결되지 않아 이번 기회에 좋은 시도를 했다고 생각됩니다.
+
+넥스트가 가진 기능 외 스스로의 생각대로 해결하는 것 또한 나쁘지 않다고 생각이 됩니다.
+
+여기까지 읽어주셔서 감사합니다. 😁

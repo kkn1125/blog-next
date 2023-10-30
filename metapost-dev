@@ -7,7 +7,3 @@ pnpm run metadata-dev
 cp package-origin package.json
 
 echo "✨ success !"
-
-pnpm run dev
-
-echo "running on dev mode..."

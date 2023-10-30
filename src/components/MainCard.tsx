@@ -46,6 +46,7 @@ function MainCard({
         "& a": {
           transition: "150ms ease-in-out",
         },
+        backgroundColor: "#00000056",
         // "& *": {
         //   textShadow: `-0.5px -0.5px 0 ${colors()}, 0.5px -0.5px 0 ${colors()}, -0.5px 0.5px 0 ${colors()}, 0.5px 0.5px 0 ${colors()}`,
         // },
@@ -81,8 +82,8 @@ function MainCard({
           backgroundImage: `url(${getReponsiveImageUrl(
             post.frontmatter.image
           )})`,
-          // maskImage:
-          //   "linear-gradient(to right, transparent 0%, #00000036 3%, #000000 5%, #000000 95%, #00000036 97%, transparent 100%)",
+          maskImage:
+            "linear-gradient(to right, transparent 0%, #00000036 3%, #000000 5%, #000000 95%, #00000036 97%, transparent 100%)",
           transition: "ease-in-out 150ms",
           filter: "brightness(0.55)",
         }}
@@ -97,6 +98,36 @@ function MainCard({
           zIndex: 1,
           // color: "#ffffff",
         }}>
+        <Typography
+          component={Link}
+          href={slugToBlogTrailingSlash(post.frontmatter.slug)}
+          fontFamily={`"IBM Plex Sans KR", sans-serif`}
+          fontWeight={700}
+          fontSize={(theme) => theme.typography.pxToRem(28)}
+          sx={{
+            display: "inline-block",
+            color: "inherit",
+            textDecoration: "none",
+          }}>
+          {post.frontmatter.title}
+        </Typography>
+
+        <Typography
+          component={Link}
+          href={
+            slugToBlogTrailingSlash(post.frontmatter.slug) + "#comment-wrap"
+          }
+          fontFamily={`"IBM Plex Sans KR", sans-serif`}
+          fontWeight={200}
+          fontSize={(theme) => theme.typography.pxToRem(16)}
+          title='댓글'
+          sx={{
+            display: "inline-block",
+            color: "inherit",
+            textDecoration: "none",
+          }}>
+          💬 Comments ({comment.comments})
+        </Typography>
         <Stack direction='row' gap={1} alignItems='center' className='time'>
           <Typography
             fontFamily={`"IBM Plex Sans KR", sans-serif`}
@@ -121,36 +152,14 @@ function MainCard({
             fontSize={(theme) => theme.typography.pxToRem(12)}>
             {new Date(post.frontmatter.date.slice(0, -6)).toLocaleString()}
           </Typography>
+          <Typography
+            fontFamily={`"IBM Plex Sans KR", sans-serif`}
+            fontWeight={200}
+            fontSize={(theme) => theme.typography.pxToRem(12)}>
+            ({post.readingTime})
+          </Typography>
         </Stack>
-        <Typography
-          component={Link}
-          href={slugToBlogTrailingSlash(post.frontmatter.slug)}
-          fontFamily={`"IBM Plex Sans KR", sans-serif`}
-          fontWeight={700}
-          fontSize={(theme) => theme.typography.pxToRem(28)}
-          sx={{
-            display: "inline-block",
-            color: "inherit",
-            textDecoration: "none",
-          }}>
-          {post.frontmatter.title}
-        </Typography>
-        <Typography
-          component={Link}
-          href={
-            slugToBlogTrailingSlash(post.frontmatter.slug) + "#comment-wrap"
-          }
-          fontFamily={`"IBM Plex Sans KR", sans-serif`}
-          fontWeight={200}
-          fontSize={(theme) => theme.typography.pxToRem(16)}
-          title='댓글'
-          sx={{
-            display: "inline-block",
-            color: "inherit",
-            textDecoration: "none",
-          }}>
-          💬 Comments ({comment.comments})
-        </Typography>
+
         <Typography
           component={Link}
           href={slugToBlogTrailingSlash(post.frontmatter.slug)}
