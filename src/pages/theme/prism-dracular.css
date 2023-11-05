@@ -194,8 +194,9 @@ code[class*="language-"] {
   position: relative;
   background-color: rgba(239, 68, 68, 0.2); /* Set deleted line (-) color */
 }
+/* .code-line.inserted > :first-child: */
 
-.code-line.inserted > .token.operator:first-child::before {
+/* .code-line.inserted .token.operator:first-of-type {
   display: "block" !important;
   content: "+";
   position: relative;
@@ -203,16 +204,15 @@ code[class*="language-"] {
   color: rgba(16, 185, 129, 0.5) !important;
 }
 
-.code-line.deleted > .token.operator:first-child::before {
+.code-line.deleted .token.operator:first-of-type {
   display: "block" !important;
   content: "-";
   position: relative;
   left: -10px;
   color: rgba(239, 68, 68, 0.5) !important;
-}
+} */
 
-.code-line.inserted > .token.operator {
-  /* display: none; */
+/* .code-line.inserted > .token.operator {
   display: inline-block;
   color: #ffffff00;
   width: 0px !important;
@@ -220,12 +220,11 @@ code[class*="language-"] {
 }
 
 .code-line.deleted > .token.operator {
-  /* display: none; */
   display: inline-block;
   color: #ffffff00;
   width: 0px !important;
   pointer-events: none;
-}
+} */
 
 .highlight-line {
   background-color: rgba(42, 81, 144, 0.8); /* Set highlight bg color */

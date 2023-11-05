@@ -496,24 +496,34 @@ function Index({
               {current.frontmatter.title || ""}
             </Typography>
             <Typography
-              fontSize={(theme) => theme.typography.pxToRem(16)}
+              fontSize={(theme) => theme.typography.pxToRem(14)}
               fontWeight={200}
               fontFamily={`"IBM Plex Sans KR", sans-serif`}
               align='center'
               gutterBottom>
-              {format(
-                current.frontmatter.date || "",
-                "YYYY-MM-dd HH:mm",
-                false
-              )}
-              {isUpdated &&
-                "| Update." +
+              {"🖋️" +
+                format(
+                  current.frontmatter.date || "",
+                  "YYYY-MM-dd HH:mm",
+                  false
+                )}
+            </Typography>
+            {isUpdated && (
+              <Typography
+                title='updated'
+                fontSize={(theme) => theme.typography.pxToRem(16)}
+                fontWeight={200}
+                fontFamily={`"IBM Plex Sans KR", sans-serif`}
+                align='center'
+                gutterBottom>
+                {"📝 " +
                   format(
                     current.frontmatter.modified || "",
                     "YYYY-MM-dd HH:mm",
                     false
                   )}
-            </Typography>
+              </Typography>
+            )}
             <Typography
               fontSize={(theme) => theme.typography.pxToRem(16)}
               fontWeight={500}
@@ -528,7 +538,7 @@ function Index({
               fontFamily={`"IBM Plex Sans KR", sans-serif`}
               align='center'
               gutterBottom>
-              {current.frontmatter.readingTime || ""}
+              {current.readingTime || ""}
             </Typography>
             <Stack direction='row' justifyContent='center' gap={1}>
               <Tooltip title={`카카오톡 공유`} placement='bottom'>

@@ -1,0 +1,498 @@
+---
+slug: "/mail-authentication01/"
+date: 2023-11-03 15:19:14 +0000
+modified: 2023-11-05 23:37:19 +0000
+title: "[NESTJS] 메일을 이용한 본인인증 구현"
+author: Kimson
+categories: [next]
+image: /assets/images/post/covers/TIL-nest2.png
+tags: [nest, mail, authentication, til]
+description: "최근 본인인증에 대한 관심이 생겨 여러 방법을 찾던 중 구현이 어렵지 않은 이메일 본인인증을 시도하게 되었습니다. `NICE평가정보`, `PASS` 등 본인인증 API를 제공하지만 개인이 사용하기에는 절차가 까다롭기도 하고 비용을 지불해야하는 조건이 있습니다.
+
+때문에 비용도 발생하지 않고, 본인 인증에 대한 이해도를 높힐 겸 원리를 알아보고자 이메일을 이용한 본인인증을 구현하게 되었습니다.
+
+Nest.js에서 메일 인증 구현
+
+Nest.js(이하 네스트)를 사용하고 있기 때문에 네스트를 기준으로 코드를 작성하면서 이미지를 첨부하도록 하겠습니다."
+featured: true
+rating: 4.5
+profile: false
+published: true
+---
+
+최근 본인인증에 대한 관심이 생겨 여러 방법을 찾던 중 구현이 어렵지 않은 이메일 본인인증을 시도하게 되었습니다. `NICE평가정보`, `PASS` 등 본인인증 API를 제공하지만 개인이 사용하기에는 절차가 까다롭기도 하고 비용을 지불해야하는 조건이 있습니다.
+
+때문에 비용도 발생하지 않고, 본인 인증에 대한 이해도를 높힐 겸 원리를 알아보고자 이메일을 이용한 본인인증을 구현하게 되었습니다.
+
+# Nest.js에서 메일 인증 구현
+
+Nest.js(이하 네스트)를 사용하고 있기 때문에 네스트를 기준으로 코드를 작성하면서 이미지를 첨부하도록 하겠습니다.
+
+> 사용된 이미지는 draw.io를 이용해 직접 만들기 때문에 이용하시는 분들은 출처를 남기셔서 사용하시기 바랍니다.
+
+메일 인증에 중요한 메일 보내는 기능이 필요하기 때문에 `nodemailer(이하 메일러)`를 사용합니다. 그 외 라이브러리는 선택사항입니다. 메일러 설정은 필요한 파일을 생성 후 이어나가겠습니다. `mailer`와 `auth`라는 명으로 필요한 파일을 만듭니다.
+
+```bash showLineNumbers
+nest g mo auth
+nest g controller auth
+nest g service auth
+
+nest g mo mailer
+nest g controller mailer
+nest g service mailer
+```
+
+## Nodemailer 기초 설정
+
+메일러를 설정할 때 필요한 smtp주소와 포트는 본인이 사용하고자 하는 메일 설정을 참고하여 작성하시기 바랍니다. 필자의 경우 구글 메일을 사용하므로 다음과 같이 작성합니다.
+
+```typescript showLineNumbers filename="src/mailer/mailer.config.ts"
+import { registerAs } from "@nestjs/config";
+
+export default registerAs("mailer", () => ({
+  smtp: "smtp.gmail.com",
+  smtp_id: "<example>@gmail.com",
+  smtp_pw: "<app_password>",
+  smtp_ssl: true,
+  smtp_port: 587,
+  smtp_from_name: "<example_name>",
+  smtp_from_email: "<example>@gmail.com",
+  privkey: "supertest",
+}));
+```
+
+위와 같이 `configService`를 이용해 가져올 변수를 지정합니다. 여기서 `smtp_pw`는 구글 계정 설정에서 보안 탭에 들어가 앱 비밀번호를 생성하여 사용해야 합니다. 예시를 위해 직접 문자열로 작성했지만 가급적 `.env`파일로 사용하기를 권장합니다. 비밀번호를 발급받는 방법은 아래를 참고바랍니다.
+
+> privkey는 꼭 개발버전 외에는 변경해서 사용해야합니다.
+
+### google 앱 비밀번호 설정
+
+![계정 설정](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/8d5daef5-13b6-40fa-8048-07bee7a546d6)
+
+![보안 탭 > 2단계 인증](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/e50e0e31-b52c-4d51-811d-9cd4fc743cfe)
+
+본인 계정의 비밀번호를 입력하고 난 후 맨 아래 앱 비밀번호를 클릭합니다.
+
+![앱 비밀번호 탭](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/7eda7ae6-439c-4d1b-a1e6-6e782652d63b)
+
+![앱 비밀번호 생성](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/c637c0c2-dd26-48c6-aa34-5ee23538629c)
+
+만들기 버튼을 누르면 비밀번호가 생성됩니다. 이때 비밀번호는 잘 보관하시기 바랍니다. 닫고 나면 다시는 볼 수 없기 때문에 새로 생성해서 교체해야하는 일이 발생 할 수 있습니다.
+
+생성된 비밀번호는 이전에 설정했던 메일러의 `smtp_pw`에 붙여넣습니다. 설정이 끝났다면 메일을 전송해서 제대로 설정되었는지 확인합니다.
+
+### Nodemailer 전송 테스트
+
+`mailer`도메인을 완성해서 메일 전송이 제대로 되는지 확인해야합니다. 아래는 앞서 만들어둔 mailer 컨트롤러와 서비스 부분입니다.
+
+```typescript showLineNumbers filename="src/mailer/mailer.controller.ts"
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Request,
+  Res,
+  UseGuards,
+} from "@nestjs/common";
+import { AuthGuard } from "@src/auth/auth.guard";
+import { MailerService } from "./mailer.service";
+import { Response } from "express";
+
+@Controller("mailer")
+export class MailerController {
+  constructor(private readonly mailerService: MailerService) {}
+
+  @Post("confirm")
+  async emailConfirm(@Body("email") email: string) {
+    return this.mailerService.sendEmail(email);
+  }
+
+  @Get("check")
+  async checkEncryptMessage(@Res() res: Response, @Query("q") q: string) {
+    const token = decodeURIComponent(q);
+    res.contentType("text/html");
+    const isCheckSuccessed = await this.mailerService.checkToken(token);
+    switch (isCheckSuccessed) {
+      case "success":
+        // 성공
+        break;
+      case "token no exists":
+        // 존재하지 않는 토큰
+        break;
+      case "expired":
+        // 만료된 토큰
+        break;
+      case "no exists":
+        // 존재하지 않는 이메일
+        break;
+    }
+  }
+}
+```
+
+`emailConfirm`메서드는 바디의 `email`필드를 가져와 `mailerService`의 `sendEmail`의 인자로 전달합니다. 응답 데이터로는 메일러의 결과 값을 출력하도록 하겠습니다. 필요에 따라 페이지 또는 커스텀한 응답을 주도록 변경하면 됩니다. `checkEncryptMessage`메서드는 메일 전송 테스트 이후 서비스 단을 작성하도록 하겠습니다.
+
+```typescript showLineNumbers filename="src/mailer/mailer.service.ts"
+import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { ApiResponseService } from "@src/api.response/api.response.service";
+import * as mailer from "nodemailer";
+
+@Injectable()
+export class MailerService {
+  constructor(private readonly configService: ConfigService) {}
+
+  async sendEmail(email: string) {
+    const smtp = this.configService.get<string>("mailer.smtp");
+    const smtpId = this.configService.get<string>("mailer.smtp_id");
+    const smtpPw = this.configService.get<string>("mailer.smtp_pw");
+    const smtpPort = this.configService.get<string>("mailer.smtp_port");
+    const smtpFromName = this.configService.get<string>(
+      "mailer.smtp_from_name"
+    );
+    const smtpFromEmail = this.configService.get<string>(
+      "mailer.smtp_from_email"
+    );
+
+    const transforter = mailer.createTransport({
+      host: smtp,
+      port: +smtpPort,
+      auth: {
+        user: smtpId,
+        pass: smtpPw,
+      },
+      secure: false,
+      tls: {
+        rejectUnauthorized: true,
+        minVersion: "TLSv1.2",
+      },
+    });
+
+    const result = await transforter.sendMail({
+      from: `${smtpFromName} <${smtpFromEmail}>`,
+      to: `${email}`,
+      subject: "테스트 메일 서비스",
+      html: `
+        <h3>hello world!</h3>
+        <div>
+          <a href="javascript:void">click this link.</a>
+        </div>
+      `,
+    });
+
+    return result;
+  }
+}
+```
+
+위 내용을 작성하고 `POST` 요청해서 메일이 정상적으로 발송되는지 테스트합니다.
+
+![메일 전송](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/7bcffe9a-6b82-4262-9daa-e47c163e079e)
+
+바디에 이메일을 넣고 요청을 보내고 아래와 같이 본인의 테스트 메일에 전송이 되면 성공입니다.
+
+![메일 내용 확인](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/5216c981-3103-4833-bc7f-06bbf6569f28)
+
+이제 서비스 부분을 작성해서 본인인증하는 로직을 완성하면 됩니다. 작성하기에 앞서 생각한 이메일 본인인증의 구조를 살펴보겠습니다.
+
+## 메일 인증 구조
+
+메일을 이용해 구현하는 본인인증의 구조는 다음과 같습니다.
+
+![본인인증 구조도](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/ebf638a6-6e39-45ee-8841-a93562ad0b26)
+
+각 번호별로 프로세스를 간략히 설명하자면 아래와 같습니다. 위에서 봤던 컨트롤러의 `emailConfirm`, `checkEncryptMessage`메서드를 기억하면서 보시면 됩니다.
+
+1. `POST /mailer/confirm`으로 바디에 `email`을 담아 요청을 보냅니다.
+2. `emailConfirm`메서드를 실행합니다. (이때 메서드는 비동기로 동작해야합니다.)
+   1. 실행 초기 Promise를 정의하고 `resolve`를 바깥으로 꺼내어 `Map`객체에 token을 `key`값으로 하고 `value`에 포함하여 추가합니다.
+   2. 메일러를 이용해 토큰 값을 `encodeURIComponent`에 감싸고 `q=<token>`형식으로 링크에 담아 메일 본문에 포함하여 요청받은 메일로 전송합니다.
+   3. await로 promise를 기다립니다.
+3. 사용자가 본인의 이메일을 확인하여 링크를 클릭하면 `GET /mailer/check`로 요청을 보냅니다.
+4. 이때 토큰 값 검증이 들어갑니다. (먼저 Map에 저장된 토큰인지 판별합니다.)
+   - 본인인증에 걸리는 소요시간이 제한시간을 넘겼는지
+   - 발급된 토큰이 맞는지 (Map이 포함하는 토큰인지)
+   - 들어온 토큰이 Map에 있다면 시간값과 이메일 등의 메세지를 암호화 했을 때 동일한 값인지
+   - 해당 이메일이 회원의 이메일인지(db 값 조회)
+5. 통과했다면 해당 토큰과 저장되었던 resolver를 true값을 인자로 호출합니다.
+6. `resolver`가 호출되면 사용자가 초기 인증을 신청했던 `POST`요청이 대기 상태에서 통과되고 응답합니다.
+
+사용자가 가입한 이메일을 잊었을 때는 위 방식을 택해도 무관하겠지만 가입한 이메일로 한정한다면 1번 과정에서 이미 회원의 이메일인지 아닌지 판별한 후 토큰을 보내는 것이 좋겠지요.
+
+우선 위 과정을 하나 씩 작성해봅시다.
+
+### 본인인증 프로세스 구현
+
+의사코드를 작성했으니 이후 부터는 잘 작동하는지 보기만 하면 됩니다.
+
+```diff-typescript showLineNumbers filename="src/mailer/mailer.service.ts"
+import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { ApiResponseService } from "@src/api.response/api.response.service";
++import { UserService } from "@src/user/user.service";
+import * as mailer from "nodemailer";
++import * as cryptoJS from "crypto-js";
+
++type CheckMailType = {
++  email: string;
++  token: string;
++  time: number;
++  resolver: (value: boolean) => void;
++};
+
++const checkMailMap = new Map<string, CheckMailType>();
+
+@Injectable()
+export class MailerService {
+-  constructor(private readonly configService: ConfigService) {}
++  constructor(
++    private readonly configService: ConfigService,
++    private readonly userService: UserService
++  ) {}
+
+  async sendEmail(email: string) {
+    let resolver: (value: boolean) => void;
+    const promise = new Promise((resolve) => (resolver = resolve));
+    const smtp = this.configService.get<string>("mailer.smtp");
+    const smtpId = this.configService.get<string>("mailer.smtp_id");
+    const smtpPw = this.configService.get<string>("mailer.smtp_pw");
+    const smtpPort = this.configService.get<string>("mailer.smtp_port");
+    const smtpFromName = this.configService.get<string>(
+      "mailer.smtp_from_name"
+    );
+    const smtpFromEmail = this.configService.get<string>(
+      "mailer.smtp_from_email"
+    );
+
+    const transforter = mailer.createTransport({
+      host: smtp,
+      port: +smtpPort,
+      auth: {
+        user: smtpId,
+        pass: smtpPw,
+      },
+      secure: false,
+      tls: {
+        rejectUnauthorized: true,
+        minVersion: "TLSv1.2",
+      },
+    });
+
++    const sendTime = +new Date();
++    const token = this.makeToken(email, sendTime);
++    const checkMailLink = `http://localhost:5000/api/mailer/check?q=${encodeURIComponent(
++      token
++    )}`;
+
+    const result = await transforter.sendMail({
+      from: `${smtpFromName} <${smtpFromEmail}>`,
+      to: `${email}`,
+      subject: "테스트 메일 서비스",
+      html: `
+        <h3>hello world!</h3>
+        <div>
+-          <a href="javascript:void">click this link.</a>
++          <a href="${checkMailLink}">click this link.</a>
+        </div>
+      `,
+    });
+
++    checkMailMap.set(token, { email, token, time: sendTime, resolver });
+
++    await promise;
+    return result;
+  }
+
++  async checkToken(token: string) {
++    const EXPIRED_TIME = 1000 * 10;
++    const NOW = +new Date();
++    const hasTokenInStore = checkMailMap.has(token);
++    const tokenInfo = checkMailMap.get(token);
++    let flag: string = "";
+
++    if (hasTokenInStore) {
++      const { email, token, time, resolver } = tokenInfo;
+
++      const isExpired = NOW - time > EXPIRED_TIME;
++      if (isExpired) {
++        flag = "expired";
++      }
+
++      console.log("token is matched!");
++      console.log("checkMailMap", checkMailMap);
++      const user = await this.userService.findOneByEmail(email);
+
++      if (user) {
++        console.log("found user!");
++        resolver(true);
++        flag = "success";
++      } else {
++        flag = "no exists";
++      }
++    } else {
++      flag = "token no exists";
++    }
+
++    /* initialize */
++    checkMailMap.delete(token);
++    return flag;
++  }
+
++  private makeToken(email: string, sendTime: number) {
++    return cryptoJS
++      .HmacSHA256(
++        "check:" + email + "|" + sendTime + "|" + "localhost:5000",
++        this.configService.get<string>("mailer.privkey")
++      )
++      .toString();
++  }
+}
+```
+
+사용자가 메일을 받고 본문에 띄어지는 링크를 클릭하면 `checkToken`메서드로 요청이 가면서 파라미터 `q`에 담긴 내용을 디코딩하고 토큰이 서버에서 발행되었는지 검증합니다. 시간 또한 만료인지 아닌지 판별합니다.
+
+### 메일 전송 토큰 발행
+
+토큰을 발행하는 부분을 이전 코드에서 가져와서 보면 아래와 같습니다. Hmac SHA256 방식으로 사용자 이메일과 시간을 포함하여 토큰을 생성합니다. checkToken에서 반환하는 토큰은 컨트롤러에서 페이지에 링크 파라미터로 전달할 때 인코딩해서 메일로 발송합니다.
+
+```typescript showLineNumbers filename="src/mailer/mailer.service.ts"
+export class MailerService {
+  // ... 다른 메서드
+
+  async checkToken(token: string) {
+    const EXPIRED_TIME = 1000 * 10;
+    const NOW = +new Date();
+    const hasTokenInStore = checkMailMap.has(token);
+    const tokenInfo = checkMailMap.get(token);
+    let flag: string = "";
+
+    if (hasTokenInStore) {
+      const { email, token, time, resolver } = tokenInfo;
+
+      const isExpired = NOW - time > EXPIRED_TIME;
+      if (isExpired) {
+        flag = "expired";
+      }
+
+      console.log("token is matched!");
+      console.log("checkMailMap", checkMailMap);
+      const user = await this.userService.findOneByEmail(email);
+
+      if (user) {
+        console.log("found user!");
+        resolver(true);
+        flag = "success";
+      } else {
+        flag = "no exists";
+      }
+    } else {
+      flag = "token no exists";
+    }
+
+    /* initialize */
+    checkMailMap.delete(token);
+    return flag;
+  }
+
+  private makeToken(email: string, sendTime: number) {
+    return cryptoJS
+      .HmacSHA256(
+        "check:" + email + "|" + sendTime + "|" + "localhost:5000",
+        this.configService.get<string>("mailer.privkey")
+      )
+      .toString();
+  }
+}
+```
+
+### 토큰 확인과 검증
+
+정상적으로 발행된 토큰이라면 `Map`에서 토큰을 찾아 `resolver`를 호출하고 처음 보냈던 요청에 응답이 작동되도록 합니다. `checkToken`으로 들어왔던 요청은 인증 결과에 대한 페이지를 보여주는 응답을 해주면 마무리 됩니다.
+
+```typescript
+export class MailerController {
+  constructor(private readonly mailerService: MailerService) {}
+
+  @Post("confirm")
+  async emailConfirm(@Body("email") email: string) {
+    return this.mailerService.sendEmail(email);
+  }
+
+  @Get("check")
+  async checkEncryptMessage(@Res() res: Response, @Query("q") q: string) {
+    const token = decodeURIComponent(q);
+    res.contentType("text/html");
+    const isCheckSuccessed = await this.mailerService.checkEncryptMessage(
+      token
+    );
+    switch (isCheckSuccessed) {
+      case "success":
+        res.send(`
+          <script>
+            function closing(){
+              window.close();
+            }
+          </script>
+          <h3>✅ Check Success!</h3>
+          <h5>인증이 완료되었습니다. 아래 닫기를 눌러 창을 닫아주세요.</h5>
+          <div>
+            <a href="javascript:void" onclick="closing()">닫기</a>
+          </div>
+        `);
+        break;
+      case "token no exists":
+        res.send(`
+          <script>
+            function closing(){
+              window.close();
+            }
+          </script>
+          <h3>❌ Check Fail!</h3>
+          <h5>token invalid</h5>
+          <div>
+            <a href="javascript:void" onclick="closing()">닫기</a>
+          </div>
+        `);
+        break;
+      case "expired":
+        res.send(`
+          <script>
+            function closing(){
+              window.close();
+            }
+          </script>
+          <h3>✅ Check Fail!</h3>
+          <h5>check time expired</h5>
+          <div>
+            <a href="javascript:void" onclick="closing()">닫기</a>
+          </div>
+        `);
+        break;
+      case "no exists":
+        res.send(`
+          <script>
+            function closing(){
+              window.close();
+            }
+          </script>
+          <h3>✅ Check Fail!</h3>
+          <h5>no exists email in db!</h5>
+          <div>
+            <a href="javascript:void" onclick="closing()">닫기</a>
+          </div>
+        `);
+        break;
+      default:
+        break;
+    }
+  }
+}
+```
+
+서비스단에서 미리 페이지 처리를 반환한다면 컨트롤러에서는 코드량을 확실히 줄일 수 있습니다. 예를 들면, 위의 소스코드에서 `switch`문을 서비스단으로 옮기고, `ResponsePage`라는 클래스를 만들어 타입에 맞는 페이지를 처리하도록 하는 방식입니다.
+
+## 마무리
+
+NICE 또는 PASS 등의 본인인증 솔루션을 사용할 수 있으면 더 좋았겠지요. 회사에서는 다룰 기회가 없었기 떄문에 생각난 김에 빠르게 기록했습니다. 작성하면서 느끼지만 몇가지 보완할 점이 있습니다. 가령, 토큰 검증이 제대로 되지 않는 부분, 에러 처리가 다양하지 못하다는 부분입니다. 보완점은 기회가 된다면 다루도록 하고, 공부하면서 여러 방면으로 시도해서 다듬어 볼 예정입니다.
