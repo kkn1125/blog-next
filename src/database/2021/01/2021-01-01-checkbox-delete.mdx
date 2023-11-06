@@ -1,207 +1,365 @@
 ---
 slug: "/checkbox-delete/"
 date: 2021-01-01 21:25:04 +0000
-modified: 2022-03-23 16:02:12 +0000
+modified: 2023-11-06 14:57:21 +0000
 title: "[JAVASCRIPT] checkbox로 항목 삭제 기능 구현"
 author: Kimson
 categories: [javascript]
 image: /assets/images/post/covers/TIL-javascript.png
 tags: [delete, checkbox, backup, til]
-description: "checkbox로 항목 삭제 기능 구현"
+description: "항목 다중 처리 구현
+
+게시글이나 이미지 등을 관리할 때 자주 사용되는 기능이 아닐까 생각합니다. 아이템을 선택하고 단일 또는 다중 삭제, 전체 삭제 기능을 구현할 때 어떤 방식이 편리할지, 효율적인지는 환경에 따라 달라질 수 있으므로 어디까지나 참고만 하시기 바랍니다.
+
+기본 UI 생성
+
+`배열`을 이용하거나 맵을 이용한 `key-value` 쌍으로 관리하는 방법 등 여러가지가 있습니다. 비교적 이해가 쉬운 `배열`로 접근하는 방법을 예시로 들겠습니다.
+
+먼저 사용자 데이터를 생성하고, 선택한 사용자 데이터를 가공하면서 실시간으로 변경사항을 렌더링하는 기능만 구현하면 간단하게 만들 수 있습니다. `vite`로 구동하고 `sass`를 설치하여 진행합니다."
 featured: false
 rating: 3
 profile: false
 published: true
 ---
 
-# checkbox로 항목 삭제 기능 구현
+> 내용 보완을 위해 이전에 작성했던 포스팅의 글과 예시를 모두 수정했습니다.
 
-## 배열과 체크박스를 사용한 일괄 삭제 기능
+# 항목 다중 처리 구현
 
-```html
+게시글이나 이미지 등을 관리할 때 자주 사용되는 기능이 아닐까 생각합니다. 아이템을 선택하고 단일 또는 다중 삭제, 전체 삭제 기능을 구현할 때 어떤 방식이 편리할지, 효율적인지는 환경에 따라 달라질 수 있으므로 어디까지나 참고만 하시기 바랍니다.
+
+## 기본 UI 생성
+
+`배열`을 이용하거나 맵을 이용한 `key-value` 쌍으로 관리하는 방법 등 여러가지가 있습니다. 비교적 이해가 쉬운 `배열`로 접근하는 방법을 예시로 들겠습니다.
+
+먼저 사용자 데이터를 생성하고, 선택한 사용자 데이터를 가공하면서 실시간으로 변경사항을 렌더링하는 기능만 구현하면 간단하게 만들 수 있습니다. `vite`로 구동하고 `sass`를 설치하여 진행합니다.
+
+```html showLineNumbers filename="src/index.html"
 <!DOCTYPE html>
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <title>arr-del</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Checkbox</title>
+    <link rel="stylesheet" href="main.scss" lang="scss" />
   </head>
-
   <body>
-    <!-- 정보표시 함수 링크 -->
-    <a href="javascript:list()">list</a>
-    <a href="javascript:deletes()">delete</a>
-    <!-- 정보를 담는 배열을 표시하는 영역 -->
-    <div class="ctg"></div>
-  </body>
+    <div id="app">
+      <h1>Test Checkbox</h1>
 
-  <script src="js.js"></script>
+      <h3>Item List</h3>
+
+      <div id="wrap">
+        <div id="list"></div>
+        <div id="users"></div>
+      </div>
+      <button id="delete">delete</button>
+      <button id="delete-all">delete all</button>
+    </div>
+
+    <script src="main.js"></script>
+  </body>
 </html>
 ```
 
-1. 배열을 표시하는 list 링크와 삭제를 위한 delete 링크를 만든다. 여기서 delete의 기능은 바로 삭제하는 게 아닌 각 항목에 일괄 혹은 단일 삭제를 위한 체크박스를 띄우기 위해 만든 것.
+기본 틀은 `wrap`으로 감싸고 `list`와 `users`를 양측으로 분할한 후 버튼을 아래에 배치한 `UI`로 진행합니다. `css`는 최소화하여 다음과 같습니다.
 
-```javascript
-// 예를 들어 게시글의 정보를 담은 배열로 생각하고 각 항목을 넣는다.
-var arr = [1, 2, 3, 4, 5];
-
-// checkbox 클릭 시 해당 checkbox의 내용을 담기 위해 빈 배열 del을 생성한다.
-var del = [];
-
-// 1. list() 함수는 1-1에 만들었던 div.ctg 태그에 배열들을 출력시킨다.
-function list() {
-  var target = document.querySelector(".ctg");
-  var sv = "";
-  for (var i = 0; i < arr.length; i++) {
-    sv += "<div>" + arr[i] + "</div>"; // for문 반복때마다 div태그에 감싸 줄바꿈
-  }
-  target.innerHTML = sv; // 출력
+```scss showLineNumbers filename="src/main.scss"
+html,
+body {
+  margin: 0;
 }
 
-/**
- * 1. list() 함수와 같은 구조로 각 항목들의 앞에 checkbox를 부여한다.
- * 2. 마지막으로 accept라는 최종 확인 기능의 버튼을 구현해준다.
- * 3. 이제 함수 두 개가 추가되었으니 마저 작성해준다.
- */
-function deletes() {
-  var target = document.querySelector(".ctg");
-  var sv = "";
-  for (var i = 0; i < arr.length; i++) {
-    sv +=
-      '<label><input type="checkbox" onclick="javascript:checks(this)">' +
-      arr[i] +
-      "</label><br>"; // for문 반복때마다 div태그에 감싸 줄바꿈
-  }
-  sv += '<div><a href="javascript:checkdel()">accept!!</a></div>';
-  target.innerHTML = sv; // 출력
+#app {
+  width: 50%;
+  margin: auto;
 }
-```
 
-```javascript
-var sav = []; // 체크여부 저장하는 빈 배열
+#wrap {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  justify-content: space-between;
 
-function checks(self) {
-  // 체크박스 클릭 시 실행 될 함수
-  if (self.checked) {
-    sav.push(self.labels[0].textContent);
-    $e(`체크박스 -> true`); // 1-1-1의 함수 참조(console.log()를 단순화시킴)
-    $e(sav); // 1-1-1의 함수 참조(console.log()를 단순화시킴)
-  } else {
-    for (var i = 0; i < sav.length; i++) {
-      if (self.labels[0].textContent == sav[i]) {
-        sav.splice(i, 1);
-        $e(`체크박스 -> false`); // 1-1-1의 함수 참조(console.log()를 단순화시킴)
-        $e(sav); // 1-1-1의 함수 참조(console.log()를 단순화시킴)
+  #list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex: 1;
+    label {
+      &::before {
+        content: attr(for);
+        text-transform: uppercase;
+        font-weight: 700;
+      }
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      input[type="checkbox"] {
+        accent-color: green;
+        width: 1.5rem;
+        height: 1.5rem;
       }
     }
   }
-  $e(sav);
+
+  #users {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex: 1;
+    border: 1px solid #565656;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    -webkit-border-radius: 0.5rem;
+    -moz-border-radius: 0.5rem;
+    -ms-border-radius: 0.5rem;
+    -o-border-radius: 0.5rem;
+  }
+  margin-bottom: 1rem;
+}
+
+button {
+  background-color: #da6666;
+  color: white;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: none;
+  outline: none;
+  padding: 0.5rem 0.8rem;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(0.85);
+    -webkit-filter: brightness(0.85);
+  }
 }
 ```
 
-1. list() 함수는 1-1에 만들었던 div.ctg 태그에 배열들을 출력시킨다. 진행상황 및 테스트는 콘솔 로그와 개발자 도구를 통해 연구해본다.
-2. 테스트한 내용을 빼고 코드를 정리해보면,
+스타일까지 입히고 나면 아래와 같이 패널형태가 나타납니다.
 
-```javascript
-var sav = []; // 체크여부 저장하는 빈 배열
+![스타일 세팅 후](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/c796a5ef-f766-4a08-83b8-0c5be99753e8)
 
-function checks(self) {
-  // 체크박스 클릭 시 실행 될 함수
-  if (self.checked) {
-    // self를 인자로 받아 check 여부에 따라 true false 반환
-    sav.push(self.labels[0].textContent); // sav배열에 self의 텍스트를 push
-  } else {
-    // check를 풀면 다시 check되는 값의 배열push를 방지하기 위해 다시 배열 제외
-    for (var i = 0; i < sav.length; i++) {
-      // 반복문을 통해 sav배열 조회
-      if (self.labels[0].textContent == sav[i]) {
-        // sav요소와 self텍스트 일치 조회
-        sav.splice(i, 1); // 일치 시 sav의 i번째 요소 삭제
-      }
-    }
-  }
+## 데이터 가공과 렌더링 프로세스
+
+데이터 가공과 렌더링 프로세스는 다음과 같습니다.
+
+1. 데이터를 받아옵니다. (여기서는 생성합니다.)
+2. 체크박스 데이터를 표시합니다.
+3. 체크박스를 선택합니다.
+4. 선택된 데이터를 가공합니다.
+   1. 데이터가 가공될 때마다 화면을 업데이트 합니다.
+5. 선택된 데이터를 삭제합니다.
+   1. 데이터가 가공될 때마다 화면을 업데이트 합니다.
+6. 모든 데이터를 삭제합니다.
+   1. 데이터가 가공될 때마다 화면을 업데이트 합니다.
+
+조금 더 간단하게 추려내자면, 데이터는 항상 출력시키고, 데이터 가공이 일어날 때마다 화면을 업데이트만 해주면 됩니다.
+
+### 데이터 생성
+
+```javascript showLineNumbers filename="src/main.js"
+/* variables */
+// constants
+const USER_AMOUNT = 10;
+const USER_LIST = [];
+
+// elements
+const WRAP_EL = document.getElementById("wrap");
+const USERS_EL = document.getElementById("users");
+const LIST_EL = document.getElementById("list");
+
+// informations
+const characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const numbers = "0123456789";
+const domains = [
+  "gmail.com",
+  "hanmail.net",
+  "daum.net",
+  "hotmail.com",
+  "naver.com",
+  "kakao.com",
+];
+const genders = ["male", "female", "others"];
+const first = ["010", "011", "012"];
+let id = 0;
+```
+
+필요한 상수와 변수를 모두 상단에 정리해서 정의합니다.
+
+- 사용자 10명 생성
+- html 미리 작성한 요소 정의
+- 랜덤 문자 및 숫자
+- 이메일 도메인
+- 성별
+- 사용자 아이디
+
+### 데이터 가공 함수
+
+그리고 사용자 데이터를 생성하고 수정하고 삭제하는 기능을 만듭니다.
+
+```javascript showLineNumbers filename="src/main.js"
+/* generate user's information */
+const getRandom = (list) => list[Math.floor(Math.random() * list.length)];
+const getRandomCharacters = (place) =>
+  place.replace(/x|y/g, ($1) =>
+    $1.match(/^\d$/) ? getRandom(numbers) : getRandom(characters)
+  );
+const getRandomPhoneNumber = () => {
+  return getRandom(first) + "-" + getRandomCharacters("xxxx-xxxx");
+};
+const geteRandomGender = () => {
+  return getRandom(genders);
+};
+const getRandomEmailDomain = () => {
+  return getRandom(domains);
+};
+const getRandomEmail = () => {
+  return getRandomCharacters("xxxxxxxxxxyyyy") + "@" + getRandomEmailDomain();
+};
+```
+
+사용자를 생성하기에 앞서 데이터를 임의 생성하는 함수를 정의합니다.
+
+```javascript showLineNumbers filename="src/main.js"
+/* generate user */
+function createUser(nickname, email, gender, phone) {
+  id++;
+  return {
+    id,
+    nickname,
+    email,
+    gender,
+    phone,
+    is_deleted: false,
+    selected: false,
+  };
 }
-
-function checkdel() {
-  $e("--for문시작--"); // 함수가 어디쯤 작동되는지 보기위한 콘솔로그
-  for (var j = 0; j < sav.length; j++) {
-    // j변수를 sav배열 인덱스로 함
-    for (var i = 0; i < arr.length; i++) {
-      // j변수가 증가할때마다 i변수로 arr 조회
-      if (sav[j] == arr[i]) {
-        // 즉 sav배열 하나하나 당 arr배열요소가 일치하는지 검사
-        $e(arr); // arr변수의 현재 값
-        $e(String(j) + String(i)); // sav의 몇번째와 i변수의 몇번째를 반환하는지 확인
-        arr.splice(i, 1);
-        $e(arr); // splice 후 arr의 배열 상태 확인. 이때 잘 제거 됐으면 성공.
-        break; // splice한 후 for문을 정지 시키고 다시 j변수 for문 실행
-      }
+/* find user */
+function findUser(id) {
+  return USER_LIST.find((user) => user.id === +id);
+}
+function findSelectedUser() {
+  return USER_LIST.filter((user) => user.selected);
+}
+/* control delete */
+function deleteSelectUsers() {
+  USER_LIST.forEach((user) => {
+    if (user.selected) {
+      user.is_deleted = true;
+      user.selected = false;
     }
-  }
-  $e("--for문 종료--"); // 함수가 제대로 진행되어 마쳤는지 보기위한 콘솔로그
-  list(); // 삭제 후 삭제된 배열을 다시 list()함수로 보여지게 하여 확인
+  });
+}
+function deleteAllUsers() {
+  USER_LIST.forEach((user) => {
+    user.is_deleted = true;
+    user.selected = false;
+  });
+}
+/* initializer */
+function initializeUserList() {
+  for (let i = 0; i < USER_AMOUNT; i++)
+    USER_LIST.push(
+      createUser(
+        getRandomCharacters("xxxxxxxxxx"),
+        getRandomEmail(),
+        geteRandomGender(),
+        getRandomPhoneNumber()
+      )
+    );
 }
 ```
 
-1. checkdel() 함수로 accept링크 클릭 시 해당 목록 지워지고 arr배열의 상태를 확인한다.
-2. 잘 제거되었을 시 성공
-3. 작동이 잘 안 될 시 콘솔 로그와 개발자 도구를 이용하여 에러가 나거나 boolean이 사용되는 부분을 찾아내어 하나씩 고친다.
+사용자는 닉네임과 이메일, 성별, 폰번호를 받아 객체 데이터를 반환하고, 선택한 사용자를 찾기위해 `find*`함수와 선택된 사용자를 삭제하는 `delete*`함수를 만들고 마지막으로 전체 사용자 데이터를 초기화하는 `initializeUserList`함수를 작성합니다. `initializeUserList`는 초기에 한 번만 실행합니다.
+
+### 화면 렌더링 함수
+
+```javascript showLineNumbers filename="src/main.js"
+/* generate view */
+function drawItem(user) {
+  const item = document.createElement("label");
+  item.textContent = user.email;
+  item.htmlFor = user.id;
+
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.id = user.id;
+  checkbox.checked = user.selected;
+
+  item.append(checkbox);
+
+  return item;
+}
+
+/* clear view */
+function clearList() {
+  LIST_EL.innerHTML = "";
+}
+function clearUsers() {
+  USERS_EL.innerHTML = "";
+}
+
+/* update view */
+function updateList() {
+  clearList();
+  clearUsers();
+  for (const user of USER_LIST) {
+    if (!user.is_deleted) LIST_EL.append(drawItem(user));
+  }
+  for (const user of findSelectedUser()) {
+    USERS_EL.innerHTML += `<div>${user.email}</div>`;
+  }
+}
+```
+
+10번 줄에서 `checkbox`의 `checked`를 변경하는 이유는 선택 후 `updateList`함수를 호출하기 때문에 다시 렌더링 되는 체크박스는 선택되었다는 표시가 사라지게 됩니다. 때문에 데이터의 속성값으로 제어합니다.
+
+> 데이터를 가공하고 렌더링하는데 있어서 필자의 생각입니다. 원본 데이터는 최대한 포맷을 유지해야합니다. 렌더링 하는 부분에서 필요에 따라 데이터를 조합, 변경해야 원본 데이터가 유지됩니다. 즉, 렌더링을 위해 데이터 포맷이 변형되면 안된다는 것이지요.
+
+### 요소 이벤트 추가
+
+```javascript showLineNumbers filename="src/main.js"
+/* event initialize */
+window.addEventListener("click", (e) => {
+  const target = e.target;
+  if (["INPUT", "LABEL"].includes(target.tagName)) {
+    const id = target.tagName === "LABEL" ? target.htmlFor : target.id;
+    const user = findUser(id);
+    user.selected = !user.selected;
+    updateList();
+  } else if (target.tagName === "BUTTON") {
+    if (target.id === "delete") {
+      deleteSelectUsers();
+    } else if (target.id === "delete-all") {
+      deleteAllUsers();
+    }
+    updateList();
+  }
+});
+```
+
+체크박스를 클릭했을 때 해당하는 사용자를 찾아 선택 표시하고, 버튼을 클릭해서 삭제하는 이벤트를 추가합니다. 이벤트까지 추가하고 나면 체크박스를 이용해 단일 또는 다중 선택하여 삭제하거나 모든 데이터를 삭제하는 기능 구현이 완료됩니다.
+
+![초기 렌더링 모습](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/7538b720-66a5-40e9-8627-763d3e49985e)
+
+![아이템 선택 모습](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/8ad6ac23-251e-407d-8e6c-f15dd7a9eb36)
+
+![아이템 삭제 모습](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/908e18b8-2050-414a-af3d-62da68c411e0)
+
+![아이템 전체 삭제 모습](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/1187f83d-4139-4abb-96c4-c031590399e6)
+
+이제까지 구현한 기능에서 조금 더 사용자가 편리하게 사용할 수 있도록 `confirm` 또는 모달, 팝업을 이용해서 커스텀한다면 조금 더 나은 기능이 나오겠지요.
+
+## 마무리
+
+2년전 글을 다시 작성하면서 느끼는게 있습니다. 짧지만 많은 차이를 느꼈고 그래도 많이 성장했다는 생각을 합니다. 나름 열심히 했구나 하는 생각도 듭니다. 당시에는 설명하는 범위나 목적도 개인 공부만을 위해 대충 적었던 것이 눈에 띄고, 여전히 그러고 있지 않나 반성하게 됩니다. 기초를 공부하고 계시다면 이 글이 도움이 되었으면 합니다.
 
 ---
 
-```javascript
-// 최종 코드
-function $e(a) {
-  return console.log(a);
-}
+📚 함께 보면 좋은 내용
 
-var arr = [1, 2, 3, 4, 5];
-var sav = [];
-
-var func = {
-  list: function () {
-    var target = document.querySelector(".ctg");
-    var sv = "";
-    for (var i = 0; i < arr.length; i++) {
-      sv += "<div>" + arr[i] + "</div>"; // for문 반복때마다 div태그에 감싸 줄바꿈
-    }
-    target.innerHTML = sv; // 출력
-  },
-  dlist: function () {
-    var target = document.querySelector(".ctg");
-    var sv = "";
-    for (var i = 0; i < arr.length; i++) {
-      sv +=
-        '<label><input type="checkbox" onclick="javascript:func.checks(this)">' +
-        arr[i] +
-        "</label><br>"; // for문 반복때마다 div태그에 감싸 줄바꿈
-    }
-    sv += '<div><a href="javascript:func.checkdel()">accept!!</a></div>';
-    target.innerHTML = sv; // 출력
-  },
-  checks: function (self) {
-    if (self.checked) {
-      sav.push(self.labels[0].textContent);
-    } else {
-      for (var i = 0; i < sav.length; i++) {
-        if (self.labels[0].textContent == sav[i]) {
-          sav.splice(i, 1);
-        }
-      }
-    }
-  },
-  checkdel: function () {
-    for (var j = 0; j < sav.length; j++) {
-      for (var i = 0; i < arr.length; i++) {
-        if (sav[j] == arr[i]) {
-          $e(arr);
-          $e(String(j) + String(i));
-          arr.splice(i, 1);
-          $e(arr);
-          break;
-        }
-      }
-    }
-    func.list();
-  },
-};
-```
+<a href='/download/checkbox-delete.zip' target='_blank' download>예시 다운로드</a>

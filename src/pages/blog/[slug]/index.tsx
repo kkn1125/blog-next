@@ -496,6 +496,7 @@ function Index({
               {current.frontmatter.title || ""}
             </Typography>
             <Typography
+              title='published'
               fontSize={(theme) => theme.typography.pxToRem(14)}
               fontWeight={200}
               fontFamily={`"IBM Plex Sans KR", sans-serif`}

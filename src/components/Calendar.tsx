@@ -10,36 +10,15 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { memo, useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
-import { duration, format, getWeek, orderByRepeat, removeDuplicates } from "@/util/tool";
+import {
+  duration,
+  format,
+  getWeek,
+  orderByRepeat,
+  removeDuplicates,
+} from "@/util/tool";
 import StackBadge from "./StackBadge";
-
-const tagIcon: any = {
-  undefined: "▷",
-  "": "▷",
-  rest: "☕",
-  study: "📖",
-  book: "📕",
-  post: "📑",
-  alert: "📢",
-  1: "🥇",
-  2: "🥈",
-  3: "🥉",
-  fix: "🔧",
-  edit: "🔧",
-  idea: "💡",
-  "!": "❗",
-  important: "❗",
-  know: "❗",
-  how: "❓",
-  "?": "❓",
-  what: "❓",
-  check: "✅",
-  cancel: "❎",
-  prj: "🔮",
-  project: "🔮",
-  home: "🏠",
-  money: "💸",
-};
+import { tagIcon } from "@/util/global";
 
 const now = new Date();
 
@@ -78,43 +57,57 @@ function ServerDay(
   const isSelected = !props.outsideCurrentMonth && Boolean(pickTodo);
   const isRepeat = repeatDays.find((item: any) => {
     const baseTime = new Date(item.time as string);
-
+    if (item.repeatStart === null || item.repeatStart === undefined) {
+      item.repeatStart = item.time;
+    }
     if (item.repeat && !props.outsideCurrentMonth) {
       if (!props.outsideCurrentMonth && props.day.day() === 0) {
         weeks += 1;
       }
-      if (
-        (item.repeatDayOfWeek as unknown as number[]).includes(
-          getWeek(year, month + 1, date)
-        ) &&
-        item.repeatDay?.some(
-          (day: any) => day === props.day.day()
-        ) /* === props.day.day() */
-      ) {
-        return item;
-      } else if (
-        item.repeatDay &&
-        (item.repeatDay as number) > -1 &&
-        !Boolean((item.repeatDayOfWeek as unknown as number[])?.length) &&
-        item.repeatDay?.some(
-          (day: any) => day === props.day.day()
-        ) /* === props.day.day() */
-      ) {
-        return item;
-      } else if (
-        item.repeatDayOfYear &&
-        baseTime.getMonth() === month &&
-        baseTime.getDate() === date
-      ) {
-        return item;
-      } else if (item.repeatDayOfMonth && baseTime.getDate() === date) {
-        return item;
+      // console.log(item.repeatStart)
+      // console.log(new Date(item.repeatStart) <= props.day.toDate())
+      // console.log(props.day.toDate())
+      const isUpperDay = new Date(item.repeatStart) <= props.day.toDate();
+      if (isUpperDay) {
+        if (
+          (item.repeatDayOfWeek as unknown as number[]).includes(
+            getWeek(year, month + 1, date)
+          ) &&
+          item.repeatDay?.some(
+            (day: any) => day === props.day.day()
+          ) /* === props.day.day() */
+        ) {
+          return item;
+        } else if (
+          item.repeatDay &&
+          (item.repeatDay as number) > -1 &&
+          !Boolean((item.repeatDayOfWeek as unknown as number[])?.length) &&
+          item.repeatDay?.some(
+            (day: any) => day === props.day.day()
+          ) /* === props.day.day() */
+        ) {
+          return item;
+        } else if (
+          item.repeatDayOfYear &&
+          baseTime.getMonth() === month &&
+          baseTime.getDate() === date
+        ) {
+          return item;
+        } else if (item.repeatDayOfMonth && baseTime.getDate() === date) {
+          return item;
+        }
+      } else {
+        return false;
       }
     }
     return false;
   });
   // console.log("dueDays", dueDays[0].dueStart, date);
+
   const isDue = dueDays.find((item: any) => {
+    if (item.dueStart === null) {
+      item.dueStart = item.time;
+    }
     const baseTime = new Date(item.dueStart as string);
     // console.log(baseTime.getMonth());
     // console.log(baseTime.getDate());
@@ -260,7 +253,7 @@ function Calendar() {
     const isEmptyRepeat = (repeatTodos?.length || 0) === 0;
 
     const dueTodos = dueDays.filter((item: any) => {
-      const baseTime = new Date(item.dueStart as string);
+      const baseTime = new Date((item.dueStart as string) || Date.now());
       const clickTime = new Date(
         Number(calInfo.y),
         Number(calInfo.m),
