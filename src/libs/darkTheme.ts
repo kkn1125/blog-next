@@ -36,7 +36,8 @@ const darkTheme = {
   contrastThreshold: 3,
   tonalOffset: 0.2,
   background: {
-    default: grey[900],
+    // default: grey[900],
+    default: "#1c1917",
   },
 };
 

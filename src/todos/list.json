@@ -1,6 +1,60 @@
 {
   "2023": {
     "10": {
+      "13": [
+        {
+          "todo": "검색 배경 프로필과 z값 충돌 수정",
+          "tag": "check",
+          "time": "2023-11-13 14:16:04",
+          "repeat": false,
+          "repeatStart": null,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": [],
+          "dueStart": null,
+          "due": 0
+        },
+        {
+          "todo": "다크모드 수정",
+          "tag": "check",
+          "time": "2023-11-13 14:16:04",
+          "repeat": false,
+          "repeatStart": null,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": [],
+          "dueStart": null,
+          "due": 0
+        },
+        {
+          "todo": "뉴스레터 구독 기능 추가",
+          "tag": "check",
+          "time": "2023-11-13 14:16:04",
+          "repeat": false,
+          "repeatStart": null,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": [],
+          "dueStart": null,
+          "due": 0
+        },
+        {
+          "todo": "ga4 태그 업데이트",
+          "tag": "check",
+          "time": "2023-11-13 14:16:04",
+          "repeat": false,
+          "repeatStart": null,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": [],
+          "dueStart": null,
+          "due": 0
+        }
+      ],
       "6": [
         {
           "todo": "checkbox-delete 포스팅 업데이트",

@@ -3,10 +3,10 @@ import GenerateHead from "@/components/GenerateHead";
 import {
   AUTHOR,
   BLOG,
-  BRAND_DESC,
   BRAND_LOGO,
   BRAND_NAME,
   GITHUB,
+  MAIN_SUBSCRIPTION,
   PORTFOLIO,
   TITLE_SIZE,
 } from "@/util/global";
@@ -40,7 +40,7 @@ const ABOUT_LINKS = [
 
 const metadatas = {
   title: `${BRAND_NAME.toUpperCase()}::About`,
-  description: BRAND_DESC.trim(),
+  description: MAIN_SUBSCRIPTION.trim(),
   author: AUTHOR,
   image: BRAND_LOGO,
 };

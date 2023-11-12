@@ -1,20 +1,23 @@
 import Animated from "@/components/Animated";
 import GenerateHead from "@/components/GenerateHead";
 import { PostContext } from "@/context/PostProvider";
-import { getAllArticles } from "@/libs/service";
-import { BRAND_DESC, BRAND_LOGO, BRAND_NAME, TITLE_SIZE } from "@/util/global";
+import {
+  BRAND_LOGO,
+  BRAND_NAME,
+  MAIN_SUBSCRIPTION,
+  TITLE_SIZE,
+} from "@/util/global";
 import {
   changeWhiteSpaceToHipen,
   duplicateRemoveArrayFromCategory,
-  duplicateRemoveArrayFromTag,
 } from "@/util/tool";
 import { Chip, Container, Stack, Toolbar, Typography } from "@mui/material";
 import Link from "next/link";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 
 const metadatas = {
   title: BRAND_NAME.toUpperCase() + "::Categories",
-  description: BRAND_DESC,
+  description: MAIN_SUBSCRIPTION.trim(),
   // author: AUTHOR,
   image: BRAND_LOGO,
 };

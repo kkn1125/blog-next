@@ -1,7 +1,11 @@
 import GenerateHead from "@/components/GenerateHead";
 import { PostContext } from "@/context/PostProvider";
-import { getAllArticles } from "@/libs/service";
-import { AUTHOR, BRAND_DESC, BRAND_LOGO, BRAND_NAME } from "@/util/global";
+import {
+  AUTHOR,
+  BRAND_LOGO,
+  BRAND_NAME,
+  MAIN_SUBSCRIPTION,
+} from "@/util/global";
 import { Article } from "@/util/types";
 import {
   Alert,
@@ -22,7 +26,7 @@ import { useContext, useEffect, useState } from "react";
 
 const metadatas = {
   title: `${BRAND_NAME.toUpperCase()}::Not Found`,
-  description: BRAND_DESC.trim(),
+  description: MAIN_SUBSCRIPTION.trim(),
   author: AUTHOR,
   image: BRAND_LOGO,
 };

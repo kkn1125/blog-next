@@ -3,16 +3,16 @@ import Calendar from "@/components/Calendar";
 import Card from "@/components/Card";
 import GenerateHead from "@/components/GenerateHead";
 import MainCard from "@/components/MainCard";
-import { getAllArticles } from "@/libs/service";
 import { CommentContext, findComment } from "@/context/CommentProvider";
+import { PostContext } from "@/context/PostProvider";
 import {
-  BRAND_DESC,
   BRAND_LOGO,
   BRAND_NAME,
   MAIN_SUBSCRIPTION,
   TITLE_SIZE,
 } from "@/util/global";
 import { slicedBundle } from "@/util/tool";
+import { Article } from "@/util/types";
 import {
   Box,
   Container,
@@ -23,12 +23,10 @@ import {
   useTheme,
 } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
-import { PostContext } from "@/context/PostProvider";
-import { Article } from "@/util/types";
 
 const metadatas = {
   title: BRAND_NAME.toUpperCase(),
-  description: BRAND_DESC.trim(),
+  description: MAIN_SUBSCRIPTION.trim(),
   // author: AUTHOR,
   image: BRAND_LOGO,
 };

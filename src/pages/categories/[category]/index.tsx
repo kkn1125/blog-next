@@ -1,23 +1,23 @@
 import Animated from "@/components/Animated";
 import Card from "@/components/Card";
 import GenerateHead from "@/components/GenerateHead";
-import { getAllArticles, getArticlesByCategory } from "@/libs/service";
 import { CommentContext, findComment } from "@/context/CommentProvider";
+import { PostContext } from "@/context/PostProvider";
+import { getAllArticles } from "@/libs/service";
 import {
-  AUTHOR,
-  BRAND_DESC,
   BRAND_LOGO,
   BRAND_NAME,
+  MAIN_SUBSCRIPTION,
   TITLE_SIZE,
 } from "@/util/global";
 import {
   capitalize,
-  changeHipenToWhiteSpace,
   changeWhiteSpaceToHipen,
   duplicateRemoveArrayFromCategory,
   filterByCategory,
   slicedBundle,
 } from "@/util/tool";
+import { Article } from "@/util/types";
 import {
   Container,
   Pagination,
@@ -29,14 +29,12 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
-import { PostContext } from "@/context/PostProvider";
-import { Article } from "@/util/types";
 
 const PAGINATION_AMOUNT = 6;
 
 const metadatas = (param: string) => ({
   title: BRAND_NAME.toUpperCase() + "::Category" + "-" + param,
-  description: BRAND_DESC,
+  description: MAIN_SUBSCRIPTION.trim(),
   // author: AUTHOR,
   image: BRAND_LOGO,
 });

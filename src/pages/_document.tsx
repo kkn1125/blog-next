@@ -24,12 +24,33 @@ export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
     <Html lang='ko'>
       <Head>
         <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-PRBK72RQ');`,
+          }}></script>
+
+        <script
           src='/assets/kakao/min/t1.kakaocdn.net_kakao_js_sdk_2.3.0_kakao.min.js'
           integrity='sha384-70k0rrouSYPWJt7q9rSTKpiTfX6USlMYjZUtr1Du+9o4cGvhPAWxngdtVZDdErlh'
           crossOrigin='anonymous'></script>
         <script
           dangerouslySetInnerHTML={{
-            __html: `window.Kakao.init("${K_APP_KEY}"); // 사용하려는 앱의 JavaScript 키 입력`,
+            __html: `window.Kakao.init("${K_APP_KEY}");`,
+          }}></script>
+
+        <script
+          async
+          src='https://www.googletagmanager.com/gtag/js?id=G-XXKQGQJWVT'></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+        
+          gtag('config', 'G-XXKQGQJWVT');`,
           }}></script>
 
         {/* <script
@@ -99,8 +120,19 @@ export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
           content='6cebf2441529d02294b07c32ba2cd5ce09ba2c71'
         />
         {emotionStyleTags}
+        {/* //@ts-ignore */}
       </Head>
       <body>
+        <noscript>
+          <iframe
+            src='https://www.googletagmanager.com/ns.html?id=GTM-PRBK72RQ'
+            height='0'
+            width='0'
+            style={{
+              display: "none",
+              visibility: "hidden",
+            }}></iframe>
+        </noscript>
         <Main />
         <NextScript />
       </body>

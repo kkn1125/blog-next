@@ -4,6 +4,7 @@ import PostMDXComponent from "@/components/PostMDXComponent";
 import PostNavigator from "@/components/PostNavigator";
 import SideBar from "@/components/SideBar";
 import { PostContext } from "@/context/PostProvider";
+import { ColorModeContext } from "@/context/ThemeModeProvider";
 import { findArticleBySlug, getOnlySlugs } from "@/libs/service";
 import { BRAND_NAME } from "@/util/global";
 import {
@@ -260,6 +261,7 @@ function Index({
   const commentEl = useRef<HTMLElement>();
 
   const { posts } = useContext(PostContext);
+  const colorMode = useContext(ColorModeContext) as any;
 
   const [prev, setPrev] = useState<Article | undefined>(undefined);
   const [next, setNext] = useState<Article | undefined>(undefined);
@@ -583,6 +585,25 @@ function Index({
               lazy
             />
             <PostNavigator prev={prev} next={next} />
+            <Box>
+              <Typography component='div' align='center'>
+                * 구독하시면 뉴스레터를 받으실 수 있습니다 😁
+              </Typography>
+              <Box
+                component='iframe'
+                src={`https://maily.so/devkimson/embed?src=&mode=${colorMode.mode()}`}
+                width='100%'
+                allowFullScreen
+                sandbox='allow-scripts allow-same-origin allow-forms allow-popups allow-modals'
+                sx={{
+                  border: "none",
+                  outline: "none",
+                  minHeight: 210,
+                  overflow: "hidden",
+                }}
+              />
+            </Box>
+
             <Box
               id='comment-wrap'
               sx={{

@@ -1,19 +1,24 @@
 import Animated from "@/components/Animated";
 import GenerateHead from "@/components/GenerateHead";
-import { BRAND_NAME, BRAND_DESC, BRAND_LOGO, TITLE_SIZE } from "@/util/global";
 import {
-  Stack,
+  BRAND_LOGO,
+  BRAND_NAME,
+  MAIN_SUBSCRIPTION,
+  TITLE_SIZE,
+} from "@/util/global";
+import {
+  Box,
+  Button,
   Container,
+  Stack,
   Toolbar,
   Typography,
-  Button,
-  Box,
 } from "@mui/material";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 const metadatas = {
   title: BRAND_NAME.toUpperCase() + "::Games",
-  description: BRAND_DESC,
+  description: MAIN_SUBSCRIPTION.trim(),
   // author: AUTHOR,
   image: BRAND_LOGO,
 };

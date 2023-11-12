@@ -1,18 +1,16 @@
 import Animated from "@/components/Animated";
 import Card from "@/components/Card";
 import GenerateHead from "@/components/GenerateHead";
-import { getAllArticles } from "@/libs/service";
 import { CommentContext, findComment } from "@/context/CommentProvider";
+import { PostContext } from "@/context/PostProvider";
 import {
-  AUTHOR,
-  BRAND_DESC,
   BRAND_LOGO,
   BRAND_NAME,
+  MAIN_SUBSCRIPTION,
   TITLE_SIZE,
 } from "@/util/global";
 import { slicedBundle } from "@/util/tool";
-import { Badge } from "@mui/material";
-import { Chip } from "@mui/material";
+import { Article } from "@/util/types";
 import {
   Container,
   Pagination,
@@ -24,12 +22,10 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
-import { PostContext } from "@/context/PostProvider";
-import { Article } from "@/util/types";
 
 const metadatas = {
   title: `${BRAND_NAME.toUpperCase()}::Blog`,
-  description: BRAND_DESC.trim(),
+  description: MAIN_SUBSCRIPTION.trim(),
   // author: AUTHOR,
   image: BRAND_LOGO,
 };

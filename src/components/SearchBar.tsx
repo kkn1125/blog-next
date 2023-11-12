@@ -112,6 +112,7 @@ function SearchBar({
         right: 0,
         bototm: 0,
         backgroundColor: "#000000a6",
+        zIndex: 1000,
       }}>
       <Paper
         id='search'

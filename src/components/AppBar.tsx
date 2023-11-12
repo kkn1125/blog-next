@@ -455,7 +455,7 @@ function ResponsiveAppBar() {
               <SearchBar open={searchOpen} setOpen={setSearchOpen} />
             </Box>
             <Box sx={{ flex: 0 }}>
-              <Tooltip title="Owner's Profile">
+              <Tooltip title="Owner's Profile" sx={{zIndex:1}}>
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar alt={"devkimson"} src={PROFILE} />
                 </IconButton>

@@ -3,11 +3,15 @@ import Card from "@/components/Card";
 import GenerateHead from "@/components/GenerateHead";
 import { CommentContext, findComment } from "@/context/CommentProvider";
 import { PostContext } from "@/context/PostProvider";
-import { getAllArticles, getArticlesByTag } from "@/libs/service";
-import { BRAND_DESC, BRAND_LOGO, BRAND_NAME, TITLE_SIZE } from "@/util/global";
+import { getAllArticles } from "@/libs/service";
+import {
+  BRAND_LOGO,
+  BRAND_NAME,
+  MAIN_SUBSCRIPTION,
+  TITLE_SIZE,
+} from "@/util/global";
 import {
   capitalize,
-  changeHipenToWhiteSpace,
   changeWhiteSpaceToHipen,
   duplicateRemoveArrayFromTag,
   filterByTag,
@@ -30,7 +34,7 @@ const PAGINATION_AMOUNT = 6;
 
 const metadatas = (param: string) => ({
   title: BRAND_NAME.toUpperCase() + "::Tag" + "-" + param,
-  description: BRAND_DESC,
+  description: MAIN_SUBSCRIPTION.trim(),
   image: BRAND_LOGO,
 });
 
