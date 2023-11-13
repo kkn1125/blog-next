@@ -38,20 +38,21 @@ import React, { useContext, useEffect, useState } from "react";
 import LazyImage from "./LazyImage";
 import SearchBar from "./SearchBar";
 import Visitants from "./Visitants";
+import LaunchIcon from "@mui/icons-material/Launch";
 
 const pages = [
   {
     name: "blog",
     path: "/blog/",
   },
-  {
-    name: "category",
-    path: "/categories/",
-  },
-  {
-    name: "tag",
-    path: "/tags/",
-  },
+  // {
+  //   name: "category",
+  //   path: "/categories/",
+  // },
+  // {
+  //   name: "tag",
+  //   path: "/tags/",
+  // },
   {
     name: "about",
     path: "/about/",
@@ -59,6 +60,16 @@ const pages = [
   {
     name: "games",
     path: "/games/",
+  },
+  {
+    name: "portfolio",
+    path: "https://kkn1125.github.io/portfolio-renew/",
+    outlink: true,
+  },
+  {
+    name: "wiki",
+    path: "https://kkn1125.github.io/wiki/",
+    outlink: true,
   },
 ];
 
@@ -103,7 +114,7 @@ function ResponsiveAppBar() {
     {
       name: "wiki",
       feature: () => {
-        router.push("https://kkn1125.github.io/wikimson/");
+        router.push("https://kkn1125.github.io/wiki/");
       },
     },
   ];
@@ -265,9 +276,9 @@ function ResponsiveAppBar() {
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
-  };
+  // const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+  //   setAnchorElUser(event.currentTarget);
+  // };
 
   const handleOpenSearch = (event: React.MouseEvent<HTMLElement>) => {
     setSearchOpen(!searchOpen);
@@ -277,13 +288,13 @@ function ResponsiveAppBar() {
     setAnchorElNav(null);
   };
 
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
+  // const handleCloseUserMenu = () => {
+  //   setAnchorElUser(null);
+  // };
 
   useEffect(() => {
     handleCloseNavMenu();
-    handleCloseUserMenu();
+    // handleCloseUserMenu();
   }, [navigate.pathname]);
 
   return (
@@ -366,27 +377,38 @@ function ResponsiveAppBar() {
               open={Boolean(anchorElNav)}
               onClose={() => {
                 handleCloseNavMenu();
-                handleCloseUserMenu();
+                // handleCloseUserMenu();
               }}
               sx={{
                 display: { xs: "block", md: "none" },
                 alignItems: "center",
               }}>
-              {pages.map(({ name, path }) => (
-                <MenuItem
-                  key={name}
-                  onClick={() => {
-                    handleCloseNavMenu();
-                    router.push(path);
-                  }}>
-                  <Typography
-                    textAlign='center'
+              {pages.map(({ name, path, outlink }) => (
+                <Tooltip title={name} key={name}>
+                  <MenuItem
                     sx={{
-                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                    onClick={() => {
+                      handleCloseNavMenu();
+                      if (outlink) {
+                        window.open(path, "_blank");
+                        // location.href = path;
+                      } else {
+                        router.push(path);
+                      }
                     }}>
-                    {name.toUpperCase()}
-                  </Typography>
-                </MenuItem>
+                    <Typography
+                      textAlign='center'
+                      sx={{
+                        width: "100%",
+                      }}>
+                      {name.toUpperCase()}
+                    </Typography>
+                    {outlink && <LaunchIcon fontSize='small' />}
+                  </MenuItem>
+                </Tooltip>
               ))}
               <Visitants visitor={visitor} />
             </Menu>
@@ -415,20 +437,28 @@ function ResponsiveAppBar() {
               display: { xs: "none", md: "flex" },
               alignItems: "center",
             }}>
-            {pages.map(({ name, path }) => (
-              <Button
-                key={name}
-                onClick={() => {
-                  handleCloseNavMenu();
-                  router.push(path);
-                }}
-                sx={{
-                  color: (theme) => theme.palette.text.primary,
-                  display: "block",
-                  textAlign: "center",
-                }}>
-                {name}
-              </Button>
+            {pages.map(({ name, path, outlink }) => (
+              <Tooltip title={name} key={name}>
+                <Button
+                  onClick={() => {
+                    handleCloseNavMenu();
+                    if (outlink) {
+                      window.open(path, "_blank");
+                      // location.href = path;
+                    } else {
+                      router.push(path);
+                    }
+                  }}
+                  sx={{
+                    color: (theme) => theme.palette.text.primary,
+                    display: outlink ? "flex" : "block",
+                    textAlign: "center",
+                    alignItems: "center",
+                  }}>
+                  {name}
+                  {outlink && <LaunchIcon fontSize='small' />}
+                </Button>
+              </Tooltip>
             ))}
             <Visitants visitor={visitor} />
           </Box>
@@ -454,7 +484,7 @@ function ResponsiveAppBar() {
               </Tooltip>
               <SearchBar open={searchOpen} setOpen={setSearchOpen} />
             </Box>
-            <Box sx={{ flex: 0 }}>
+            {/* <Box sx={{ flex: 0 }}>
               <Tooltip title="Owner's Profile" sx={{zIndex:1}}>
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar alt={"devkimson"} src={PROFILE} />
@@ -494,7 +524,7 @@ function ResponsiveAppBar() {
                   </MenuItem>
                 ))}
               </Menu>
-            </Box>
+            </Box> */}
           </Stack>
         </Toolbar>
       </Container>

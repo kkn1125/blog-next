@@ -65,12 +65,14 @@ function Index(/* { categories }: any */) {
           }}>
           Categories
         </Typography>
+      </Animated>
+      <Animated order={1} animate='fadeInUp'>
         <Stack
           direction='row'
           flexWrap={"wrap"}
           gap={1}
           sx={{
-            mb: 3,
+            my: 3,
           }}>
           {categories.map((category: string) => (
             <Chip

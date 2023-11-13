@@ -3,6 +3,19 @@
     "10": {
       "13": [
         {
+          "todo": "GNB 메뉴 및 프로필 구성 업데이트",
+          "tag": "fix",
+          "time": "2023-11-13 14:57:44",
+          "repeat": false,
+          "repeatStart": null,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": [],
+          "dueStart": null,
+          "due": 0
+        },
+        {
           "todo": "검색 배경 프로필과 z값 충돌 수정",
           "tag": "check",
           "time": "2023-11-13 14:16:04",

@@ -50,7 +50,7 @@ function Index(/* { tags }: any */) {
         <Typography
           component={Link}
           href={"/tags/"}
-          fontSize={(theme) => theme.typography.pxToRem(TITLE_SIZE.M)}
+          fontSize={(theme) => theme.typography.pxToRem(TITLE_SIZE.L)}
           fontWeight={500}
           gutterBottom
           fontFamily={`"IBM Plex Sans KR", sans-serif`}
@@ -61,12 +61,14 @@ function Index(/* { tags }: any */) {
           }}>
           Tags
         </Typography>
+      </Animated>
+      <Animated order={1} animate='fadeInUp'>
         <Stack
           direction='row'
           flexWrap={"wrap"}
           gap={1}
           sx={{
-            mb: 3,
+            my: 3,
           }}>
           {tags.map((tag: string) => (
             <Chip

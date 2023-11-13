@@ -12,6 +12,7 @@ import {
 import { slicedBundle } from "@/util/tool";
 import { Article } from "@/util/types";
 import {
+  Button,
   Container,
   Pagination,
   Stack,
@@ -21,7 +22,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
+import { memo, useContext, useEffect, useState } from "react";
 
 const metadatas = {
   title: `${BRAND_NAME.toUpperCase()}::Blog`,
@@ -65,10 +66,10 @@ function Index(/* { posts, totalCount }: any */) {
     setPage((page) => value);
   };
 
-  const handleRedirectToCategory = (to: string) => {
+  const handleRedirectToCategory = (to: string = "") => {
     router.push(location.origin + "/categories/" + (to ? to + "/" : ""));
   };
-  const handleRedirectToTag = (to: string) => {
+  const handleRedirectToTag = (to: string = "") => {
     router.push(location.origin + "/tags/" + (to ? to + "/" : ""));
   };
 
@@ -84,12 +85,30 @@ function Index(/* { posts, totalCount }: any */) {
       <Stack sx={{ flex: 1 }}>
         <Animated order={0} animate='fadeInUp'>
           <Typography
-            fontSize={(theme) => theme.typography.pxToRem(TITLE_SIZE.M)}
+            fontSize={(theme) => theme.typography.pxToRem(TITLE_SIZE.L)}
             fontWeight={500}
             gutterBottom
             fontFamily={`"IBM Plex Sans KR", sans-serif`}>
             All Blogs
           </Typography>
+        </Animated>
+        <Animated order={1} animate='fadeInUp'>
+          <Stack direction='row' gap={1} sx={{ mb: 3 }}>
+            <Button
+              size='small'
+              variant='contained'
+              color='secondary'
+              onClick={() => handleRedirectToCategory()}>
+              카테고리 보기
+            </Button>
+            <Button
+              size='small'
+              variant='contained'
+              color='secondary'
+              onClick={() => handleRedirectToTag()}>
+              태그 보기
+            </Button>
+          </Stack>
         </Animated>
       </Stack>
       <Stack
@@ -113,7 +132,7 @@ function Index(/* { posts, totalCount }: any */) {
                 <Animated
                   card
                   key={q}
-                  order={i * o.length + q + 1}
+                  order={i * o.length + q + 2}
                   animate='fadeInUp'>
                   <Card
                     post={post}
@@ -143,7 +162,7 @@ function Index(/* { posts, totalCount }: any */) {
   );
 }
 
-export default Index;
+export default memo(Index);
 
 /* export const getStaticProps = async () => {
   const posts = await getAllArticles();
