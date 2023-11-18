@@ -1,6 +1,21 @@
 {
   "2023": {
     "10": {
+      "18": [
+        {
+          "todo": "클립보드 사용 포스팅",
+          "tag": "check",
+          "time": "2023-11-18 19:20:11",
+          "repeat": false,
+          "repeatStart": null,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": [],
+          "dueStart": null,
+          "due": 0
+        }
+      ],
       "13": [
         {
           "todo": "GNB 메뉴 및 프로필 구성 업데이트",

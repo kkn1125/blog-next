@@ -1,0 +1,447 @@
+---
+slug: "/clipboard-to-image/"
+date: 2023-11-18 16:13:26 +0000
+modified: 2023-11-18 16:13:26 +0000
+title: "[JAVASCRIPT] 클립보드 이미지 가공하기"
+author: Kimson
+categories: [javascript]
+image: /assets/images/post/covers/TIL-javascript.png
+tags: [clipboard, image, base64, canvas, til]
+description: "블로그를 작성하다보면 이미지 자료를 사용할 때가 많습니다. 물론 저작권이나 출처 표기에 대한 작업은 필수지요. 이미지를 다운 받거나 해당 이미지의 URL을 가져와 사용하는 경우가 대부분일텐데요. 저는 이미지 URL을 얻어 사용하는 것을 선호합니다. 이유는 블로그를 빌드할 때 무거워지지 않고, 간편함이 있기 때문입니다.
+
+클립보드는 무엇인가?
+
+우리는 웹을 사용하면서 복사 단축키를 꽤 많이 사용합니다. 원하는 글이나 이미지, 문단 블록 등을 드래그-복사하지요. 흔히 사용하는 기능이지만 클립보드에 대한 개념을 좀 더 자세하게 알아볼 필요가 있을 것 같습니다.
+
+`ctrl + c`를 이용해 복사하게 되면, 눈에 보이지 않지만 우리가 알고 있는 클립보드에 저장이 됩니다. 정확하게는 RAM에 저장이 된다고 말할 수 있습니다."
+featured: true
+rating: 4.5
+profile: false
+published: true
+---
+
+블로그를 작성하다보면 이미지 자료를 사용할 때가 많습니다. 물론 저작권이나 출처 표기에 대한 작업은 필수지요. 이미지를 다운 받거나 해당 이미지의 URL을 가져와 사용하는 경우가 대부분일텐데요. 저는 이미지 URL을 얻어 사용하는 것을 선호합니다. 이유는 블로그를 빌드할 때 무거워지지 않고, 간편함이 있기 때문입니다.
+
+# 클립보드는 무엇인가?
+
+우리는 웹을 사용하면서 복사 단축키를 꽤 많이 사용합니다. 원하는 글이나 이미지, 문단 블록 등을 드래그-복사하지요. 흔히 사용하는 기능이지만 클립보드에 대한 개념을 좀 더 자세하게 알아볼 필요가 있을 것 같습니다.
+
+`ctrl + c`를 이용해 복사하게 되면, 눈에 보이지 않지만 우리가 알고 있는 클립보드에 저장이 됩니다. 정확하게는 RAM에 저장이 된다고 말할 수 있습니다.
+
+> The clipboard is a buffer that some operating systems provide for short-term storage and transfer within and between application programs. The clipboard is usually temporary and unnamed, and its contents reside in the computer's RAM.\[1\] \[출처: <a href="https://en.wikipedia.org/wiki/Clipboard_(computing)" target="_blank">위키</a>\]
+> 클립보드는 일부 운영 체제가 응용 프로그램 내부 및 응용 프로그램 간 단기 저장 및 전송을 위해 제공하는 버퍼입니다. 클립보드는 일반적으로 임시적이고 이름이 지정되지 않으며, 그 내용은 컴퓨터의 RAM에 저장됩니다.
+
+위키에 따르면 클립보드는 RAM의 공간에 임시로 데이터를 저장할 수 있도록 하는 버퍼입니다. 글이나 이미지를 복사하게 되면 클립보드에 저장되고 `ctrl + v`로 붙여넣기해서 데이터를 임시공간에서 가져와 사용하는 구조입니다.
+
+## 클립보드 사용의 예시
+
+포스팅을 준비하면서 대표적인 예시로 깃허브의 이미지 호스팅 서비스입니다. 모르는 분을 위해 추가적으로 설명드리자면 다음과 같습니다.
+
+깃허브에서 이슈 또는 댓글 창에서 이미지를 복사한 후 붙여넣기하게 되면 약간의 시간이 소요되며 이미지 URL을 생성해서 제공해줍니다. 이떄 생성된 URL을 복사해서 `img`태그에 넣거나 주소창에 붙여넣고 요청하게 되면 복사했던 이미지가 그대로 제공됩니다. 이러한 편리함과 배포하는 블로그에서 용량을 차지하지 않기 때문에 깃허브의 이미지 호스팅 기능을 애용하고 있습니다.
+
+## 클립보드 이미지, 어디까지 가공해봤니?
+
+클립보드 텍스트의 경우 편리함을 위해서 자체적으로 다루어 본 경험이 있습니다. 내용을 분석할 때 어떤 키워드가 존재하는지, 혹은 텍스트 길이가 어느정도 인지, 본문 포맷이 달라 부분적으로 원하는 기호와 포맷에 맞추어 내용을 가공하는 등의 작업이 예시가 되겠습니다.
+
+이번에 궁금증을 가지고 클립보드의 이미지를 가공하는 내용을 다루고자 합니다. 우선, 클립보드에 데이터가 어떻게 저장되어 있는지, 어떻게 꺼내서 활용하는지 단계별로 접근하려합니다.
+
+### 텍스트와 이미지 파일의 저장 형태
+
+테스트해보기 위해 붙여넣기 할 때 발생하는 `paste`이벤트를 사용하고 `navigator`의 `clipboard`와 `paste`이벤트의 `clipboardData`를 살펴보겠습니다.
+
+```javascript showLineNumbers filename="src/main.js"
+window.addEventListenre("paste", async (e) => {
+  const clipboardData = e.clipboardData;
+  console.log("clipboardData:", clipboardData);
+  console.log("clipboardData:types", clipboardData.types);
+  console.log("clipboardData:files", clipboardData.files);
+  Array.from(clipboardData.files).forEach((file) => {
+    console.log("clipboardData:file", file);
+  });
+  console.log("clipboardData:items", clipboardData.items);
+  Array.from(clipboardData.items).forEach((item) => {
+    console.log(
+      "clipboardData:items",
+      item.type,
+      clipboardData.getData(item.type)
+    );
+  });
+
+  const clipboardText = await navigator.clipboard.readText();
+  console.log("clipboardText:", clipboardText);
+});
+```
+
+텍스트의 경우 다음과 같이 내용이 출력됩니다. 예시 텍스트는 구글에서 "시"를 검색했을 때의 결과 중 아무 텍스트를 가져왔습니다. 예시 문구는 "시란 마음 속에 떠오르는 느낌을 운율이 있는 언어로 압축하여 표현한 글이다."입니다.
+
+![예시 텍스트를 붙여넣은 후](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/eeba157f-38e6-48f8-b533-a105d9277445)
+
+여기서 주의 점은 해당 이벤트가 발생하고 난 후 `DataTransfer`는 초기화 되는 것으로 보입니다. 때문에 `await` 또한 하단에 배치해서 출력했습니다. 콘솔에 출력된 `DataTransfer`를 클릭해도 이미 데이터가 초기화 된 이후이기 때문에 콘솔에 출력했던 것과 다르게 나올 수 있습니다.
+
+여기서 텍스트를 붙여넣기 하는 경우 `navigator`와 이벤트 객체의 데이터는 별 다를게 없어 보입니다. 하지만 이벤트 객체 쪽이 더욱 디테일하고 세밀한 정보를 가진 것을 알 수 있습니다. navigator는 텍스트만을 다룰 때는 좀 더 유리할 것으로 보입니다. 원문 그대로를 가져와 곧바로 출력하기 때문이지요. 하지만 복사한 데이터의 유형과 `html`로 가공이 필요하다면 이벤트 객체의 `DataTransfer`를 사용하는 편이 유리하겠네요.
+
+그렇다면 이미지를 복사하고 붙여넣기 하면 어떤 결과가 나올까요? <a href="https://pixabay.com/ko/illustrations/%EA%BD%83%EB%93%A4-%EB%82%98%EB%AD%87%EC%9E%8E-%EC%8B%9D%EB%AC%BC%EC%9D%98-%EB%AC%B4%EB%8A%AC-8383322/" target="_blank">픽사베이</a>의 저작권 없는 무료 이미지를 가져와 테스트해보겠습니다.
+
+![예시 이미지 얻기](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/3d54e523-c709-4d5e-93ad-3e96c6ff9788)
+
+이미지를 주소가 아닌 이미지 자체를 복사하고 붙여넣기 하면 다음과 같은 결과를 얻을 수 있습니다.
+
+![이미지 복사 - 붙여넣기 후](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/e832d387-21af-4a86-81b3-61adcdd4b546)
+
+눈에 띄는 차이는 축약하자면 다음과 같습니다.
+
+| 분류        | 텍스트 | 이미지 | 데이터 타입 |
+| ----------- | ------ | ------ | ----------- |
+| navigator   | ✅     | ❌     | ✅          |
+| paste event | ✅     | ✅     | ✅          |
+
+이미지 붙여넣기 특징을 리스트화하면 다음과 같습니다.
+
+1. 텍스트 데이터는 `navigator`와 `paste` 이벤트 모두 출력된다.
+2. 이미지 데이터는 `navigator`에서 빈 값을 출력한다.
+3. 다만, `naviagtor.clipboard.read`를 통해 해당 데이터 타입은 가져올 수 있다.
+4. 이미지 데이터는 `paste`이벤트에서 `files`에 담겨 출력된다.
+5. `text/html`타입으로 데이터를 가져오면 html코드로 변환해서 출력해준다.
+6. `files`에 담긴 데이터는 `File` 타입이다.
+
+눈에 띄는 점은 놀랍게도 `text/html`타입으로 데이터를 얻어내면 `img`태그에 원본 이미지의 `url`을 `src`로 지정하고 `alt` 또한 원본 데이터를 그대로 생성해준 다는 점과 위키의 내용처럼 이미지 데이터에서 파일명이 지정되지 않는 점입니다.
+
+### 이미지 데이터의 변환
+
+이제 클립보드의 개념과 저장 형태에 대해 알아봤으니 이미지 데이터를 가공하는 방법에 대해 살펴보겠습니다. 이제 이미지 데이터를 이용해 오브젝트 URL을 생성하거나 base64인코딩으로 추출해서 사용하거나 다운로드 기능을 추가할 수 있습니다.
+
+#### Blob URL 또는 base64 URL로 도출하기
+
+아래는 이미지의 Blob URL을 얻는 예시입니다.
+
+```diff-javascript showLineNumbers filename="src/main.js"
+window.addEventListener("paste", async (e) => {
+  const clipboardData = e.clipboardData;
+  console.log("clipboardData:", clipboardData);
+  console.log("clipboardData:types", clipboardData.types);
+  console.log("clipboardData:files", clipboardData.files);
+  Array.from(clipboardData.files).forEach((file) => {
+    console.log("clipboardData:file", file);
++    displayImage(file);
+  });
+  console.log("clipboardData:items", clipboardData.items);
+  Array.from(clipboardData.items).forEach((item) => {
+    console.log(
+      "clipboardData:items",
+      item.type,
+      clipboardData.getData(item.type)
+    );
+  });
+
+  const clipboardText = await navigator.clipboard.readText();
+  console.log("clipboardText:", clipboardText);
+});
+
++/* 이미지 및 다운로드 버튼 표시 */
++function displayImage(imageFile) {
++  /* 이미지 태그 생성 */
++  const img = document.createElement("img");
++  img.width = 500;
++  img.src = URL.createObjectURL(imageFile);
++
++  /* 다운로드 버튼 생성 */
++  const btn = createDownloadButton(imageFile);
++
++  /* 요소 추가 */
++  document.body.append(img, btn);
++}
+
++/* 다운로드 버튼 생성 */
++function createDownloadButton(imageFile) {
++  const btn = document.createElement("button");
++  const a = document.createElement("a");
++  a.innerText = "download";
++  a.download = imageFile.name;
++  a.href = URL.createObjectURL(imageFile);
++  btn.append(a);
++  return btn;
++}
+```
+
+아래는 붙여넣기 후 결과가 출력된 화면입니다.
+
+![결과물](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/d15466ae-da1c-4f24-8ce7-9a85e9a6d0a1)
+
+다운로드 버튼을 누르게 되면 `image.png`라는 이름과 함께 저장할 위치를 묻는 팝업이 뜹니다. 다운로드 후 원본과 비교하면 동일한 파일임을 확인 할 수 있습니다.
+
+그렇다면 `base64 URL`을 얻으려면 어떻게해야할까요? `base64`는 `canvas`를 이용하면 간편하게 얻을 수 있습니다. 에러를 피하기 위해 `img`가 로드된 후 `canvas` 작업을 해야하는 점 주의하시기 바랍니다. 다음은 `canvas`를 사용한 `base64 URL`을 얻는 예시입니다.
+
+```diff-javascript showLineNumbers filename="src/main.js"
+window.addEventListener("paste", async (e) => {
+  const clipboardData = e.clipboardData;
+  console.log("clipboardData:", clipboardData);
+  console.log("clipboardData:types", clipboardData.types);
+  console.log("clipboardData:files", clipboardData.files);
+  Array.from(clipboardData.files).forEach((file) => {
+    console.log("clipboardData:file", file);
+    displayImage(file);
+  });
+  console.log("clipboardData:items", clipboardData.items);
+  Array.from(clipboardData.items).forEach((item) => {
+    console.log(
+      "clipboardData:items",
+      item.type,
+      clipboardData.getData(item.type)
+    );
+  });
+
+  const clipboardText = await navigator.clipboard.readText();
+  console.log("clipboardText:", clipboardText);
+});
+
+/* 이미지 및 다운로드 버튼 표시 */
+function displayImage(imageFile) {
+  /* 이미지 태그 생성 */
+  const img = document.createElement("img");
+  img.width = 500;
+  img.src = URL.createObjectURL(imageFile);
+
++  getBase64Url(imageFile, (dataURL) => {
++    const base64URL = document.createElement("p");
++    base64URL.style.width = "100%";
++    base64URL.style.wordBreak = "break-all";
++    base64URL.innerText = dataURL;
++
++    const base64Img = document.createElement("img");
++    base64Img.width = 500;
++    base64Img.src = dataURL;
++
++    document.body.append(base64Img, base64URL);
++  });
+
+  /* 다운로드 버튼 생성 */
+  const btn = createDownloadButton(imageFile);
+
+  /* 요소 추가 */
+  document.body.append(img, btn);
+}
+
++/* canvas를 이용한 basee64 얻기 */
++function getBase64Url(imageFile, cb) {
++  const imgEL = document.createElement("img");
++  imgEL;
++  const canvas = document.createElement("canvas");
++  const ctx = canvas.getContext("2d");
++  ctx.imageSmoothingEnabled = true;
++  ctx.imageSmoothingQuality = "high";
+
++  imgEL.src = URL.createObjectURL(imageFile);
+
++  imgEL.onload = () => {
++    canvas.width = imgEL.width;
++    canvas.height = imgEL.height;
++    ctx.drawImage(imgEL, 0, 0, canvas.width, canvas.height);
++    cb(canvas.toDataURL(imageFile.type));
++  };
++}
+
+/* 다운로드 버튼 생성 */
+function createDownloadButton(imageFile) {
+  const btn = document.createElement("button");
+  const a = document.createElement("a");
+  a.innerText = "download";
+  a.download = imageFile.name;
+  a.href = URL.createObjectURL(imageFile);
+  btn.append(a);
+  return btn;
+}
+```
+
+이전 코드에서 `basee64 URL`을 얻는 함수를 추가 했습니다. `canvas`로 처리하는 함수에서 기존 `img`를 사용하지 않은 이유는 `img`에 렌더링된 사이즈가 이미 `500`이 되어 있기 때문에 작은 이미지를 기반으로 `base64`를 생성하기 때문에 화질이 떨어지게 됩니다. 이를 방지하기 위해 원본 데이터를 다시 이미지 태그에 넣어 로드되는 시점에서 `base64`를 얻어 화면에 출력하는 `img`태그에 `500`사이즈로 출력했기 때문에 원본과 동일한 화질을 유지하고 출력할 수 있지요.
+
+### 깃허브 이미지 호스팅 원리 알아보기
+
+깃허브의 이미지 호스팅 원리는 자세히 알 수 없지만, 어떤 처리 과정이 필요한 지 간단하게 요약해봤습니다.
+
+1. 서버에서 이미지만을 대상으로 get요청을 처리하는 API를 구현한다.
+2. 이미지를 붙여넣는다.
+3. 이미지를 서버로 저장하기 위해 formdata로 post요청한다.
+4. 서버에서 이미지 데이터를 받아 랜덤 값의 해시로 이름을 바꾸어 저장한다.
+5. 랜덤 값의 해시를 적용해서 get요청할 수 있는 url을 반환한다.
+6. 반환된 url을 img태그에 사용하거나 접속한다.
+
+이제 이 프로세스를 적용해서 express를 사용해서 API 서버를 생성하고, 프론트에서 붙여넣기 후 이미지 호스팅된 URL을 얻어 사용하는 방식으로 실험하고 마치겠습니다.
+
+#### 이미지 호스팅을 구현해보자
+
+API 서버는 다음과 같이 간단하게 구성합니다. 프론트는 ejs를 사용해도 좋지만 저는 html을 같이 사용하는 예시로 접근하겠습니다. 제가 생각한 프로젝트 구조는 다음과 같습니다.
+
+```markdown showLineNumbers
+- root
+  - server/
+    - main.js <-- 서버
+    - index.html <-- 프론트
+    - convert.js <-- 스크립트
+    - images/ <--
+      - <호스팅되는 이미지 파일>
+```
+
+다음은 html과 js파일입니다.
+
+```html showLineNumbers filename="src/server/index.html"
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Hosting Test</title>
+  </head>
+  <body>
+    <h1>Image Hosting Test</h1>
+    <textarea
+      name="result"
+      id=""
+      cols="50"
+      rows="10"
+      placeholder="글을 작성해주세요. 이미지를 넣으면 이미지 호스팅 URL을 얻을 수 있습니다."
+    ></textarea>
+    <div>
+      <label>
+        생성된 URL을 넣어주세요.
+        <input type="text" id="add-url" />
+      </label>
+      <hr />
+      <img id="target" src="" alt="" width="500" />
+    </div>
+    <script src="source/convert.js"></script>
+  </body>
+</html>
+```
+
+```javascript showLineNumbers filename="src/server/convert.js"
+const targetImage = document.querySelector("#target");
+const addUrl = document.querySelector("#add-url");
+const ta = document.querySelector("textarea");
+
+window.addEventListener("paste", async (e) => {
+  const clipboardData = e.clipboardData;
+  Array.from(clipboardData.files).forEach((file) => {
+    console.log("clipboardData:file", file);
+    const formData = new FormData();
+    formData.append("file", file);
+    const originValue = ta.value;
+    ta.value += "\n이미지 생성 중...";
+    fetch("http://localhost:8000/api/save", {
+      method: "post",
+      body: formData,
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((json) => {
+        ta.value = originValue + `\n![image](${json.url})`;
+      })
+      .then(() => {
+        alert("이미지 호스팅 URL 생성 완료");
+      });
+  });
+});
+
+addUrl.addEventListener("change", () => {
+  targetImage.src = addUrl.value;
+});
+```
+
+여기까지 작성하면 다음과 같은 화면이 나옵니다.
+
+![예시 화면](https://github.com/kkn1125/kkn1125.github.io/assets/71887242/b4b53443-a750-483e-a169-38ea9351965b)
+
+`textarea`에 이미지를 붙여넣기 하면 "이미지 생성 중..."이라는 문구가 추가되고, 이미지 호스팅이 완료되면 URL이 작성됩니다. 출력된 URL을 복사해서 아래 `input`에 붙여넣기하면 이미지 태그에 `src`로 적용되면서 테스트를 한 번에 할 수 있습니다.
+
+```javascript showLineNumbers filename="src/server/main.js"
+import cors from "cors";
+import express from "express";
+import fs from "fs";
+import multer from "multer";
+import path from "path";
+import { v4 } from "uuid";
+
+const IMAGE_URL = "http://localhost:8000/api/image";
+
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(multer().any());
+app.use(cors());
+
+app.post("/api/save", (req, res) => {
+  if (req.files?.length > 0) {
+    const file = req.files.at(0);
+    console.log("fieldname", file.fieldname);
+    console.log("originalname", file.originalname);
+    console.log("mimetype", file.mimetype);
+    console.log("buffer", file.buffer);
+    console.log("size", file.size);
+    const extension = file.mimetype.split("/")[1];
+    const newFilename = v4().concat(".", extension);
+    try {
+      fs.writeFileSync(
+        path.join(path.resolve(), "server/images", newFilename),
+        file.buffer
+      );
+    } catch (error) {
+      console.log("file save fail", error);
+    }
+    res.json({
+      ok: true,
+      url: IMAGE_URL.concat("/", newFilename),
+    });
+  } else {
+    res.json({
+      ok: false,
+      url: "no files in request.",
+    });
+  }
+});
+
+app.get("/api/image/:path", (req, res) => {
+  const { path: imagePath } = req.params;
+  try {
+    const imageFile = fs.readFileSync(
+      path.join(path.resolve(), "server/images", imagePath)
+    );
+    res.contentType("image/png");
+    res.send(imageFile);
+  } catch (error) {
+    res.send("");
+  }
+});
+
+app.get("/", (req, res) => {
+  res.contentType("text/html");
+  res.sendFile(path.join(path.resolve(), "server/index.html"));
+});
+
+app.get("/source/:path", (req, res) => {
+  const { path: filePath } = req.params;
+  const dict = {
+    js: "text/javascript",
+    css: "text/css",
+  };
+  const jsFile = fs
+    .readFileSync(path.join(path.resolve(), `server`, filePath))
+    .toString("utf8");
+  res.contentType(dict[filePath.split(".")[1]]);
+  res.send(jsFile);
+});
+
+app.listen(8000, () => {
+  console.log("app listening on http://localhost:8000");
+});
+```
+
+`formdata`에서 `file`을 전송해서 받아야 하기 때문에 `multer`를 사용했습니다. 위 코드를 실행하고 아까 정리했던 프로세스로 테스트해보면 깃허브의 이미지 호스팅과 유사한 결과를 얻어낼 수 있습니다.
+
+## 마무리
+
+매번 해야지 해야지 하던 주제를 드디어 포스팅하게 되었습니다. 예시 자료를 만들면서 조금 더 공부한 느낌이 들어 뿌듯합니다.
+
+클립보드의 개념과 어떤 방식으로 저장되는지는 이번 기회에 자세히 알게 되었습니다. 원래 모르던 부분인데 블로그를 운영하면서 더 찾아보게 되는 습관이 드는 것 같아 좋습니다.
+
+클립보드를 이용해서 이미지 데이터를 가공하고 사용하는 예시에 대해 알아봤습니다. 부디 관련 정보를 찾는 분들께 도움이 되었으면 합니다. 😁
