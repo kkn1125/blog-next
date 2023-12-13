@@ -327,7 +327,8 @@ function Calendar() {
       direction={{ sm: "column", md: "row" }}
       gap={3}
       justifyContent='center'
-      alignItems='center'>
+      alignItems='center'
+      sx={{ border: "1px solid #56565656", borderRadius: 3, p: 1 }}>
       {date && (
         <>
           <Box
@@ -377,6 +378,7 @@ function Calendar() {
             </LocalizationProvider>
           </Box>
           <Stack
+            flex={1}
             gap={1}
             sx={{
               width: 300,
@@ -412,7 +414,29 @@ function Calendar() {
             <Typography
               fontWeight={700}
               fontSize={(theme) => theme.typography.pxToRem(18)}>
-              {(date as Dayjs)?.format("YYYY. MM. DD dddd")}
+              {(date as Dayjs)
+                ?.format("YYYY. MM. DD dd")
+                .toLowerCase()
+                .replace(/mo|tu|we|th|fr|sa|su/, ($1) => {
+                  switch ($1) {
+                    case "su":
+                      return "일요일";
+                    case "mo":
+                      return "월요일";
+                    case "tu":
+                      return "화요일";
+                    case "we":
+                      return "수요일";
+                    case "th":
+                      return "목요일";
+                    case "fr":
+                      return "금요일";
+                    case "sa":
+                      return "토요일";
+                    default:
+                      return $1;
+                  }
+                })}
             </Typography>
             <Stack
               gap={1}
@@ -452,10 +476,10 @@ function Calendar() {
                       <Box
                         component='span'
                         sx={{
-                          fontSize: (theme) => theme.typography.pxToRem(6),
+                          fontSize: (theme) => theme.typography.pxToRem(10),
                           backgroundColor: (theme) =>
-                            theme.palette.text.primary,
-                          color: (theme) => theme.palette.background.paper,
+                            theme.palette.text.primary + "56",
+                          color: (theme) => theme.palette.text.secondary,
                           px: 0.8,
                           py: 0.3,
                           borderRadius: 10,

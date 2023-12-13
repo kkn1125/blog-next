@@ -276,9 +276,9 @@ function ResponsiveAppBar() {
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
-  // const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-  //   setAnchorElUser(event.currentTarget);
-  // };
+  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElUser(event.currentTarget);
+  };
 
   const handleOpenSearch = (event: React.MouseEvent<HTMLElement>) => {
     setSearchOpen(!searchOpen);
@@ -484,8 +484,20 @@ function ResponsiveAppBar() {
               </Tooltip>
               <SearchBar open={searchOpen} setOpen={setSearchOpen} />
             </Box>
-            {/* <Box sx={{ flex: 0 }}>
-              <Tooltip title="Owner's Profile" sx={{zIndex:1}}>
+            <Box sx={{ flex: 0 }}>
+              <Tooltip
+                title={`${
+                  colorMode.mode() === "light" ? "dark" : "light"
+                } mode`}>
+                <IconButton onClick={() => colorMode.toggleColorMode()}>
+                  {theme.palette.mode === "dark" ? (
+                    <WbSunnyIcon />
+                  ) : (
+                    <NightsStayIcon />
+                  )}
+                </IconButton>
+              </Tooltip>
+              {/* <Tooltip title="Owner's Profile" sx={{ zIndex: 1 }}>
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar alt={"devkimson"} src={PROFILE} />
                 </IconButton>
@@ -523,8 +535,8 @@ function ResponsiveAppBar() {
                     </Typography>
                   </MenuItem>
                 ))}
-              </Menu>
-            </Box> */}
+              </Menu> */}
+            </Box>
           </Stack>
         </Toolbar>
       </Container>

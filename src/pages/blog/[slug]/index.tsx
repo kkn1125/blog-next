@@ -32,6 +32,7 @@ import {
 import { MDXComponents } from "mdx/types";
 import { MDXRemote } from "next-mdx-remote";
 import { useRouter } from "next/router";
+import Script from "next/script";
 import { useContext, useEffect, useRef, useState } from "react";
 
 const components: MDXComponents | MergeComponents = {
@@ -636,6 +637,17 @@ function Index({
         </Stack>
       </Stack>
       <GoTop />
+      <Script
+        type='module'
+        strategy='afterInteractive'
+        dangerouslySetInnerHTML={{
+          __html: `
+          import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs";
+          mermaid.initialize({startOnLoad: true});
+          mermaid.contentLoaded();
+        `,
+        }}
+      />
     </Stack>
   );
 }

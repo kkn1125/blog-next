@@ -161,6 +161,11 @@ export default function MyApp(props: MyAppProps) {
           href='/favicon/favicon-16x16.png'
         />
         <link rel='manifest' href='/favicon/site.webmanifest' />
+        <link
+          rel='stylesheet'
+          href='https://cdn.jsdelivr.net/gh/kkn1125/typer@vv100/typer.css'
+          integrity='sha384-72aQAReU+HRrgKRCBZ3h9JpFQmjl3vjb6bOeFdyCVDxJ/O3f3JQROWhfcLCcKbUd'
+          crossOrigin='anonymous'></link>
       </Head>
       <Script
         src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7028508433313066'

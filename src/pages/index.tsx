@@ -23,6 +23,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
+import Script from "next/script";
 
 const metadatas = {
   title: BRAND_NAME.toUpperCase(),
@@ -35,9 +36,18 @@ export default function Home(/* { posts }: any */) {
   const { posts: postList } = useContext(PostContext);
   const [posts, setPosts] = useState<Article[]>([]);
   const { comments } = useContext(CommentContext);
+  const [typerJs, setTyperJs] = useState("");
 
   const theme = useTheme();
   const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
+
+  useEffect(() => {
+    fetch("https://cdn.jsdelivr.net/gh/kkn1125/typer@vv100/typer.js")
+      .then((res) => res.text())
+      .then((js) => {
+        setTyperJs(js);
+      });
+  }, []);
 
   useEffect(() => {
     setPosts(postList.slice(0, 4));
@@ -61,6 +71,7 @@ export default function Home(/* { posts }: any */) {
           </Animated>
           <Animated order={1} animate='fadeInUp'>
             <Typography
+              data-typer-name='mainword'
               fontSize={(theme) => theme.typography.pxToRem(TITLE_SIZE.S)}
               fontWeight={200}
               align='center'
@@ -70,7 +81,7 @@ export default function Home(/* { posts }: any */) {
           </Animated>
         </Box>
         <Toolbar />
-        <Stack component={"section"} alignItems='center'>
+        <Stack component={"section"}>
           <Animated order={2} animate='fadeInUp'>
             <MainCard post={posts[0]} />
           </Animated>
@@ -103,6 +114,36 @@ export default function Home(/* { posts }: any */) {
         </Animated>
         <Toolbar />
       </Stack>
+      {typerJs && (
+        <Script
+          data-nscript='afterInteractive'
+          dangerouslySetInnerHTML={{
+            __html: `
+            ${typerJs}
+
+            const typer = Typer.init({
+                typer: {
+                  words: {
+                    mainword: [
+                      "문제 상황이나 궁금했던 부분에 대해 공부하고 블로그에 기록합니다."
+                    ]
+                  },
+                  speed: 1,
+                  delay: 1,
+                  loop: true,
+                  loopDelay: 10,
+                  // start: 0.3,
+                  eraseMode: true,
+                  eraseSpeed: 0.1,
+                  realTyping: true,
+                  style: {
+                      cursorBlink: 'horizontal'
+                  },
+                }
+            });
+          `,
+          }}></Script>
+      )}
     </Container>
   );
 }

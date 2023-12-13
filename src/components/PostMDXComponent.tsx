@@ -8,6 +8,20 @@ interface CodeBlockProps {
   className: string;
 }
 
+function extractTextChildren(children: any) {
+  let text = "";
+
+  React.Children.forEach(children, (child: any) => {
+    if (typeof child === "string" || typeof child === "number") {
+      text += child;
+    } else if (React.isValidElement(child) && (child.props as any).children) {
+      text += extractTextChildren((child.props as any).children);
+    }
+  });
+
+  return text;
+}
+
 const CodeBlock = (props: CodeBlockProps | any) => {
   const { filename, children, className } = props;
   const [fileName, setFileName] = useState("");
@@ -18,6 +32,20 @@ const CodeBlock = (props: CodeBlockProps | any) => {
       setFileName(filename);
     }
   }, []);
+  if (className === "language-mermaid") {
+    return (
+      <Box
+        component='pre'
+        className='mermaid'
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          backgroundColor: (theme) => theme.palette.background.default,
+        }}>
+        {extractTextChildren(children)}
+      </Box>
+    );
+  }
 
   return className ? (
     <Stack
@@ -255,7 +283,6 @@ const ALink = ({ children, ...rest }: any) => {
 const Table = ({ children }: any) => (
   <Box
     component='table'
-
     sx={{
       my: 2,
       borderCollapse: "collapse",

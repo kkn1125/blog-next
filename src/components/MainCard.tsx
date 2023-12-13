@@ -46,7 +46,7 @@ function MainCard({
         "& a": {
           transition: "150ms ease-in-out",
         },
-        backgroundColor: "#00000056",
+        backgroundColor: (theme) => theme.palette.background.default,
         // "& *": {
         //   textShadow: `-0.5px -0.5px 0 ${colors()}, 0.5px -0.5px 0 ${colors()}, -0.5px 0.5px 0 ${colors()}, 0.5px 0.5px 0 ${colors()}`,
         // },
@@ -82,8 +82,8 @@ function MainCard({
           backgroundImage: `url(${getReponsiveImageUrl(
             post.frontmatter.image
           )})`,
-          maskImage:
-            "linear-gradient(to right, transparent 0%, #00000036 3%, #000000 5%, #000000 95%, #00000036 97%, transparent 100%)",
+          // maskImage:
+          //   "linear-gradient(to right, transparent 0%, #00000036 3%, #000000 5%, #000000 95%, #00000036 97%, transparent 100%)",
           transition: "ease-in-out 150ms",
           filter: "brightness(0.55)",
         }}

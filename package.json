@@ -52,6 +52,8 @@
     "rehype": "^12.0.1",
     "rehype-mdx-code-props": "^1.0.0",
     "remark-breaks": "^3.0.3",
+    "remark-grid-tables": "^2.2.0",
+    "remark-rehype": "^11.0.0",
     "sharp": "^0.32.1",
     "typescript": "5.0.4"
   },
