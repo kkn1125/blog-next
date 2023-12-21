@@ -2,6 +2,7 @@ import { convertIdString } from "@/util/tool";
 import { Box, Divider, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import mermaid from "mermaid";
 
 interface CodeBlockProps {
   children: string;
@@ -31,6 +32,11 @@ const CodeBlock = (props: CodeBlockProps | any) => {
     if (props) {
       setFileName(filename);
     }
+
+    mermaid.initialize({ startOnLoad: false });
+    mermaid.run({
+      querySelector: ".mermaid",
+    });
   }, []);
   if (className === "language-mermaid") {
     return (

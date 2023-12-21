@@ -1,6 +1,21 @@
 {
   "2023": {
     "11": {
+      "20": [
+        {
+          "todo": "Typoz 타이핑 효과 라이브러리 출시! v0.0.22",
+          "tag": "check",
+          "time": "2023-12-20 18:50:36",
+          "repeat": false,
+          "repeatStart": null,
+          "repeatDay": [],
+          "repeatDayOfYear": false,
+          "repeatDayOfMonth": false,
+          "repeatDayOfWeek": [],
+          "dueStart": null,
+          "due": 0
+        }
+      ],
       "13": [
         {
           "todo": "예외 처리 포스팅",

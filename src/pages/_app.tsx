@@ -12,7 +12,7 @@ import "animate.css";
 import { AppProps } from "next/app";
 import Head from "next/head";
 import Script from "next/script";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import createEmotionCache from "../libs/createEmotionCache";
 import "./theme/prism-dracular.css";
 // Client-side cache, shared for the whole session of the user in the browser.
@@ -123,17 +123,17 @@ export default function MyApp(props: MyAppProps) {
   return (
     <CacheProvider value={emotionCache}>
       <Head>
-        <meta property='type' content={"website"} />
+        <meta name='type' content={"website"} />
         <meta property='og:type' content={"website"} />
-        <meta property='author' content={AUTHOR} />
+        <meta name='author' content={AUTHOR} />
         <meta property='og:author' content={AUTHOR} />
-        <meta property='url' content={"https://kkn1125.github.io/"} />
+        <meta name='url' content={"https://kkn1125.github.io/"} />
         <meta property='og:url' content={"https://kkn1125.github.io/"} />
-        <meta property='site_name' content={BRAND_NAME.toUpperCase()} />
+        <meta name='site_name' content={BRAND_NAME.toUpperCase()} />
         <meta property='og:site_name' content={BRAND_NAME.toUpperCase()} />
-        <meta property='locale' content={"ko_KR"} />
+        <meta name='locale' content={"ko_KR"} />
         <meta property='og:locale' content={"ko_KR"} />
-        <meta property='locale:alternate' content={"en_US"} />
+        <meta name='locale:alternate' content={"en_US"} />
         <meta property='og:locale:alternate' content={"en_US"} />
         <link rel='preconnect' href='https://fonts.googleapis.com' />
         <link
@@ -161,11 +161,6 @@ export default function MyApp(props: MyAppProps) {
           href='/favicon/favicon-16x16.png'
         />
         <link rel='manifest' href='/favicon/site.webmanifest' />
-        <link
-          rel='stylesheet'
-          href='https://cdn.jsdelivr.net/gh/kkn1125/typer@vv100/typer.css'
-          integrity='sha384-72aQAReU+HRrgKRCBZ3h9JpFQmjl3vjb6bOeFdyCVDxJ/O3f3JQROWhfcLCcKbUd'
-          crossOrigin='anonymous'></link>
       </Head>
       <Script
         src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7028508433313066'

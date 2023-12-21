@@ -5,7 +5,7 @@ import PostNavigator from "@/components/PostNavigator";
 import SideBar from "@/components/SideBar";
 import { PostContext } from "@/context/PostProvider";
 import { ColorModeContext } from "@/context/ThemeModeProvider";
-import { findArticleBySlug, getOnlySlugs } from "@/libs/service";
+import { getOnlySlugs } from "@/libs/service";
 import { BRAND_NAME } from "@/util/global";
 import {
   format,
@@ -32,7 +32,6 @@ import {
 import { MDXComponents } from "mdx/types";
 import { MDXRemote } from "next-mdx-remote";
 import { useRouter } from "next/router";
-import Script from "next/script";
 import { useContext, useEffect, useRef, useState } from "react";
 
 const components: MDXComponents | MergeComponents = {
@@ -637,17 +636,6 @@ function Index({
         </Stack>
       </Stack>
       <GoTop />
-      <Script
-        type='module'
-        strategy='afterInteractive'
-        dangerouslySetInnerHTML={{
-          __html: `
-          import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs";
-          mermaid.initialize({startOnLoad: true});
-          mermaid.contentLoaded();
-        `,
-        }}
-      />
     </Stack>
   );
 }
