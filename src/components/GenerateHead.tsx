@@ -12,18 +12,12 @@ function convertToMetadata(metadatas: Metadata) {
     if (k === "title") {
       isTitleExists = true;
       dataSet.push(<title>{v}</title>);
-      dataSet.push(<meta name={k} content={v} />);
       dataSet.push(<meta property={`og:${k}`} content={v} />);
+      dataSet.push(<meta property={`og:site_name`} content={"DEVKIMSON"} />);
     } else if (k === "category" || k === "tag") {
       // (v as unknown as any[]).forEach((vv: string) => {
       dataSet.push(
         <meta name={k} content={(v as unknown as any[]).join(",")} />
-      );
-      dataSet.push(
-        <meta
-          property={`og:${k}`}
-          content={(v as unknown as any[]).join(",")}
-        />
       );
       dataSet.push(
         <meta
@@ -42,6 +36,11 @@ function convertToMetadata(metadatas: Metadata) {
           content={v.match(/^\/assets/) ? v : `/assets${v}`}
         />
       );
+    } else if (k === "keywords") {
+      const keywords = v.replace(/,+/, ",").split(",");
+      const dupRemove = [...new Set(keywords)];
+      dataSet.push(<meta name={k} content={dupRemove.join(",")} />);
+      dataSet.push(<meta property={`og:${k}`} content={dupRemove.join(",")} />);
     } else {
       dataSet.push(<meta name={k} content={v} />);
       dataSet.push(<meta property={`og:${k}`} content={v} />);

@@ -243,6 +243,7 @@ const metadatas = (frontmatter: any) => ({
   category: frontmatter.categories,
   tag: frontmatter.tags,
   image: frontmatter.image,
+  keywords: [frontmatter.categories, frontmatter.tags].join(","),
 });
 
 let copyActive = false;
