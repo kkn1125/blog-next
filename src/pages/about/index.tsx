@@ -2,13 +2,13 @@ import Animated from "@/components/Animated";
 import GenerateHead from "@/components/GenerateHead";
 import {
   AUTHOR,
-  BLOG,
   BRAND_LOGO,
   BRAND_NAME,
   GITHUB,
   MAIN_SUBSCRIPTION,
   PORTFOLIO,
   TITLE_SIZE,
+  WIKI,
 } from "@/util/global";
 import {
   Alert,
@@ -33,8 +33,8 @@ const ABOUT_LINKS = [
     value: PORTFOLIO,
   },
   {
-    name: "BLOG",
-    value: BLOG,
+    name: "WIKI",
+    value: WIKI,
   },
 ];
 
